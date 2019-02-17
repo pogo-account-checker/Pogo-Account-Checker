@@ -4,6 +4,7 @@ Pogo Account Checker is an Android app that checks if Pokémon Go PTC accounts a
 * [Discord](https://discord.gg/sNv8sPr "Discord") - For support
 ## Requirements
 * Rooted Android device with Android 5.0 or higher and the language set to english.
+* Pokémon Go installed.
 ## Setup
 ### Rooting
 1. Ensure your phone has an unlocked bootloader and is able to support root. [LineageOS](https://lineageos.org/ "LineageOS") is a good place to start for a custom ROM and they have good installation instruction for each device.
