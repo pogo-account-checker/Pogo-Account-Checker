@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Pogo Account Checker</string>
+    <string name="notification_channel_name">Account checking status</string>
+    <string name="notification_title">Checking accounts…</string>
+    <string name="notification_message">Accounts check in progress.</string>
+    <string name="title_activity_result">ResultActivity</string>
+</resources>
