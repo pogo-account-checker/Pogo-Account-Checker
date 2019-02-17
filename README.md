@@ -15,8 +15,13 @@ You can get the APK by directly downloading it from Github (`apk/pogo-account-ch
 3. The application uses the [ML Kit's text recognition APIs](https://firebase.google.com/docs/ml-kit/recognize-text "ML Kit's text recognition APIs"). In order for the text recognition to work a `google-services.json` file must be downloaded and placed in the `app` folder. This file contains confidential information, hence it's not added to this repo. [Here](https://firebase.google.com/docs/android/setup "How to get google-services.json") is explained how to obtain this file.
 4. Install the app on your phone by clicking the green play button in Android Studio.
 ## Checking accounts
-First you have to put your accounts in a `.txt` file, username and password should be seperated by a comma. TXT file example:
+First you have to put your PTC accounts in a `.txt` file, username and password should be seperated by a comma. TXT file example:
 ```txt
 username01,password01
 username02,password02
 ```
+Then transfer the file to your phone. Next open the app and select the file. Press start to start checking the accounts. The result can be found in the `PogoAccountChecker` folder on your phone. In this folder there will be a maximum of four files:
+* `not_banned.txt` - contains accounts that still work
+* `banned.txt` - contains accounts that are banned
+* `not_exist` - contains accounts that don't exist or have an incorrect username/password
+* `error.txt` - contains accounts for which checking failed 10 times in a row, this can for example happen when there is no internet connection
