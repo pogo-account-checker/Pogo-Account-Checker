@@ -16,5 +16,5 @@ You can get the APK by directly downloading it from Github (`apk/pogo-account-ch
 4. Install the app on your phone by clicking the green play button in Android Studio.
 ## Checking accounts
 First you have to put your accounts in a `.txt` file, username and password should be seperated by a comma. TXT file example:
-`username01,password01
-username02,password02`
+```username01,password01
+username02,password02``` 
