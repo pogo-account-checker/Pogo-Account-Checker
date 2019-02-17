@@ -1,6 +1,6 @@
 # Pogo-Account-Checker
 ## Information
-Pogo Account Checker is an Android app that checks if Pokémon Go PTC accounts are banned or not. It does so by using the Pokémon Go app, no third party APIs are used.
+Pogo Account Checker is an Android app that checks if Pokémon Go PTC accounts are banned or not. It does so by using the Pokémon Go app, no third party APIs that can put your accounts at risk are used.
 * [Discord](https://discord.gg/sNv8sPr "Discord") - For support
 ## Requirements
 * Rooted Android device with Android 5.0 or higher, that's all
