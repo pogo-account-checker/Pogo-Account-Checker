@@ -199,7 +199,7 @@ public class PogoInteractor {
             FirebaseVisionText visionText = getVisionTextInCurrentScreen();
             if (visionText == null) return false;
             String text = visionText.getText().toLowerCase();
-            if (text.contains("username") && text.contains("password")) {
+            if (text.contains("username") && text.contains("password") && text.contains("sign")) {
                 Log.i(LOG_TAG, "On login screen.");
 
                 int statusBarHeight = getStatusBarHeigth();
@@ -353,7 +353,7 @@ public class PogoInteractor {
                 for (FirebaseVisionText.Line line: textBlock.getLines()) {
                     if (line.getText().toLowerCase().contains(text)) {
                         for (FirebaseVisionText.Element element : line.getElements()) {
-                            if (element.getText().toLowerCase().contains(text)) {
+                            if (element.getText().toLowerCase().contains(text) && !element.getText().contains("?")) {
                                 return element.getCornerPoints();
                             }
                         }
