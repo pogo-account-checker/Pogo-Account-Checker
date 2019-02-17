@@ -13,5 +13,5 @@ You can get the APK by directly downloading it from Github (`apk/pogo-account-ch
 1. Install the latest version of [Android Studio](https://developer.android.com/studio/ "Android Studio").
 2. `git clone` and open the project in Android Studio.
 3. The application uses the [ML Kit's text recognition APIs](https://firebase.google.com/docs/ml-kit/recognize-text "ML Kit's text recognition APIs"). In order for the text recognition to work a `google-services.json` file must be downloaded and placed in the `app` folder. This file contains confidential information, hence it's not added to this repo. [Here](https://firebase.google.com/docs/android/setup "How to get google-services.json") is explained how to obtain this file.
-4. Build the app and install it on your phone by clicking the green play button in Android Studio.
+4. Install the app on your phone by clicking the green play button in Android Studio.
 ## Checking accounts
