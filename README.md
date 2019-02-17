@@ -3,7 +3,7 @@
 Pogo Account Checker is an Android app that checks if Pokémon Go PTC accounts are banned or not. It does so by using the Pokémon Go app, no third party APIs that can put your accounts at risk are used.
 * [Discord](https://discord.gg/sNv8sPr "Discord") - For support
 ## Requirements
-* Rooted Android device with Android 5.0 or higher, that's all
+* Rooted Android device with Android 5.0 or higher, the language should be set to english.
 ## Setup
 ### Rooting
 1. Ensure your phone has an unlocked bootloader and is able to support root. [LineageOS](https://lineageos.org/ "LineageOS") is a good place to start for a custom ROM and they have good installation instruction for each device.
@@ -21,7 +21,7 @@ username01,password01
 username02,password02
 ```
 Then transfer the file to your phone. Next open the app and select the file. Press start to start checking the accounts. The checked accounts can be found in the `PogoAccountChecker` folder on your phone. In this folder there will be a maximum of four files:
-* `not_banned.txt` - contains accounts that still work
-* `banned.txt` - contains accounts that are banned
-* `not_exist.txt` - contains accounts that don't exist
-* `error.txt` - contains accounts for which checking failed 10 times in a row, this can for example happen when there is no internet connection
+* `not_banned.txt` - contains accounts that still work.
+* `banned.txt` - contains accounts that are banned.
+* `not_exist.txt` - contains accounts that don't exist.
+* `error.txt` - contains accounts for which checking failed 10 times in a row, this can for example happen when there is no internet connection.
