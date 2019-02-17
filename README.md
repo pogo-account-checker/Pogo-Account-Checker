@@ -23,5 +23,5 @@ username02,password02
 Then transfer the file to your phone. Next open the app and select the file. Press start to start checking the accounts. The checked accounts can be found in the `PogoAccountChecker` folder on your phone. In this folder there will be a maximum of four files:
 * `not_banned.txt` - contains accounts that still work
 * `banned.txt` - contains accounts that are banned
-* `not_exist` - contains accounts that don't exist or have an incorrect username/password
+* `not_exist.txt` - contains accounts that don't exist or have an incorrect username/password
 * `error.txt` - contains accounts for which checking failed 10 times in a row, this can for example happen when there is no internet connection
