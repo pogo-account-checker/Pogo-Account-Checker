@@ -13,6 +13,7 @@ import com.pogoaccountchecker.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -83,16 +84,16 @@ public class PogoInteractor {
         return true;
     }
 
-    public boolean selectDateOfBirth(int numRetries) {
-        if (numRetries < 1) {
-            numRetries = 1;
+    public boolean selectDateOfBirth(int numAttempts) {
+        if (numAttempts < 1) {
+            numAttempts = 1;
         }
         int onWrongScreenCount = 0;
-        while (onWrongScreenCount != numRetries) {
+        while (onWrongScreenCount != numAttempts) {
             FirebaseVisionText visionText = getVisionTextInCurrentScreen();
             if (visionText == null) return false;
             String text = visionText.getText().toLowerCase();
-            if ((text.contains("date") || text.contains("birth")) && text.contains("submit")) {
+            if (text.contains("2019") && text.contains("submit")) {
                 Log.i(LOG_TAG, "On DOB screen.");
 
                 // Open year selector.
@@ -108,24 +109,25 @@ public class PogoInteractor {
                 Utils.sleep(500);
 
                 // Submit date of birth.
-                if (!submitDateOfBirth(visionText)) return false;
-
-                Log.i(LOG_TAG, "Year of birth submitted.");
-                return true;
+                if (tapText(visionText, "submit")) {
+                    Log.i(LOG_TAG, "Year of birth submitted.");
+                    return true;
+                }
+                return false;
             }
             Log.w(LOG_TAG, "Not on DOB screen.");
             onWrongScreenCount++;
         }
-        Log.e(LOG_TAG, "DOB screen not detected after " + Integer.toString(numRetries) + " retries.");
+        Log.e(LOG_TAG, "DOB screen not detected after " + Integer.toString(numAttempts) + " attempts.");
         return false;
     }
 
-    private boolean selectYearOfBirth(int numRetries) {
-        if (numRetries < 1) {
-            numRetries = 1;
+    private boolean selectYearOfBirth(int numAttempts) {
+        if (numAttempts < 1) {
+            numAttempts = 1;
         }
         int onWrongScreenCount = 0;
-        while (onWrongScreenCount != numRetries) {
+        while (onWrongScreenCount != numAttempts) {
             FirebaseVisionText visionText = getVisionTextInCurrentScreen();
             if (visionText == null) return false;
             if (visionText.getText().toLowerCase().contains("2018")) {
@@ -135,25 +137,16 @@ public class PogoInteractor {
             Log.w(LOG_TAG, "Year selector not detected.");
             onWrongScreenCount++;
         }
-        Log.e(LOG_TAG, "Year selector not detected after " + Integer.toString(numRetries) + " retries.");
+        Log.e(LOG_TAG, "Year selector not detected after " + Integer.toString(numAttempts) + " attempts.");
         return false;
     }
 
-    private boolean submitDateOfBirth(FirebaseVisionText visionText) {
-        if (visionText.getText().toLowerCase().contains("submit")) {
-            Log.i(LOG_TAG, "Submit button detected.");
-            return tapText(visionText, "submit");
-        }
-        Log.e(LOG_TAG, "Couldn't detect submit button.");
-        return false;
-    }
-
-    public boolean selectReturningPlayer(int numRetries) {
-        if (numRetries < 1) {
-            numRetries = 1;
+    public boolean selectReturningPlayer(int numAttempts) {
+        if (numAttempts < 1) {
+            numAttempts = 1;
         }
         int onWrongScreenCount = 0;
-        while (onWrongScreenCount != numRetries) {
+        while (onWrongScreenCount != numAttempts) {
             FirebaseVisionText visionText = getVisionTextInCurrentScreen();
             if (visionText == null) return false;
             if (visionText.getText().toLowerCase().contains("returning")) {
@@ -163,16 +156,16 @@ public class PogoInteractor {
             Log.w(LOG_TAG, "Not on returning/new player selection screen.");
             onWrongScreenCount++;
         }
-        Log.e(LOG_TAG, "Returning/new player selection screen not detected after " + Integer.toString(numRetries) + " retries.");
+        Log.e(LOG_TAG, "Returning/new player selection screen not detected after " + Integer.toString(numAttempts) + " attempts.");
         return false;
     }
 
-    public boolean selectPTC(int numRetries) {
-        if (numRetries < 1) {
-            numRetries = 1;
+    public boolean selectPTC(int numAttempts) {
+        if (numAttempts < 1) {
+            numAttempts = 1;
         }
         int onWrongScreenCount = 0;
-        while (onWrongScreenCount != numRetries) {
+        while (onWrongScreenCount != numAttempts) {
             FirebaseVisionText visionText = getVisionTextInCurrentScreen();
             if (visionText == null) return false;
             String text = visionText.getText().toLowerCase();
@@ -186,25 +179,39 @@ public class PogoInteractor {
             Log.w(LOG_TAG, "Not on account type selection screen.");
             onWrongScreenCount++;
         }
-        Log.e(LOG_TAG, "Account type selection screen not detected after " + Integer.toString(numRetries) + " retries.");
+        Log.e(LOG_TAG, "Account type selection screen not detected after " + Integer.toString(numAttempts) + " attempts.");
         return false;
     }
 
-    public boolean login(String username, String password, int numRetries) {
-        if (numRetries < 1) {
-            numRetries = 1;
+    public boolean login(String username, String password, int numAttempts) {
+        if (numAttempts < 1) {
+            numAttempts = 1;
         }
         int onWrongScreenCount = 0;
-        while (onWrongScreenCount != numRetries) {
+        while (onWrongScreenCount != numAttempts) {
             FirebaseVisionText visionText = getVisionTextInCurrentScreen();
             if (visionText == null) return false;
-            String text = visionText.getText().toLowerCase();
-            if (text.contains("username") && text.contains("password") && text.contains("sign")) {
+            List<FirebaseVisionText.Line> usernameLines = getLines(visionText.getTextBlocks(), "username", 2);
+            List<FirebaseVisionText.Line> passwordLines = getLines(visionText.getTextBlocks(), "password", 2);
+            if (usernameLines.size() == 2 && passwordLines.size() == 2 && visionText.getText().toLowerCase().contains("sign")) {
                 Log.i(LOG_TAG, "On login screen.");
 
-                int statusBarHeight = getStatusBarHeigth();
+                int statusBarHeight = getStatusBarHeight();
 
-                if (!tapText(visionText, "username")) return false;
+                Point[] cornerPoints;
+
+                // Get corner points from the line that contains "username" only.
+                String textLine0 = usernameLines.get(0).getText().toLowerCase();
+                if (!(textLine0.contains("forgot") && textLine0.contains("your") && textLine0.contains("?"))) {
+                    // Get corner points from the first line.
+                    cornerPoints = getCornerPoints(usernameLines.get(0), "username");
+
+                } else {
+                    // Get corner points from the second line.
+                    cornerPoints = getCornerPoints(usernameLines.get(1), "username");
+                }
+                // Tap "username".
+                if (cornerPoints == null || !tapRandomInBox(cornerPoints)) return false;
                 if (!insertText(username)) return false;
                 // Tap to hide keyboard.
                 if (!tapScreen(Utils.randomWithRange(10, 100), statusBarHeight + Utils.randomWithRange(10, 20))) return false;
@@ -212,7 +219,18 @@ public class PogoInteractor {
                 // Wait for keyboard to disappear.
                 Utils.sleep(500);
 
-                if (!tapText(visionText, "password")) return false;
+                // Get corner points from the line that contains "password" only.
+                textLine0 = passwordLines.get(0).getText().toLowerCase();
+                if (!(textLine0.contains("forgot") && textLine0.contains("your") && textLine0.contains("?"))) {
+                    // Get corner points from the first line.
+                    cornerPoints = getCornerPoints(passwordLines.get(0), "password");
+
+                } else {
+                    // Get corner points from the second line.
+                    cornerPoints = getCornerPoints(passwordLines.get(1), "password");
+                }
+                // Tap "password".
+                if (cornerPoints == null || !tapRandomInBox(cornerPoints)) return false;
                 if (!insertText(password)) return false;
                 // Tap to hide keyboard.
                 if (!tapScreen(Utils.randomWithRange(10, 100), statusBarHeight + Utils.randomWithRange(10, 20))) return false;
@@ -225,7 +243,7 @@ public class PogoInteractor {
             Log.w(LOG_TAG, "Not on login screen.");
             onWrongScreenCount++;
         }
-        Log.e(LOG_TAG, "Login screen not detected after " + Integer.toString(numRetries) + " retries.");
+        Log.e(LOG_TAG, "Login screen not detected after " + Integer.toString(numAttempts) + " attempts.");
         return false;
     }
 
@@ -233,12 +251,12 @@ public class PogoInteractor {
         ACCOUNT_NOT_BANNED, ACCOUNT_BANNED, ACCOUNT_NOT_EXIST, ERROR
     }
 
-    public LoginResult getLoginResult(int numRetries) {
-        if (numRetries < 1) {
-            numRetries = 1;
+    public LoginResult getLoginResult(int numAttempts) {
+        if (numAttempts < 1) {
+            numAttempts = 1;
         }
         int onWrongScreenCount = 0;
-        while (onWrongScreenCount != numRetries) {
+        while (onWrongScreenCount != numAttempts) {
             FirebaseVisionText visionText = getVisionTextInCurrentScreen();
             if (visionText == null) return LoginResult.ERROR;
             String text = visionText.getText().toLowerCase();
@@ -277,7 +295,7 @@ public class PogoInteractor {
             Log.e(LOG_TAG, "Detected none of the login keywords.");
             onWrongScreenCount++;
         }
-        Log.e(LOG_TAG, "Login result not detected after " + Integer.toString(numRetries) + " retries.");
+        Log.e(LOG_TAG, "Login result not detected after " + Integer.toString(numAttempts) + " attempts.");
         return LoginResult.ERROR;
     }
 
@@ -303,13 +321,21 @@ public class PogoInteractor {
         return tapScreen(tapX, tapY);
     }
 
+    /**
+     * Taps the first occurrence of a {@code String} in a {@link FirebaseVisionText}.
+     *
+     * @param visionText The {@link FirebaseVisionText} that possibly contains the {@code String}.
+     * @param text The {@code String} that needs to be tapped.
+     * @return true when the text was successfully tapped and false when not.
+     */
     private boolean tapText(@NonNull FirebaseVisionText visionText, @NonNull String text) {
-        Point[] cornerPoints = getBlockCornerPoints(visionText.getTextBlocks(), text);
-        if (cornerPoints == null) return false;
+        List<FirebaseVisionText.Line> lines = getLines(visionText.getTextBlocks(), text, 1);
+        if (lines.isEmpty()) return false;
+        Point[] cornerPoints = getCornerPoints(lines.get(0), text);
         return tapRandomInBox(cornerPoints);
     }
 
-    private boolean insertText(String text) {
+    private boolean insertText(@NonNull String text) {
         if (mInterrupted) return false;
         try {
             Shell.runSuCommand("input text '" + text + "'");
@@ -346,26 +372,37 @@ public class PogoInteractor {
         return mTextInImageRecognizer.detectText(screenshotUri);
     }
 
-    private Point[] getBlockCornerPoints(List<FirebaseVisionText.TextBlock> textBlocks, String text) {
+    private Point[] getCornerPoints(FirebaseVisionText.Line line, String text) {
+        for (FirebaseVisionText.Element element : line.getElements()) {
+            if (element.getText().toLowerCase().contains(text)) {
+                return element.getCornerPoints();
+            }
+        }
+        Log.d(LOG_TAG, "Couldn't find text in line.");
+        return null;
+    }
+
+    private List<FirebaseVisionText.Line> getLines(@NonNull List<FirebaseVisionText.TextBlock> textBlocks, @NonNull String text, int count) {
+        List<FirebaseVisionText.Line> lines = new ArrayList<>(count);
+        if (count < 1) count = 1;
+        int foundCount = 0;
         text = text.toLowerCase();
         for (FirebaseVisionText.TextBlock textBlock : textBlocks) {
             if (textBlock.getText().toLowerCase().contains(text)) {
                 for (FirebaseVisionText.Line line: textBlock.getLines()) {
                     if (line.getText().toLowerCase().contains(text)) {
-                        for (FirebaseVisionText.Element element : line.getElements()) {
-                            if (element.getText().toLowerCase().contains(text) && !element.getText().contains("?")) {
-                                return element.getCornerPoints();
-                            }
-                        }
+                        lines.add(line);
+                        foundCount++;
+                        if (count == foundCount) return lines;
                     }
                 }
             }
         }
         Log.d(LOG_TAG, "Couldn't find text in textBlock.");
-        return null;
+        return lines;
     }
 
-    private int getStatusBarHeigth() {
+    private int getStatusBarHeight() {
         int resourceId = mContext.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if(resourceId != 0) {
             return mContext.getResources().getDimensionPixelSize(resourceId);

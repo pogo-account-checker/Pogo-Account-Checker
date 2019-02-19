@@ -8,9 +8,7 @@ public class Shell {
     }
 
     public static void runSuCommand(String command) throws IOException, InterruptedException {
-        if (!command.substring(command.length() - 2).equals("\n")) {
-            command = command.concat("\n");
-        }
+        command = command.concat("\n");
         Process process = Runtime.getRuntime().exec("su");
         OutputStream stdin = process.getOutputStream();
         stdin.write(command.getBytes());
