@@ -200,7 +200,7 @@ public class PogoInteractor {
 
                 Point[] cornerPoints;
 
-                // Get corner points from the line that contains "username" only.
+                // Get corner points from the line that contains only "username".
                 String textLine0 = usernameLines.get(0).getText().toLowerCase();
                 if (!(textLine0.contains("forgot") && textLine0.contains("your") && textLine0.contains("?"))) {
                     // Get corner points from the first line.
@@ -219,7 +219,7 @@ public class PogoInteractor {
                 // Wait for keyboard to disappear.
                 Utils.sleep(500);
 
-                // Get corner points from the line that contains "password" only.
+                // Get corner points from the line that contains only "password".
                 textLine0 = passwordLines.get(0).getText().toLowerCase();
                 if (!(textLine0.contains("forgot") && textLine0.contains("your") && textLine0.contains("?"))) {
                     // Get corner points from the first line.
@@ -267,7 +267,7 @@ public class PogoInteractor {
                 continue;
             }
             if (text.contains("remember") || text.contains("surroundings")) {
-                Utils.sleep(2000);
+                Utils.sleep(500);
                 // Recheck if account is not banned, because the loading screen is shortly visible before the ban screen appears.
                 visionText = getVisionTextInCurrentScreen();
                 if (visionText == null) return LoginResult.ERROR;
