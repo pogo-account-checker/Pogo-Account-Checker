@@ -4,4 +4,13 @@
     <string name="notification_title">Checking accounts…</string>
     <string name="notification_message">Accounts check in progress.</string>
     <string name="title_activity_result">ResultActivity</string>
+
+    <integer name="height_2019">598750</integer>
+    <integer name="width_2019">733796</integer>
+
+    <integer name="height_2010">733385</integer>
+    <integer name="width_2010">717963</integer>
+
+    <integer name="height_submit">715573</integer>
+    <integer name="width_submit">500139</integer>
 </resources>

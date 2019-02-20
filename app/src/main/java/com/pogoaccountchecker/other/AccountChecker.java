@@ -80,10 +80,7 @@ public class AccountChecker {
                         errorCount++;
                         continue;
                     }
-
-                    // Wait while pogo starts.
-                    Utils.sleep(5000);
-
+                    
                     // Select date of birth.
                     if (!mPogoInteractor.selectDateOfBirth(20)) {
                         if (mInterrupted) return;

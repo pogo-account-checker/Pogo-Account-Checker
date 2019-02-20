@@ -5,8 +5,11 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.pogoaccountchecker.R;
 import com.pogoaccountchecker.utils.TextInImageRecognizer;
 import com.pogoaccountchecker.utils.Shell;
 import com.pogoaccountchecker.utils.Utils;
@@ -24,6 +27,14 @@ public class PogoInteractor {
     private final String POGO_PACKAGE_NAME = "com.nianticlabs.pokemongo";
     private final String POGO_MAIN_ACTIVITY_NAME = "com.nianticproject.holoholo.libholoholo.unity.UnityMainActivity";
     private final String PATHNAME;
+    private int screenHeight;
+    private int screenWidth;
+    private float percentage2019Width;
+    private float percentage2019Height;
+    private float percentage2010Width;
+    private float percentage2010Height;
+    private float percentageSubmitWidth;
+    private float percentageSubmitHeight;
     private boolean mInterrupted;
     private final String LOG_TAG = getClass().getSimpleName();
 
@@ -32,6 +43,35 @@ public class PogoInteractor {
         mTextInImageRecognizer = new TextInImageRecognizer(mContext);
         PATHNAME = Environment.getExternalStorageDirectory().getPath() + "/PogoAccountChecker";
         mInterrupted = false;
+
+        screenHeight = getScreenHeight();
+        screenWidth  = getScreenWidth();
+
+        if (!((screenWidth % 9) == 0 && (screenHeight % 16) == 0) && !(screenWidth / 9 == screenHeight / 16)) {
+            // Screen is not 16x9, resize.
+            if (screenWidth >= 2160 && screenHeight >= 3840) {
+                resizeScreen(2160, 3840);
+            } else if (screenWidth >= 1440 && screenHeight >= 2560) {
+                resizeScreen(1440, 2560);
+            } else if (screenWidth >= 1080 && screenHeight >= 1920) {
+                resizeScreen(1080, 1920);
+            } else if (screenWidth >= 720 && screenHeight >= 1280) {
+                resizeScreen(720, 1280);
+            } else if (screenWidth >= 540 && screenHeight >= 960) {
+                resizeScreen(540, 960);
+            } else if (screenWidth >= 360 && screenHeight >= 640) {
+                resizeScreen(360, 640);
+            }
+        }
+
+        percentage2019Width = (float) mContext.getResources().getInteger(R.integer.width_2019) / 1000000;
+        percentage2019Height = (float) mContext.getResources().getInteger(R.integer.height_2019) / 1000000;
+        percentage2010Width = (float) mContext.getResources().getInteger(R.integer.width_2010) / 1000000;
+        percentage2010Height = (float) mContext.getResources().getInteger(R.integer.height_2010) / 1000000;
+        percentageSubmitWidth = (float) mContext.getResources().getInteger(R.integer.width_submit) / 1000000;
+        percentageSubmitHeight = (float) mContext.getResources().getInteger(R.integer.height_submit) / 1000000;
+
+        hideControlBar();
     }
 
     public boolean startPogo() {
@@ -97,19 +137,19 @@ public class PogoInteractor {
                 Log.i(LOG_TAG, "On DOB screen.");
 
                 // Open year selector.
-                if (!tapText(visionText, "2019")) return false;
+                if (!tapRandomWithPercentage(percentage2019Width, percentage2019Height, 0)) return false;
 
                 // Wait for animation.
                 Utils.sleep(500);
 
                 // Select year of birth.
-                if (!selectYearOfBirth(5)) return false;
+                if(!tapRandomWithPercentage(percentage2010Width, percentage2010Height, 0)) return false;
 
                 // Wait for animation.
                 Utils.sleep(500);
 
                 // Submit date of birth.
-                if (tapText(visionText, "submit")) {
+                if (tapRandomWithPercentage(percentageSubmitWidth, percentageSubmitHeight, 0)) {
                     Log.i(LOG_TAG, "Year of birth submitted.");
                     return true;
                 }
@@ -119,25 +159,6 @@ public class PogoInteractor {
             onWrongScreenCount++;
         }
         Log.e(LOG_TAG, "DOB screen not detected after " + Integer.toString(numAttempts) + " attempts.");
-        return false;
-    }
-
-    private boolean selectYearOfBirth(int numAttempts) {
-        if (numAttempts < 1) {
-            numAttempts = 1;
-        }
-        int onWrongScreenCount = 0;
-        while (onWrongScreenCount != numAttempts) {
-            FirebaseVisionText visionText = getVisionTextInCurrentScreen();
-            if (visionText == null) return false;
-            if (visionText.getText().toLowerCase().contains("2018")) {
-                Log.i(LOG_TAG, "Year selector detected.");
-                return tapText(visionText, "2018");
-            }
-            Log.w(LOG_TAG, "Year selector not detected.");
-            onWrongScreenCount++;
-        }
-        Log.e(LOG_TAG, "Year selector not detected after " + Integer.toString(numAttempts) + " attempts.");
         return false;
     }
 
@@ -315,6 +336,14 @@ public class PogoInteractor {
         return true;
     }
 
+    private boolean tapRandomWithPercentage(float widthRatio, float heightRatio, int offset) {
+        int x = (int) (widthRatio * screenWidth);
+        int y = (int) (heightRatio * screenHeight);
+        int tapX = Utils.randomWithRange(x - offset, x + offset);
+        int tapY = Utils.randomWithRange(y - offset, y + offset);
+        return tapScreen(tapX, tapY);
+    }
+
     private boolean tapRandomInBox(@NonNull Point[] boxCornerPoints) {
         int tapX = Utils.randomWithRange(boxCornerPoints[0].x, boxCornerPoints[2].x);
         int tapY = Utils.randomWithRange(boxCornerPoints[0].y, boxCornerPoints[2].y);
@@ -402,12 +431,56 @@ public class PogoInteractor {
         return lines;
     }
 
+    private int getScreenHeight() {
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getRealSize(size);
+        if (size.y > size.x) {
+            return size.y;
+        } else {
+            return size.x;
+        }
+    }
+
+    private int getScreenWidth() {
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getRealSize(size);
+        if (size.x < size.y) {
+            return size.x;
+        } else {
+            return size.y;
+        }
+    }
+
     private int getStatusBarHeight() {
         int resourceId = mContext.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if(resourceId != 0) {
             return mContext.getResources().getDimensionPixelSize(resourceId);
         }
         return 0;
+    }
+
+    private boolean resizeScreen(int newWidth, int newHeight) {
+        try {
+            Shell.runSuCommand("wm size " + newWidth + "x" + newHeight);
+            return true;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean hideControlBar() {
+        try {
+            Shell.runSuCommand("settings put global policy_control immersive.full=com.nianticlabs.pokemongo");
+            return true;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public void close() {
