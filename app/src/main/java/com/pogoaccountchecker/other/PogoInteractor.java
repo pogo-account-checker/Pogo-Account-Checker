@@ -466,6 +466,8 @@ public class PogoInteractor {
     private boolean resizeScreen(int newWidth, int newHeight) {
         try {
             Shell.runSuCommand("wm size " + newWidth + "x" + newHeight);
+            screenWidth = newWidth;
+            screenHeight = newHeight;
             return true;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

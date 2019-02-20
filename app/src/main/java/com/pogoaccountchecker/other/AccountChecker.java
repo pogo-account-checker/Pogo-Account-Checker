@@ -80,7 +80,7 @@ public class AccountChecker {
                         errorCount++;
                         continue;
                     }
-                    
+
                     // Select date of birth.
                     if (!mPogoInteractor.selectDateOfBirth(20)) {
                         if (mInterrupted) return;
