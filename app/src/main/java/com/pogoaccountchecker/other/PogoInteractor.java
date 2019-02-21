@@ -7,7 +7,6 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.pogoaccountchecker.R;
@@ -16,8 +15,6 @@ import com.pogoaccountchecker.utils.Shell;
 import com.pogoaccountchecker.utils.Utils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 
@@ -27,7 +24,7 @@ public class PogoInteractor {
     private final String POGO_PACKAGE_NAME = "com.nianticlabs.pokemongo";
     private final String POGO_MAIN_ACTIVITY_NAME = "com.nianticproject.holoholo.libholoholo.unity.UnityMainActivity";
     private final String PATHNAME;
-    private int screenHeight, screenWidth;
+    private int resizedScreenHeight, resizedScreenWidth, realScreenWidth, realScreenHeight;
     private int xYearSelector, yYearSelector, widthYearSelector, heightYearSelector;
     private int x2010, y2010, width2010, height2010;
     private int xSubmit, ySubmit, widthSubmit, heightSubmit;
@@ -46,27 +43,27 @@ public class PogoInteractor {
         PATHNAME = Environment.getExternalStorageDirectory().getPath() + "/PogoAccountChecker";
         mInterrupted = false;
 
-        screenHeight = getScreenHeight();
-        screenWidth  = getScreenWidth();
+        realScreenWidth = resizedScreenWidth = getScreenWidth();
+        realScreenHeight = resizedScreenHeight = getScreenHeight();
 
-        if (!((screenWidth % 9) == 0 && (screenHeight % 16) == 0) && !(screenWidth / 9 == screenHeight / 16)) {
+        if (!((realScreenWidth % 9) == 0 && (realScreenHeight % 16) == 0) && !(realScreenWidth / 9 == realScreenHeight / 16)) {
             // Screen is not 16x9, resize it.
             boolean success = true;
-            if (screenWidth >= 2160 && screenHeight >= 3840) {
+            if (realScreenWidth >= 2160 && realScreenHeight >= 3840) {
                 success = resizeScreen(2160, 3840);
-            } else if (screenWidth >= 1440 && screenHeight >= 2560) {
+            } else if (realScreenWidth >= 1440 && realScreenHeight >= 2560) {
                 success = resizeScreen(1440, 2560);
-            } else if (screenWidth >= 1080 && screenHeight >= 1920) {
+            } else if (realScreenWidth >= 1080 && realScreenHeight >= 1920) {
                 success = resizeScreen(1080, 1920);
-            } else if (screenWidth >= 720 && screenHeight >= 1280) {
+            } else if (realScreenWidth >= 720 && realScreenHeight >= 1280) {
                 success = resizeScreen(720, 1280);
-            } else if (screenWidth >= 540 && screenHeight >= 960) {
+            } else if (realScreenWidth >= 540 && realScreenHeight >= 960) {
                 success = resizeScreen(540, 960);
-            } else if (screenWidth >= 360 && screenHeight >= 640) {
+            } else if (realScreenWidth >= 360 && realScreenHeight >= 640) {
                 success = resizeScreen(360, 640);
             }
             if (!success) {
-                Toast.makeText(mContext, "Couldn't resize screen, aborting program!", Toast.LENGTH_SHORT).show();
+                Log.e(LOG_TAG, "Couldn't resize screen, aborting program!");
                 System.exit(0);
             }
         }
@@ -107,6 +104,7 @@ public class PogoInteractor {
         widthSignIn = scale(mContext.getResources().getInteger(R.integer.width_sign_in));
         heightSignIn = scale(mContext.getResources().getInteger(R.integer.height_sign_in));
 
+        // Width, height, and center coords of Pokemon banner.
         xPokemon = scale(mContext.getResources().getInteger(R.integer.x_pokemon));
         yPokemon = scale(mContext.getResources().getInteger(R.integer.y_pokemon));
         widthPokemon = scale(mContext.getResources().getInteger(R.integer.width_pokemon));
@@ -356,8 +354,8 @@ public class PogoInteractor {
 
     private boolean resizeScreen(int newWidth, int newHeight) {
         if (Shell.runSuCommand("wm size " + newWidth + "x" + newHeight)) {
-            screenWidth = newWidth;
-            screenHeight = newHeight;
+            resizedScreenWidth = newWidth;
+            resizedScreenHeight = newHeight;
             return true;
         } else {
             return false;
@@ -365,7 +363,7 @@ public class PogoInteractor {
     }
 
     private int scale(int number) {
-        float scale = (float) screenWidth / 1080; // 1080 is standard.
+        float scale = (float) resizedScreenWidth / 1080; // 1080 is standard.
         return (int) (scale * number);
     }
 
@@ -381,6 +379,7 @@ public class PogoInteractor {
         mInterrupted = true;
         mTextInImageRecognizer.close();
         showBars();
+        if (realScreenWidth != resizedScreenWidth) resizeScreen(realScreenWidth, realScreenHeight);
         Shell.runSuCommand("rm " + PATHNAME + "/screenshot.png");
     }
 }
