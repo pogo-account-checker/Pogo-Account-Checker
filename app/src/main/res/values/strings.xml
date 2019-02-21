@@ -5,12 +5,45 @@
     <string name="notification_message">Accounts check in progress.</string>
     <string name="title_activity_result">ResultActivity</string>
 
-    <integer name="height_2019">598750</integer>
-    <integer name="width_2019">733796</integer>
+    <!-- x and y coords of the center point of each button/text field on a 1080x1920 screen. -->
+    <integer name="x_year_selector">792</integer>
+    <integer name="y_year_selector">1150</integer>
+    <integer name="x_2010">775</integer>
+    <integer name="y_2010">1408</integer>
+    <integer name="x_submit">540</integer>
+    <integer name="y_submit">1374</integer>
+    <integer name="x_returning_player">540</integer>
+    <integer name="y_returning_player">1087</integer>
+    <integer name="x_ptc">540</integer>
+    <integer name="y_ptc">900</integer>
+    <integer name="x_username">540</integer>
+    <integer name="y_username">858</integer>
+    <integer name="x_password">540</integer>
+    <integer name="y_password">1023</integer>
+    <integer name="x_sign_in">540</integer>
+    <integer name="y_sign_in">1209</integer>
 
-    <integer name="height_2010">733385</integer>
-    <integer name="width_2010">717963</integer>
 
-    <integer name="height_submit">715573</integer>
-    <integer name="width_submit">500139</integer>
+    <!-- Width and height of each button/text field on a 1080x1920 screen. A small margin is subtracted. -->
+    <integer name="width_year_selector">256</integer>
+    <integer name="height_year_selector">88</integer>
+    <integer name="width_2010">224</integer>
+    <integer name="height_2010">50</integer>
+    <integer name="width_submit">188</integer>
+    <integer name="height_submit">120</integer>
+    <integer name="width_returning_player">480</integer>
+    <integer name="height_returning_player">120</integer>
+    <integer name="width_ptc">640</integer>
+    <integer name="height_ptc">114</integer>
+    <integer name="width_username">680</integer>
+    <integer name="height_username">100</integer>
+    <integer name="width_password">680</integer>
+    <integer name="height_password">100</integer>
+    <integer name="width_sign_in">455</integer>
+    <integer name="height_sign_in">120</integer>
+
+    <integer name="x_pokemon">540</integer>
+    <integer name="y_pokemon">277</integer>
+    <integer name="width_pokemon">871</integer>
+    <integer name="height_pokemon">309</integer>
 </resources>
