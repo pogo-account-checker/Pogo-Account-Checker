@@ -12,7 +12,6 @@ import com.pogoaccountchecker.other.PogoInteractor.LoginResult;
 import com.pogoaccountchecker.utils.Shell;
 import com.pogoaccountchecker.utils.Utils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.core.app.NotificationCompat;
@@ -28,7 +27,7 @@ public class AccountChecker {
     private OnAccountCheckingFinishedListener mCallback;
     private PogoInteractor mPogoInteractor;
     private final String PATHNAME;
-    private int mNotBannedCount, mBannedCount, mNotExistCount, mErrorCount, mLockedCount;
+    private int mNotBannedCount, mBannedCount, mWrongCredentialsCount, mNotActivatedCount, mLockedCount, mErrorCount;
     private boolean mInterrupted;
     private final int NOTIFICATION_ID = 2;
     private final String LOG_TAG = getClass().getSimpleName();
@@ -40,7 +39,7 @@ public class AccountChecker {
         mCallback = listener;
         mPogoInteractor = new PogoInteractor(mContext);
         PATHNAME = Environment.getExternalStorageDirectory().getPath() + "/PogoAccountChecker";
-        mNotBannedCount = mBannedCount = mNotExistCount = mErrorCount = mLockedCount = 0;
+        mNotBannedCount = mBannedCount = mWrongCredentialsCount = mNotActivatedCount = mLockedCount = mErrorCount = 0;
         mInterrupted = false;
     }
 
@@ -172,8 +171,13 @@ public class AccountChecker {
                     break;
                 } else if (loginResult == LoginResult.WRONG_CREDENTIALS) {
                     Log.i(LOG_TAG, "Account " + account + " does not exist or the credentials are wrong.");
-                    mNotExistCount++;
+                    mWrongCredentialsCount++;
                     Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/wrong_credentials.txt");
+                    break;
+                } else if (loginResult == LoginResult.NOT_ACTIVATED) {
+                    Log.i(LOG_TAG, "Account " + account + " is not activated.");
+                    mNotActivatedCount++;
+                    Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/not_activated.txt");
                     break;
                 } else if (loginResult == LoginResult.LOCKED) {
                     Log.i(LOG_TAG, "Account " + account + " is locked.");
@@ -201,7 +205,8 @@ public class AccountChecker {
         resultIntent.putExtra("numAccounts", mAccounts.size());
         resultIntent.putExtra("notBannedCount", mNotBannedCount);
         resultIntent.putExtra("bannedCount", mBannedCount);
-        resultIntent.putExtra("notExistCount", mNotExistCount);
+        resultIntent.putExtra("wrongCredentialsCount", mWrongCredentialsCount);
+        resultIntent.putExtra("notActivatedCount", mNotActivatedCount);
         resultIntent.putExtra("lockedCount", mLockedCount);
         resultIntent.putExtra("errorCount", mErrorCount);
         resultIntent.putExtra("interrupted", mInterrupted);
@@ -223,7 +228,28 @@ public class AccountChecker {
     }
 
     private String getStats() {
-        return mNotBannedCount + " are not banned, " + mBannedCount + " are banned, " + mNotExistCount + " don't exist, " + mLockedCount + " are locked, " + mErrorCount + " couldn't be checked.";
+        String stats = "";
+        if (mNotBannedCount > 0) {
+            stats += "not banned: " + mNotBannedCount + ", ";
+        }
+        if (mBannedCount > 0) {
+            stats += "banned: " + mBannedCount + ", ";
+        }
+        if (mWrongCredentialsCount > 0) {
+            stats += "wrong un/pass: " + mWrongCredentialsCount + ", ";
+        }
+        if (mNotActivatedCount > 0) {
+            stats += "not activated: " + mNotActivatedCount + ", ";
+        }
+        if (mLockedCount > 0) {
+            stats += "locked: " + mLockedCount + ", ";
+        }
+        if (mErrorCount > 0) {
+            stats += "couldn't be checked: " + mErrorCount + ", ";
+        }
+
+        // Make first letter uppercase and remove final two characters.
+        return stats.substring(0, 1).toUpperCase() + stats.substring(1, stats.length() - 2);
     }
 
     public void stop() {

@@ -235,7 +235,7 @@ public class PogoInteractor {
     }
 
     public enum LoginResult {
-        NOT_BANNED, BANNED, WRONG_CREDENTIALS, LOCKED, UNCONFIRMED_MAIL, ERROR
+        NOT_BANNED, BANNED, WRONG_CREDENTIALS, NOT_ACTIVATED, LOCKED, ERROR
     }
 
     public LoginResult getLoginResult(int numAttempts) {
@@ -274,12 +274,13 @@ public class PogoInteractor {
                 // Account does not exist or username/password is incorrect.
                 return LoginResult.WRONG_CREDENTIALS;
             }
+            if (text.contains("activate") || text.contains("order") || text.contains("play")) {
+                // Account is not activated.
+                return LoginResult.NOT_ACTIVATED;
+            }
             if (text.contains("security") || text.contains("regain") || text.contains("questions")) {
                 // Account is locked.
                 return LoginResult.LOCKED;
-            }
-            if (text.contains("check") || text.contains("exists") || text.contains("selected")) {
-                // Mail is unconfirmed? Needs more testing.
             }
             if (text.contains("authenticate") || text.contains("again")) {
                 // Unable to authenticate.
