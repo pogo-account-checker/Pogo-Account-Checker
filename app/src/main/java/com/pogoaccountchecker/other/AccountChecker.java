@@ -184,7 +184,7 @@ public class AccountChecker {
             if (errorCount == 10) {
                 mErrorCount++;
                 try {
-                    Shell.runSuCommand("echo \"" + account + "\" " + PATHNAME + "/error.txt");
+                    Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/error.txt");
                     Log.e(LOG_TAG, "Error limit reached. Wrote account " + account + " to error.txt.");
                 } catch (IOException | InterruptedException e) {
                     Log.e(LOG_TAG, "Exception when writing account " + account + " to error.txt.");
