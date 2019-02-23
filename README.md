@@ -21,8 +21,9 @@ First you have to put your PTC accounts in a `.txt` file, username and password 
 username01,password01
 username02,password02
 ```
-Then transfer the file to your phone. Next open the app, press the `set accounts` button, grant root permission forever, and select the file. Press start to start checking the accounts. The checked accounts can be found in the `PogoAccountChecker` folder on your phone. In this folder there will be a maximum of four files:
+Then transfer the file to your phone. Next open the app, press the `set accounts` button, grant root permission forever, and select the file. Press start to start checking the accounts. The checked accounts can be found in the `PogoAccountChecker` folder on your phone. In this folder there will be a maximum of five files:
 * `not_banned.txt` - contains accounts that still work.
 * `banned.txt` - contains accounts that are banned.
-* `not_exist.txt` - contains accounts that don't exist.
+* `wrong_credentials.txt` - contains accounts that don't exist or have a wrong username/password.
+* `locked.txt` - contains accounts that are locked. Locked accounts can't be accessed untill their password gets changed.
 * `error.txt` - contains accounts for which checking failed 10 times in a row, this can for example happen when there is no internet connection.
