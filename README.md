@@ -26,5 +26,5 @@ Then transfer the file to your phone. Next open the app, press the `set accounts
 * `banned.txt` - contains accounts that are banned.
 * `wrong_credentials.txt` - contains accounts that don't exist or have a wrong username/password.
 * `locked.txt` - contains accounts that are locked. Locked accounts can't be accessed untill their password gets changed.
-* `not_activated` - contains accounts that have not been activated via the activation email.
+* `not_activated.txt` - contains accounts that have not been activated via the activation email.
 * `error.txt` - contains accounts for which checking failed 10 times in a row, this can for example happen when there is no internet connection.
