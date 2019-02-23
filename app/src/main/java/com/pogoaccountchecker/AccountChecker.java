@@ -24,7 +24,7 @@ public class AccountChecker {
     private Context mContext;
     private ArrayList<String> mAccounts;
     private char mSeparator;
-    private OnAccountCheckingFinishedListener mCallback;
+    private OnAccountCheckingStatusChangedListener mCallback;
     private PogoInteractor mPogoInteractor;
     private final String PATHNAME;
     private int mNotBannedCount, mBannedCount, mWrongCredentialsCount, mNotActivatedCount, mLockedCount, mErrorCount;
@@ -32,7 +32,7 @@ public class AccountChecker {
     private final int NOTIFICATION_ID = 2;
     private final String LOG_TAG = getClass().getSimpleName();
 
-    public AccountChecker(Context context, ArrayList<String> accounts, char separator, OnAccountCheckingFinishedListener listener) {
+    public AccountChecker(Context context, ArrayList<String> accounts, char separator, OnAccountCheckingStatusChangedListener listener) {
         mContext = context;
         mAccounts = accounts;
         mSeparator = separator;
@@ -43,8 +43,9 @@ public class AccountChecker {
         mInterrupted = false;
     }
 
-    public interface OnAccountCheckingFinishedListener {
-        void onAccountCheckingFinished();
+    public interface OnAccountCheckingStatusChangedListener {
+        void onFinished();
+        void onProgressChanged(int numChecked, int numAccounts);
     }
 
     public void start() {
@@ -53,7 +54,8 @@ public class AccountChecker {
             System.exit(0);
         }
 
-        for (String account : mAccounts) {
+        for (int i=0; i<mAccounts.size(); i++) {
+            String account = mAccounts.get(i);
             int index = account.indexOf(mSeparator);
             String username = account.substring(0, index);
             String password = account.substring(index + 1);
@@ -191,13 +193,15 @@ public class AccountChecker {
                 Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/error.txt");
                 Log.e(LOG_TAG, "Error limit reached. Wrote account " + account + " to error.txt.");
             }
+
+            mCallback.onProgressChanged(i+1, mAccounts.size());
         }
 
         Log.i(LOG_TAG, "Account checking finished. " + getStats());
         showNotification("Account checking finished", getStats());
         mPogoInteractor.stopPogo();
         mPogoInteractor.close();
-        mCallback.onAccountCheckingFinished();
+        mCallback.onFinished();
     }
 
     private void showNotification(String title, String body) {
