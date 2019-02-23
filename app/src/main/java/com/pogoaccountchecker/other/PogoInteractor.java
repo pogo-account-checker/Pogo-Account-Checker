@@ -248,7 +248,7 @@ public class PogoInteractor {
     }
 
     public enum LoginResult {
-        ACCOUNT_NOT_BANNED, ACCOUNT_BANNED, ACCOUNT_NOT_EXIST, ERROR
+        NOT_BANNED, BANNED, WRONG_CREDENTIALS, LOCKED, UNCONFIRMED_MAIL, ERROR
     }
 
     public LoginResult getLoginResult(int numAttempts) {
@@ -260,34 +260,41 @@ public class PogoInteractor {
             FirebaseVisionText visionText = getVisionTextInCurrentScreen();
             if (visionText == null) return LoginResult.ERROR;
             String text = visionText.getText().toLowerCase();
-            if (text.contains("forgot")) {
+            if (text.contains("username") && text.contains("sign") && text.contains("forgot")) {
                 // Still on login screen.
                 Log.w(LOG_TAG, "Still on login screen.");
                 onWrongScreenCount++;
                 continue;
             }
-            if (text.contains("remember") || text.contains("surroundings")) {
+            if (text.contains("remember") || text.contains("alert") || text.contains("surroundings")) {
                 Utils.sleep(500);
                 // Recheck if account is not banned, because the loading screen is shortly visible before the ban screen appears.
                 visionText = getVisionTextInCurrentScreen();
                 if (visionText == null) return LoginResult.ERROR;
                 text = visionText.getText().toLowerCase();
-                if (text.contains("termination") || text.contains("service")) {
+                if (text.contains("termination") || text.contains("permanently") || text.contains("violating")) {
                     // Account is banned. :/
-                    return LoginResult.ACCOUNT_BANNED;
+                    return LoginResult.BANNED;
                 }
                 // Account is not banned, yay.
-                return LoginResult.ACCOUNT_NOT_BANNED;
+                return LoginResult.NOT_BANNED;
             }
-            if (text.contains("termination") || text.contains("service")) {
+            if (text.contains("termination") || text.contains("permanently") || text.contains("violating")) {
                 // Account is banned. :/
-                return LoginResult.ACCOUNT_BANNED;
+                return LoginResult.BANNED;
             }
-            if (text.contains("incorrect") || text.contains("minutes")) {
+            if (text.contains("incorrect") || text.contains("before") || text.contains("minutes")) {
                 // Account does not exist or username/password is incorrect.
-                return LoginResult.ACCOUNT_NOT_EXIST;
+                return LoginResult.WRONG_CREDENTIALS;
             }
-            if (text.contains("unable") || text.contains("again")) {
+            if (text.contains("security") || text.contains("regain") || text.contains("questions")) {
+                // Account is locked.
+                return LoginResult.LOCKED;
+            }
+            if (text.contains("check") || text.contains("exists") || text.contains("selected")) {
+                // Mail is unconfirmed? Needs more testing.
+            }
+            if (text.contains("authenticate") || text.contains("again")) {
                 // Unable to authenticate.
                 Log.e(LOG_TAG, "Pogo was unable to authenticate.");
                 return LoginResult.ERROR;

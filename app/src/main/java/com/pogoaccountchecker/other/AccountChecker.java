@@ -7,7 +7,6 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.pogoaccountchecker.R;
-import com.pogoaccountchecker.activities.MainActivity;
 import com.pogoaccountchecker.activities.ResultActivity;
 import com.pogoaccountchecker.other.PogoInteractor.LoginResult;
 import com.pogoaccountchecker.utils.Shell;
@@ -29,7 +28,7 @@ public class AccountChecker {
     private OnAccountCheckingFinishedListener mCallback;
     private PogoInteractor mPogoInteractor;
     private final String PATHNAME;
-    private int mNotBannedCount, mBannedCount, mNotExistCount, mErrorCount;
+    private int mNotBannedCount, mBannedCount, mNotExistCount, mErrorCount, mLockedCount;
     private boolean mInterrupted;
     private final int NOTIFICATION_ID = 2;
     private final String LOG_TAG = getClass().getSimpleName();
@@ -41,7 +40,7 @@ public class AccountChecker {
         mCallback = listener;
         mPogoInteractor = new PogoInteractor(mContext);
         PATHNAME = Environment.getExternalStorageDirectory().getPath() + "/PogoAccountChecker";
-        mNotBannedCount = mBannedCount = mNotExistCount = mErrorCount = 0;
+        mNotBannedCount = mBannedCount = mNotExistCount = mErrorCount = mLockedCount = 0;
         mInterrupted = false;
     }
 
@@ -153,28 +152,33 @@ public class AccountChecker {
                     continue;
                 }
                 try {
-                    if (loginResult == LoginResult.ACCOUNT_NOT_BANNED) {
+                    if (loginResult == LoginResult.NOT_BANNED) {
                         Log.i(LOG_TAG, "Account " + account + " is not banned.");
                         mNotBannedCount++;
                         Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/not_banned.txt");
                         break;
-                    } else if (loginResult == LoginResult.ACCOUNT_BANNED) {
+                    } else if (loginResult == LoginResult.BANNED) {
                         Log.i(LOG_TAG, "Account " + account + " is banned.");
                         mBannedCount++;
                         Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/banned.txt");
                         break;
-                    } else if (loginResult == LoginResult.ACCOUNT_NOT_EXIST) {
+                    } else if (loginResult == LoginResult.WRONG_CREDENTIALS) {
                         Log.i(LOG_TAG, "Account " + account + " does not exist.");
                         mNotExistCount++;
-                        Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/not_exist.txt");
+                        Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/wrong_credentials.txt");
+                        break;
+                    } else if (loginResult == LoginResult.LOCKED) {
+                        Log.i(LOG_TAG, "Account " + account + " is locked.");
+                        mLockedCount++;
+                        Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/locked.txt");
                         break;
                     }
                 } catch (IOException | InterruptedException e) {
-                    if (loginResult == LoginResult.ACCOUNT_NOT_BANNED) {
+                    if (loginResult == LoginResult.NOT_BANNED) {
                         Log.e(LOG_TAG, "Exception when writing account " + account + " to not_banned.txt.");
-                    } else if (loginResult == LoginResult.ACCOUNT_BANNED) {
+                    } else if (loginResult == LoginResult.BANNED) {
                         Log.e(LOG_TAG, "Exception when writing account " + account + " to banned.txt.");
-                    } else if (loginResult == LoginResult.ACCOUNT_NOT_EXIST) {
+                    } else if (loginResult == LoginResult.WRONG_CREDENTIALS) {
                         Log.e(LOG_TAG, "Exception when writing account " + account + " to not_exist.txt.");
                     }
                     e.printStackTrace();
@@ -206,6 +210,7 @@ public class AccountChecker {
         resultIntent.putExtra("notBannedCount", mNotBannedCount);
         resultIntent.putExtra("bannedCount", mBannedCount);
         resultIntent.putExtra("notExistCount", mNotExistCount);
+        resultIntent.putExtra("lockedCount", mLockedCount);
         resultIntent.putExtra("errorCount", mErrorCount);
         resultIntent.putExtra("interrupted", mInterrupted);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
@@ -226,7 +231,7 @@ public class AccountChecker {
     }
 
     private String getStats() {
-        return mNotBannedCount + " are not banned, " + mBannedCount + " are banned, " + mNotExistCount + " don't exist, " + mErrorCount + " couldn't be checked.";
+        return mNotBannedCount + " are not banned, " + mBannedCount + " are banned, " + mNotExistCount + " don't exist, " + mLockedCount + " are locked, " + mErrorCount + " couldn't be checked.";
     }
 
     public void stop() {

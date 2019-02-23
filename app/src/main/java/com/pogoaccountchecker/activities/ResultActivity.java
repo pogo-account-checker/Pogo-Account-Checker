@@ -19,6 +19,7 @@ public class ResultActivity extends AppCompatActivity {
         int bannedCount = getIntent().getIntExtra("bannedCount", 0);
         int notExistCount = getIntent().getIntExtra("notExistCount", 0);
         int errorCount = getIntent().getIntExtra("errorCount", 0);
+        int lockedCount = getIntent().getIntExtra("lockedCount", 0);
         boolean interrupted = getIntent().getBooleanExtra("interrupted", true);
 
         TextView resultTitleView = findViewById(R.id.resultTitle);
@@ -28,12 +29,13 @@ public class ResultActivity extends AppCompatActivity {
             resultTitleView.setText("Account checking has finished");
         }
 
-        int numAccountsChecked = notBannedCount + bannedCount + notExistCount + errorCount;
+        int numAccountsChecked = notBannedCount + bannedCount + notExistCount + lockedCount + errorCount;
         TextView resultView = findViewById(R.id.result);
         resultView.setText(numAccountsChecked + "/" +numAccounts + " have been checked.\n"
                 + notBannedCount + " are not banned.\n"
                 + bannedCount + " are banned.\n"
                 + notExistCount + " don't exist.\n"
+                + lockedCount + " are locked.\n"
                 + errorCount + " couldn't be checked.");
     }
 }
