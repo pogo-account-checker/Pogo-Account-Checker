@@ -163,7 +163,7 @@ public class AccountChecker {
                         Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/banned.txt");
                         break;
                     } else if (loginResult == LoginResult.WRONG_CREDENTIALS) {
-                        Log.i(LOG_TAG, "Account " + account + " does not exist.");
+                        Log.i(LOG_TAG, "Account " + account + " does not exist or the credentials are wrong.");
                         mNotExistCount++;
                         Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/wrong_credentials.txt");
                         break;
