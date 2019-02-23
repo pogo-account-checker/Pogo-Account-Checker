@@ -33,7 +33,7 @@ public class AccountCheckingService extends Service implements AccountChecker.On
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-         mNotificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        mNotificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(getText(R.string.notification_title))
                 .setSmallIcon(R.drawable.ic_outline_running_24px)
                 .setContentIntent(pendingIntent)
@@ -48,7 +48,8 @@ public class AccountCheckingService extends Service implements AccountChecker.On
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!mRunning) {
             ArrayList<String> accounts = intent.getStringArrayListExtra("accounts");
-            mAccountChecker = new AccountChecker(this, accounts, ',', this);
+            char delimiter = intent.getCharExtra("delimiter", ',');
+            mAccountChecker = new AccountChecker(this, accounts, delimiter, this);
 
             String notificationText = "0/" + accounts.size() + " have been checked.";
             updateNotificationText(notificationText);

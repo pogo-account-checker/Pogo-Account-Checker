@@ -2,8 +2,17 @@
     <string name="app_name">Pogo Account Checker</string>
     <string name="notification_channel_name">Account checking status</string>
     <string name="notification_title">Checking accounts…</string>
-    <string name="notification_message">Accounts check in progress.</string>
     <string name="title_activity_result">ResultActivity</string>
+
+    <string name="selected_delimiter_pref_key">selected_delimiter_pref_key</string>
+
+    <string-array name="delimiters">
+        <item>,</item>
+        <item>:</item>
+        <item>;</item>
+        <item>/</item>
+        <item>|</item>
+    </string-array>
 
     <!-- x and y coords of the center point of each button/text field on a 1080x1920 screen. -->
     <integer name="x_year_selector">792</integer>

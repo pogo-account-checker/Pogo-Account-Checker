@@ -10,13 +10,19 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.pogoaccountchecker.services.AccountCheckingService;
@@ -29,8 +35,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private ArrayList<String> mAccounts;
+    private Spinner delimiterSpinner;
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     private static final int READ_REQUEST_CODE = 1;
 
@@ -38,6 +45,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        delimiterSpinner = findViewById(R.id.spinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.delimiters, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        delimiterSpinner.setAdapter(adapter);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        int selectedItem = sharedPref.getInt(getString(R.string.selected_delimiter_pref_key), 0);
+        Log.d("debug", selectedItem + "");
+        delimiterSpinner.setSelection(selectedItem, false);
+        delimiterSpinner.setOnItemSelectedListener(this);
     }
 
     /**
@@ -50,10 +70,18 @@ public class MainActivity extends AppCompatActivity {
             if (mAccounts == null) {
                 Toast.makeText(this, "Select TXT file with accounts first!", Toast.LENGTH_SHORT).show();
             } else {
-                // Start service
-                Intent intent = new Intent(this, AccountCheckingService.class);
-                intent.putStringArrayListExtra("accounts", mAccounts);
-                startService(intent);
+                if (accountsHaveDelimiter()) {
+                    // Start service
+                    Intent intent = new Intent(this, AccountCheckingService.class);
+                    intent.putStringArrayListExtra("accounts", mAccounts);
+                    char delimiter = ((String) delimiterSpinner.getSelectedItem()).charAt(0);
+                    intent.putExtra("delimiter", delimiter);
+                    intent.putExtra("separator", (String) delimiterSpinner.getSelectedItem());
+                    startService(intent);
+                } else {
+                    Toast.makeText(this, "There is something wrong with your accounts file!", Toast.LENGTH_LONG).show();
+                }
+
             }
         } else {
             Toast.makeText(this, "No root access!", Toast.LENGTH_SHORT).show();
@@ -156,5 +184,25 @@ public class MainActivity extends AppCompatActivity {
         }
         inputStream.close();
         reader.close();
+    }
+
+    private boolean accountsHaveDelimiter() {
+        String delimiter = (String) delimiterSpinner.getSelectedItem();
+        for (String account : mAccounts) {
+            if (!account.contains(delimiter)) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(getString(R.string.selected_delimiter_pref_key), position);
+        editor.apply();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
     }
 }
