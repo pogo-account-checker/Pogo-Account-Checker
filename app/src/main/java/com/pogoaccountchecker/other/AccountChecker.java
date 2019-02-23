@@ -49,11 +49,8 @@ public class AccountChecker {
     }
 
     public void start() {
-        try {
-            Shell.runSuCommand("mkdir " + PATHNAME);
-        } catch (IOException | InterruptedException e) {
-            Log.e(LOG_TAG, "Exception when creating directory.");
-            e.printStackTrace();
+        if (!Shell.runSuCommand("mkdir " + PATHNAME)) {
+            Log.e(LOG_TAG, "Couldn't create folder, aborting program!");
             System.exit(0);
         }
 
@@ -80,22 +77,27 @@ public class AccountChecker {
                         continue;
                     }
 
-                    // Wait while pogo starts.
-                    Utils.sleep(5000);
-
-                    // Select date of birth.
-                    if (!mPogoInteractor.selectDateOfBirth(20)) {
+                    // Check if we are on the DOB screen.
+                    if (!mPogoInteractor.isOnDateOfBirthScreen(20)) {
                         if (mInterrupted) return;
                         errorCount++;
                         continue;
                     }
-                    dateOfBirthEntered = true;
+
+                    // Select date of birth.
+                    if (!mPogoInteractor.selectDateOfBirth()) {
+                        if (mInterrupted) return;
+                        errorCount++;
+                        continue;
+                    } else {
+                        dateOfBirthEntered = true;
+                    }
 
                     // Wait while pogo transitions to the returning/new player selection screen.
-                    Utils.sleep(500);
+                    Utils.sleep(Utils.randomWithRange(450, 550));
 
                     // Select returning player.
-                    if (!mPogoInteractor.selectReturningPlayer(5)) {
+                    if (!mPogoInteractor.selectReturningPlayer()) {
                         if (mInterrupted) return;
                         mPogoInteractor.stopPogo();
                         errorCount++;
@@ -109,11 +111,16 @@ public class AccountChecker {
                         continue;
                     }
 
-                    // Wait while pogo starts.
-                    Utils.sleep(4000);
+                    // Check if we are on the returning player selection screen.
+                    if (!mPogoInteractor.isOnReturningPlayerSelection(20)) {
+                        if (mInterrupted) return;
+                        mPogoInteractor.stopPogo();
+                        errorCount++;
+                        continue;
+                    }
 
                     // Select returning player.
-                    if (!mPogoInteractor.selectReturningPlayer(20)) {
+                    if (!mPogoInteractor.selectReturningPlayer()) {
                         if (mInterrupted) return;
                         mPogoInteractor.stopPogo();
                         errorCount++;
@@ -122,10 +129,10 @@ public class AccountChecker {
                 }
 
                 // Wait while pogo transitions to the account type selection screen.
-                Utils.sleep(500);
+                Utils.sleep(Utils.randomWithRange(450, 550));
 
                 // Select PTC.
-                if (!mPogoInteractor.selectPTC(5)) {
+                if (!mPogoInteractor.selectPTC()) {
                     if (mInterrupted) return;
                     mPogoInteractor.stopPogo();
                     errorCount++;
@@ -133,10 +140,10 @@ public class AccountChecker {
                 }
 
                 // Wait while pogo transitions to login screen.
-                Utils.sleep(500);
+                Utils.sleep(Utils.randomWithRange(450, 550));
 
                 // Login.
-                if (!mPogoInteractor.login(username, password, 5)) {
+                if (!mPogoInteractor.login(username, password)) {
                     if (mInterrupted) return;
                     mPogoInteractor.stopPogo();
                     errorCount++;
@@ -151,49 +158,34 @@ public class AccountChecker {
                     errorCount++;
                     continue;
                 }
-                try {
-                    if (loginResult == LoginResult.NOT_BANNED) {
-                        Log.i(LOG_TAG, "Account " + account + " is not banned.");
-                        mNotBannedCount++;
-                        Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/not_banned.txt");
-                        break;
-                    } else if (loginResult == LoginResult.BANNED) {
-                        Log.i(LOG_TAG, "Account " + account + " is banned.");
-                        mBannedCount++;
-                        Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/banned.txt");
-                        break;
-                    } else if (loginResult == LoginResult.WRONG_CREDENTIALS) {
-                        Log.i(LOG_TAG, "Account " + account + " does not exist or the credentials are wrong.");
-                        mNotExistCount++;
-                        Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/wrong_credentials.txt");
-                        break;
-                    } else if (loginResult == LoginResult.LOCKED) {
-                        Log.i(LOG_TAG, "Account " + account + " is locked.");
-                        mLockedCount++;
-                        Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/locked.txt");
-                        break;
-                    }
-                } catch (IOException | InterruptedException e) {
-                    if (loginResult == LoginResult.NOT_BANNED) {
-                        Log.e(LOG_TAG, "Exception when writing account " + account + " to not_banned.txt.");
-                    } else if (loginResult == LoginResult.BANNED) {
-                        Log.e(LOG_TAG, "Exception when writing account " + account + " to banned.txt.");
-                    } else if (loginResult == LoginResult.WRONG_CREDENTIALS) {
-                        Log.e(LOG_TAG, "Exception when writing account " + account + " to not_exist.txt.");
-                    }
-                    e.printStackTrace();
-                    errorCount++;
+
+
+                if (loginResult == LoginResult.NOT_BANNED) {
+                    Log.i(LOG_TAG, "Account " + account + " is not banned.");
+                    mNotBannedCount++;
+                    Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/not_banned.txt");
+                    break;
+                } else if (loginResult == LoginResult.BANNED) {
+                    Log.i(LOG_TAG, "Account " + account + " is banned.");
+                    mBannedCount++;
+                    Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/banned.txt");
+                    break;
+                } else if (loginResult == LoginResult.WRONG_CREDENTIALS) {
+                    Log.i(LOG_TAG, "Account " + account + " does not exist or the credentials are wrong.");
+                    mNotExistCount++;
+                    Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/wrong_credentials.txt");
+                    break;
+                } else if (loginResult == LoginResult.LOCKED) {
+                    Log.i(LOG_TAG, "Account " + account + " is locked.");
+                    mLockedCount++;
+                    Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/locked.txt");
+                    break;
                 }
             }
             if (errorCount == 10) {
                 mErrorCount++;
-                try {
-                    Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/error.txt");
-                    Log.e(LOG_TAG, "Error limit reached. Wrote account " + account + " to error.txt.");
-                } catch (IOException | InterruptedException e) {
-                    Log.e(LOG_TAG, "Exception when writing account " + account + " to error.txt.");
-                    e.printStackTrace();
-                }
+                Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/error.txt");
+                Log.e(LOG_TAG, "Error limit reached. Wrote account " + account + " to error.txt.");
             }
         }
 
