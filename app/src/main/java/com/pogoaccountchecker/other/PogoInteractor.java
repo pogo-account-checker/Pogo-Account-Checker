@@ -22,7 +22,6 @@ public class PogoInteractor {
     private Context mContext;
     private TextInImageRecognizer mTextInImageRecognizer;
     private final String POGO_PACKAGE_NAME = "com.nianticlabs.pokemongo";
-    private final String POGO_MAIN_ACTIVITY_NAME = "com.nianticproject.holoholo.libholoholo.unity.UnityMainActivity";
     private final String PATHNAME;
     private int resizedScreenWidth, resizedScreenHeight, realScreenWidth, realScreenHeight;
     private int xYearSelector, yYearSelector, widthYearSelector, heightYearSelector;
@@ -42,6 +41,8 @@ public class PogoInteractor {
         mTextInImageRecognizer = new TextInImageRecognizer(mContext);
         PATHNAME = Environment.getExternalStorageDirectory().getPath() + "/PogoAccountChecker";
         mInterrupted = false;
+
+        hideBars();
 
         realScreenWidth = resizedScreenWidth = getScreenWidth();
         realScreenHeight = resizedScreenHeight = getScreenHeight();
@@ -99,17 +100,15 @@ public class PogoInteractor {
         widthSignIn = scale(mContext.getResources().getInteger(R.integer.width_sign_in));
         heightSignIn = scale(mContext.getResources().getInteger(R.integer.height_sign_in));
 
-        // Width, height, and center coords of Pokemon banner.
+        // Set width, height, and center coords of Pokemon banner.
         xPokemon = scale(mContext.getResources().getInteger(R.integer.x_pokemon));
         yPokemon = scale(mContext.getResources().getInteger(R.integer.y_pokemon));
         widthPokemon = scale(mContext.getResources().getInteger(R.integer.width_pokemon));
         heightPokemon = scale(mContext.getResources().getInteger(R.integer.height_pokemon));
-
-        hideBars();
     }
 
     public boolean startPogo() {
-        if (!mInterrupted && Shell.runSuCommand("am start -n " + POGO_PACKAGE_NAME + "/" + POGO_MAIN_ACTIVITY_NAME)) {
+        if (!mInterrupted && Shell.runSuCommand("am start -n " + POGO_PACKAGE_NAME + "/com.nianticproject.holoholo.libholoholo.unity.UnityMainActivity")) {
             Log.i(LOG_TAG, "Pogo started.");
             return true;
         } else {
