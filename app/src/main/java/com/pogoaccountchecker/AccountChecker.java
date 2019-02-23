@@ -1,4 +1,4 @@
-package com.pogoaccountchecker.other;
+package com.pogoaccountchecker;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.os.Environment;
 import android.util.Log;
 
-import com.pogoaccountchecker.R;
 import com.pogoaccountchecker.activities.ResultActivity;
-import com.pogoaccountchecker.other.PogoInteractor.LoginResult;
+import com.pogoaccountchecker.pogo.PogoInteractor;
+import com.pogoaccountchecker.pogo.PogoInteractor.LoginResult;
 import com.pogoaccountchecker.utils.Shell;
 import com.pogoaccountchecker.utils.Utils;
 

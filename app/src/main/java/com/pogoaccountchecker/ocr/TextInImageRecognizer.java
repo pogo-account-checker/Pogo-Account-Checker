@@ -1,4 +1,4 @@
-package com.pogoaccountchecker.utils;
+package com.pogoaccountchecker.ocr;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,6 +11,7 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
+import com.pogoaccountchecker.utils.Utils;
 
 import java.io.IOException;
 

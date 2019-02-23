@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.widget.Toast;
 
-import com.pogoaccountchecker.other.AccountChecker;
+import com.pogoaccountchecker.AccountChecker;
 import com.pogoaccountchecker.R;
 import com.pogoaccountchecker.activities.MainActivity;
 

@@ -1,4 +1,4 @@
-package com.pogoaccountchecker.other;
+package com.pogoaccountchecker.pogo;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -10,7 +10,7 @@ import android.view.WindowManager;
 
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.pogoaccountchecker.R;
-import com.pogoaccountchecker.utils.TextInImageRecognizer;
+import com.pogoaccountchecker.ocr.TextInImageRecognizer;
 import com.pogoaccountchecker.utils.Shell;
 import com.pogoaccountchecker.utils.Utils;
 
@@ -42,25 +42,33 @@ public class PogoInteractor {
         PATHNAME = Environment.getExternalStorageDirectory().getPath() + "/PogoAccountChecker";
         mInterrupted = false;
 
-        hideBars();
+        if (!hideBars()) {
+            Log.e(LOG_TAG, "Couldn't hide bars, aborting program!");
+            System.exit(0);
+        }
 
         realScreenWidth = resizedScreenWidth = getScreenWidth();
         realScreenHeight = resizedScreenHeight = getScreenHeight();
 
         if (!((realScreenWidth % 9) == 0 && (realScreenHeight % 16) == 0) && !(realScreenWidth / 9 == realScreenHeight / 16)) {
             // Screen is not 16x9, resize it.
+            boolean success = true;
             if (realScreenWidth >= 2160 && realScreenHeight >= 3840) {
-                resizeScreen(2160, 3840);
+                success = resizeScreen(2160, 3840);
             } else if (realScreenWidth >= 1440 && realScreenHeight >= 2560) {
-                resizeScreen(1440, 2560);
+                success = resizeScreen(1440, 2560);
             } else if (realScreenWidth >= 1080 && realScreenHeight >= 1920) {
-                resizeScreen(1080, 1920);
+                success = resizeScreen(1080, 1920);
             } else if (realScreenWidth >= 720 && realScreenHeight >= 1280) {
-                resizeScreen(720, 1280);
+                success = resizeScreen(720, 1280);
             } else if (realScreenWidth >= 540 && realScreenHeight >= 960) {
-                resizeScreen(540, 960);
+                success = resizeScreen(540, 960);
             } else if (realScreenWidth >= 360 && realScreenHeight >= 640) {
-                resizeScreen(360, 640);
+                success = resizeScreen(360, 640);
+            }
+            if (!success) {
+                Log.e(LOG_TAG, "Couldn't resize screen, aborting program!");
+                System.exit(0);
             }
         }
 
@@ -354,13 +362,13 @@ public class PogoInteractor {
         }
     }
 
-    private void resizeScreen(int newWidth, int newHeight) {
+    private boolean resizeScreen(int newWidth, int newHeight) {
         if (Shell.runSuCommand("wm size " + newWidth + "x" + newHeight)) {
             resizedScreenWidth = newWidth;
             resizedScreenHeight = newHeight;
+            return true;
         } else {
-            Log.e(LOG_TAG, "Couldn't resize screen, aborting program!");
-            System.exit(0);
+            return false;
         }
     }
 
@@ -374,7 +382,7 @@ public class PogoInteractor {
     }
 
     private boolean hideBars() {
-        return Shell.runSuCommand("settings put global policy_control immersive.full=com.nianticlabs.pokemongo");
+        return Shell.runSuCommand("settings put global policy_control immersive.full=" + POGO_PACKAGE_NAME);
     }
 
     public void close() {
