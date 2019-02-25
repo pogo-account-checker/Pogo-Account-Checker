@@ -23,7 +23,7 @@ import static com.pogoaccountchecker.App.NOTIFICATION_CHANNEL_ID;
 public class AccountChecker {
     private Context mContext;
     private ArrayList<String> mAccounts;
-    private char mSeparator;
+    private char mDelimiter;
     private OnAccountCheckingStatusChangedListener mCallback;
     private PogoInteractor mPogoInteractor;
     private final String PATHNAME;
@@ -32,10 +32,10 @@ public class AccountChecker {
     private final int NOTIFICATION_ID = 2;
     private final String LOG_TAG = getClass().getSimpleName();
 
-    public AccountChecker(Context context, ArrayList<String> accounts, char separator, OnAccountCheckingStatusChangedListener listener) {
+    public AccountChecker(Context context, ArrayList<String> accounts, char delimiter, OnAccountCheckingStatusChangedListener listener) {
         mContext = context;
         mAccounts = accounts;
-        mSeparator = separator;
+        mDelimiter = delimiter;
         mCallback = listener;
         mPogoInteractor = new PogoInteractor(mContext);
         PATHNAME = Environment.getExternalStorageDirectory().getPath() + "/PogoAccountChecker";
@@ -56,7 +56,7 @@ public class AccountChecker {
 
         for (int i=0; i<mAccounts.size(); i++) {
             String account = mAccounts.get(i);
-            int index = account.indexOf(mSeparator);
+            int index = account.indexOf(mDelimiter);
             String username = account.substring(0, index);
             String password = account.substring(index + 1);
 
@@ -164,33 +164,33 @@ public class AccountChecker {
                 if (loginResult == LoginResult.NOT_BANNED) {
                     Log.i(LOG_TAG, "Account " + account + " is not banned.");
                     mNotBannedCount++;
-                    Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/not_banned.txt");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt");
                     break;
                 } else if (loginResult == LoginResult.BANNED) {
                     Log.i(LOG_TAG, "Account " + account + " is banned.");
                     mBannedCount++;
-                    Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/banned.txt");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/banned.txt");
                     break;
                 } else if (loginResult == LoginResult.WRONG_CREDENTIALS) {
                     Log.i(LOG_TAG, "Account " + account + " does not exist or the credentials are wrong.");
                     mWrongCredentialsCount++;
-                    Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/wrong_credentials.txt");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/wrong_credentials.txt");
                     break;
                 } else if (loginResult == LoginResult.NOT_ACTIVATED) {
                     Log.i(LOG_TAG, "Account " + account + " is not activated.");
                     mNotActivatedCount++;
-                    Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/not_activated.txt");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_activated.txt");
                     break;
                 } else if (loginResult == LoginResult.LOCKED) {
                     Log.i(LOG_TAG, "Account " + account + " is locked.");
                     mLockedCount++;
-                    Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/locked.txt");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/locked.txt");
                     break;
                 }
             }
             if (errorCount == 10) {
                 mErrorCount++;
-                Shell.runSuCommand("echo \"" + account + "\" >> " + PATHNAME + "/error.txt");
+                Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/error.txt");
                 Log.e(LOG_TAG, "Error limit reached. Wrote account " + account + " to error.txt.");
             }
 

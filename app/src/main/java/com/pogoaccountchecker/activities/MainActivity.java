@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 } else {
                     Toast.makeText(this, "There is something wrong with your accounts file!", Toast.LENGTH_LONG).show();
                 }
-
             }
         } else {
             Toast.makeText(this, "No root access!", Toast.LENGTH_SHORT).show();
