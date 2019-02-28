@@ -14,17 +14,17 @@ public class ResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
-        int numAccounts = getIntent().getIntExtra("numAccounts", 0);
+        int accountCount = getIntent().getIntExtra("accountCount", 0);
         int notBannedCount = getIntent().getIntExtra("notBannedCount", 0);
         int bannedCount = getIntent().getIntExtra("bannedCount", 0);
         int wrongCredentialsCount = getIntent().getIntExtra("wrongCredentialsCount", 0);
         int notActivatedCount = getIntent().getIntExtra("notActivatedCount", 0);
         int lockedCount = getIntent().getIntExtra("lockedCount", 0);
         int errorCount = getIntent().getIntExtra("errorCount", 0);
-        boolean interrupted = getIntent().getBooleanExtra("interrupted", true);
+        boolean stopped = getIntent().getBooleanExtra("stopped", true);
 
         TextView resultTitleView = findViewById(R.id.resultTitle);
-        if (interrupted) {
+        if (stopped) {
             resultTitleView.setText("Account checking stopped");
         } else {
             resultTitleView.setText("Account checking finished");
@@ -32,7 +32,7 @@ public class ResultActivity extends AppCompatActivity {
 
         int numAccountsChecked = notBannedCount + bannedCount + wrongCredentialsCount + notActivatedCount + lockedCount + errorCount;
         TextView resultView = findViewById(R.id.result);
-        resultView.setText(numAccountsChecked + "/" +numAccounts + " accounts have been checked.\n"
+        resultView.setText(numAccountsChecked + "/" +accountCount + " accounts have been checked.\n"
                 + "Not banned: " + notBannedCount + "\n"
                 + "Banned: " + bannedCount + "\n"
                 + "Wrong username/password: " + wrongCredentialsCount + "\n"

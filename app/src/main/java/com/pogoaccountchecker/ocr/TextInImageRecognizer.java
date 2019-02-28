@@ -24,10 +24,11 @@ public class TextInImageRecognizer {
 
     public TextInImageRecognizer(Context context) {
         mContext = context;
-        mDetector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
     }
 
     public FirebaseVisionText detectText(Uri imageUri) {
+        if (mDetector == null) mDetector = FirebaseVision.getInstance().getOnDeviceTextRecognizer();
+
         FirebaseVisionImage image;
         try {
             image = FirebaseVisionImage.fromFilePath(mContext, imageUri);
@@ -71,7 +72,7 @@ public class TextInImageRecognizer {
 
     public void close() {
         try {
-            mDetector.close();
+            if (mDetector != null) mDetector.close();
         } catch (IOException e) {
             Log.e(LOG_TAG, "Exception when closing detector.");
             e.printStackTrace();

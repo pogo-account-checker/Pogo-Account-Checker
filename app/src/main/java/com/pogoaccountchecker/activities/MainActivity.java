@@ -8,13 +8,17 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.util.Log;
@@ -37,7 +41,9 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private ArrayList<String> mAccounts;
-    private Spinner delimiterSpinner;
+    private Spinner mDelimiterSpinner;
+    private AccountCheckingService mService;
+    private boolean mBound;
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     private static final int READ_REQUEST_CODE = 1;
 
@@ -46,40 +52,64 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        delimiterSpinner = findViewById(R.id.spinner);
+        mDelimiterSpinner = findViewById(R.id.spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.delimiters, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        delimiterSpinner.setAdapter(adapter);
+        mDelimiterSpinner.setAdapter(adapter);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         int selectedItem = sharedPref.getInt(getString(R.string.selected_delimiter_pref_key), 0);
-        Log.d("debug", selectedItem + "");
-        delimiterSpinner.setSelection(selectedItem, false);
-        delimiterSpinner.setOnItemSelectedListener(this);
+        mDelimiterSpinner.setSelection(selectedItem, false);
+        mDelimiterSpinner.setOnItemSelectedListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, AccountCheckingService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindService(connection);
+        mBound = false;
     }
 
     /**
-     * Called when the start button is pressed.
+     * Called when the start/pause/continue button is pressed.
      *
      * @param view the View that was clicked.
      */
-    public void start(View view) {
+    public void startPauseContinue(View view) {
         if (RootShell.isAccessGiven()) {
-            if (mAccounts == null) {
-                Toast.makeText(this, "Select TXT file with accounts first!", Toast.LENGTH_SHORT).show();
-            } else {
-                if (accountsHaveDelimiter()) {
-                    // Start service
-                    Intent intent = new Intent(this, AccountCheckingService.class);
-                    intent.putStringArrayListExtra("accounts", mAccounts);
-                    char delimiter = ((String) delimiterSpinner.getSelectedItem()).charAt(0);
-                    intent.putExtra("delimiter", delimiter);
-                    intent.putExtra("separator", (String) delimiterSpinner.getSelectedItem());
-                    startService(intent);
+            Button startPauseContinueButton = findViewById(R.id.startPauseContinueButton);
+            if (mBound) {
+                if (!mService.isChecking()) {
+                    if (mAccounts != null) {
+                        if (accountsHaveDelimiter()) {
+                            char delimiter = ((String) mDelimiterSpinner.getSelectedItem()).charAt(0);
+                            mService.checkAccounts(mAccounts, delimiter);
+                            startPauseContinueButton.setText("Pause");
+                            Button stopButton = findViewById(R.id.stop);
+                            stopButton.setVisibility(View.VISIBLE);
+                        } else {
+                            Toast.makeText(this, "There is something wrong with your accounts file!", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "Select TXT file with accounts first!", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(this, "There is something wrong with your accounts file!", Toast.LENGTH_LONG).show();
+                    if (mService.isPaused()) {
+                        mService.continueChecking();
+                        startPauseContinueButton.setText("Pause");
+                    } else {
+                        mService.pauseChecking();
+                        startPauseContinueButton.setText("Continue");
+                    }
                 }
             }
         } else {
@@ -88,27 +118,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     /**
-     * Called when the close button is pressed.
+     * Called when the stop button is pressed.
      *
      * @param view the View that was clicked.
      */
     public void stop(View view) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Do you really want to stop?")
-                .setPositiveButton("yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        Intent intent = new Intent(MainActivity.this, AccountCheckingService.class);
-                        stopService(intent);
-                    }
-                })
-                .setNegativeButton("no", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        // Don't do anything.
-                    }
-                })
-                .show();
+        if (mBound) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("Do you really want to stop?")
+                    .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            mService.stopChecking();
+                            Button startPauseContinueButton = findViewById(R.id.startPauseContinueButton);
+                            startPauseContinueButton.setText("Start");
+                        }
+                    })
+                    .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            // Don't do anything.
+                        }
+                    })
+                    .show();
+        }
     }
 
     /**
@@ -186,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private boolean accountsHaveDelimiter() {
-        String delimiter = (String) delimiterSpinner.getSelectedItem();
+        String delimiter = (String) mDelimiterSpinner.getSelectedItem();
         for (String account : mAccounts) {
             if (!account.contains(delimiter)) return false;
         }
@@ -204,4 +237,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
     }
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            AccountCheckingService.AccountCheckingServiceBinder binder = (AccountCheckingService.AccountCheckingServiceBinder) service;
+            mService = binder.getService();
+            mBound = true;
+
+            Button startPauseContinueButton = findViewById(R.id.startPauseContinueButton);
+            if (mService.isChecking()) {
+                if (mService.isPaused()) {
+                    startPauseContinueButton.setText("Continue");
+                } else {
+                    startPauseContinueButton.setText("Pause");
+                }
+            } else {
+                startPauseContinueButton.setText("Start");
+                Button stopButton = findViewById(R.id.stop);
+                stopButton.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
 }
