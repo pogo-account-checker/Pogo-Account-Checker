@@ -292,6 +292,7 @@ public class AccountCheckingService extends Service {
         mChecking = false;
         mStopped = true;
         mPogoInteractor.interrupt();
+        stopForeground(true);
         showFinishedNotification("Account checking stopped", getStats());
         startResultActivity();
         new Thread(new Runnable() {
