@@ -260,7 +260,7 @@ public class AccountCheckingService extends Service {
             public void run() {
                 for (int i=0; i<mAccountCount; i++) {
                     LoginResult result = checkAccount(accounts.get(i), delimiter);
-                    Log.d(LOG_TAG, result + "");
+                    if (result == LoginResult.INTERRUPTED) return;
                     updateCheckingNotificationText("Checked: " + getCheckedCount() + "/" + mAccountCount);
                 }
 
