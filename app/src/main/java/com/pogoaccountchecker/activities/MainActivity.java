@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -104,10 +103,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     }
                 } else {
                     if (mService.isPaused()) {
-                        mService.continueChecking();
+                        mService.resume();
                         startPauseContinueButton.setText("Pause");
                     } else {
-                        mService.pauseChecking();
+                        mService.pause();
                         startPauseContinueButton.setText("Continue");
                     }
                 }
@@ -129,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            mService.stopChecking();
+                            mService.stop();
                             Button startPauseContinueButton = findViewById(R.id.startPauseContinueButton);
                             startPauseContinueButton.setText("Start");
                         }

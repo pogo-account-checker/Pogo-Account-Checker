@@ -21,8 +21,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 
 import static com.pogoaccountchecker.App.NOTIFICATION_CHANNEL_ID;
-import static com.pogoaccountchecker.App.FOREGROUND_NOTIFICATION_ID;
-import static com.pogoaccountchecker.App.RESULT_NOTIFICATION_ID;
 
 public class AccountChecker {
     private Context mContext;
@@ -279,19 +277,19 @@ public class AccountChecker {
                 .setContentIntent(resultPendingIntent)
                 .setAutoCancel(true);
 
-        mNotificationManager.notify(RESULT_NOTIFICATION_ID, builder.build());
+        //mNotificationManager.notify(RESULT_NOTIFICATION_ID, builder.build());
     }
 
     private void updateForegroundNotificationTitle(String text) {
         mForegroundNotificationBuilder.setContentTitle(text);
         Notification notification = mForegroundNotificationBuilder.build();
-        mNotificationManager.notify(FOREGROUND_NOTIFICATION_ID, notification);
+        //mNotificationManager.notify(FOREGROUND_NOTIFICATION_ID, notification);
     }
 
     private void updateForegroundNotificationText(String text) {
         mForegroundNotificationBuilder.setContentText(text);
         Notification notification = mForegroundNotificationBuilder.build();
-        mNotificationManager.notify(FOREGROUND_NOTIFICATION_ID, notification);
+        //mNotificationManager.notify(FOREGROUND_NOTIFICATION_ID, notification);
     }
 
     private void startResultActivity() {

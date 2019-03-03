@@ -7,8 +7,6 @@ import android.os.Build;
 
 public class App extends Application {
     public static final String NOTIFICATION_CHANNEL_ID = "notificationChannelId";
-    public static final int FOREGROUND_NOTIFICATION_ID = 1;
-    public static final int RESULT_NOTIFICATION_ID = 2;
 
     @Override
     public void onCreate() {

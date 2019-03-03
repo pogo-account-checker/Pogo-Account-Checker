@@ -12,6 +12,7 @@ public class PogoInteractor {
     private Context mContext;
     private final String POGO_PACKAGE;
     private ScreenInteractor mScreenInteractor;
+    private boolean mInterrupted;
     private volatile boolean mScreenReady;
     private int xYearSelector, yYearSelector, widthYearSelector, heightYearSelector;
     private int x2010, y2010, width2010, height2010;
@@ -22,7 +23,6 @@ public class PogoInteractor {
     private int xPassword, yPassword, widthPassword, heightPassword;
     private int xSignIn, ySignIn, widthSignIn, heightSignIn;
     private int xPokemon, yPokemon, widthPokemon, heightPokemon;
-    private volatile boolean mInterrupted;
     private final String LOG_TAG = getClass().getSimpleName();
 
     public PogoInteractor(Context context) {
@@ -308,7 +308,6 @@ public class PogoInteractor {
 
     public void cleanUp() {
         clearAppData();
-        mInterrupted = true;
         mScreenReady = false;
         mScreenInteractor.cleanUp();
     }
