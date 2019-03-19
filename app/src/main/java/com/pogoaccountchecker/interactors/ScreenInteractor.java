@@ -22,6 +22,7 @@ public class ScreenInteractor {
     private TextInImageRecognizer mTextRecognizer;
     private int realWidth, realHeight, virtualWidth, virtualHeight;
     private boolean mScreenshotTaken;
+    private boolean mInterrupted;
     private final String APP_PATH;
     private final String POGO_PACKAGE;
     private final String LOG_TAG = getClass().getSimpleName();
@@ -35,32 +36,27 @@ public class ScreenInteractor {
         POGO_PACKAGE = "com.nianticlabs.pokemongo";
     }
 
-    public boolean tap(int x, int y) {
-        if (Shell.runSuCommand("input tap " + x + " " + y)) {
+    public void tap(int x, int y) {
+        if (!mInterrupted) {
+            Shell.runSuCommand("input tap " + x + " " + y);
             Log.d(LOG_TAG, "Tapped screen at: " + Float.toString(x) + "," + Float.toString(y));
-            return true;
-        } else {
-            return false;
         }
     }
 
-    public boolean tapRandom(int x, int y, int offsetX, int offsetY) {
+    public void tapRandom(int x, int y, int offsetX, int offsetY) {
         int randomOffsetX = Utils.randomWithRange(-offsetX / 2, offsetX / 2);
         int randomOffsetY = Utils.randomWithRange(-offsetY / 2, offsetY / 2);
-        return tap(x + randomOffsetX, y + randomOffsetY);
+        tap(x + randomOffsetX, y + randomOffsetY);
     }
 
-    public boolean insertText(@NonNull String text) {
-        return Shell.runSuCommand("input text '" + text + "'");
+    public void insertText(@NonNull String text) {
+        Shell.runSuCommand("input text '" + text + "'");
     }
 
     private Uri takeScreenshot() {
-        if (Shell.runSuCommand("screencap -p " + APP_PATH + "/screenshot.png")) {
-            mScreenshotTaken = true;
-            return Uri.fromFile(new File(APP_PATH + "/screenshot.png"));
-        } else {
-            return null;
-        }
+        Shell.runSuCommand("screencap -p " + APP_PATH + "/screenshot.png");
+        mScreenshotTaken = true;
+        return Uri.fromFile(new File(APP_PATH + "/screenshot.png"));
     }
 
     public FirebaseVisionText getVisionText() {
@@ -72,47 +68,37 @@ public class ScreenInteractor {
         }
     }
 
-    public boolean showBars() {
-        return Shell.runSuCommand("settings put global policy_control null*");
+    public void showBars() {
+        Shell.runSuCommand("settings put global policy_control null*");
     }
 
-    public boolean hideBars() {
-        return Shell.runSuCommand("settings put global policy_control immersive.full=" + POGO_PACKAGE);
+    public void hideBars() {
+        Shell.runSuCommand("settings put global policy_control immersive.full=" + POGO_PACKAGE);
     }
 
-    private boolean resize(int newWidth, int newHeight) {
-        if (Shell.runSuCommand("wm size " + newWidth + "x" + newHeight)) {
-            virtualWidth = newWidth;
-            virtualHeight = newHeight;
-            return true;
-        } else {
-            return false;
-        }
+    private void resize(int newWidth, int newHeight) {
+        Shell.runSuCommand("wm size " + newWidth + "x" + newHeight);
+        virtualWidth = newWidth;
+        virtualHeight = newHeight;
     }
 
     public int resizeTo16x9() {
-
         if (!((realWidth % 9) == 0 && (realHeight % 16) == 0) && !(realWidth / 9 == realHeight / 16)) {
             // Screen is not 16x9, resize it.
-            boolean success = true;
             if (realWidth >= 2160 && realHeight >= 3840) {
-                success = resize(2160, 3840);
+                resize(2160, 3840);
             } else if (realWidth >= 1440 && realHeight >= 2560) {
-                success = resize(1440, 2560);
+                resize(1440, 2560);
             } else if (realWidth >= 1080 && realHeight >= 1920) {
-                success = resize(1080, 1920);
+                resize(1080, 1920);
             } else if (realWidth >= 720 && realHeight >= 1280) {
-                success = resize(720, 1280);
+                resize(720, 1280);
             } else if (realWidth >= 540 && realHeight >= 960) {
-                success = resize(540, 960);
+                resize(540, 960);
             } else if (realWidth >= 360 && realHeight >= 640) {
-                success = resize(360, 640);
+                resize(360, 640);
             }
-            if (success) {
-                return virtualWidth;
-            } else {
-                return -1;
-            }
+            return virtualWidth;
         } else {
             // Screen was not resized.
             return realWidth;
@@ -141,6 +127,14 @@ public class ScreenInteractor {
         } else {
             return size.y;
         }
+    }
+
+    public void interrupt() {
+        mInterrupted = true;
+    }
+
+    public void resume() {
+        mInterrupted = false;
     }
 
     public void cleanUp() {

@@ -15,7 +15,7 @@ import com.pogoaccountchecker.R;
 import com.pogoaccountchecker.activities.MainActivity;
 import com.pogoaccountchecker.activities.ResultActivity;
 import com.pogoaccountchecker.interactors.PogoInteractor;
-import com.pogoaccountchecker.interactors.PogoInteractor.LoginResult;
+import com.pogoaccountchecker.interactors.PogoInteractor.Screen;
 import com.pogoaccountchecker.utils.Shell;
 import com.pogoaccountchecker.utils.Utils;
 
@@ -33,7 +33,7 @@ public class AccountCheckingService extends Service {
     private NotificationCompat.Builder mNotificationBuilderChecking;
     private volatile boolean mChecking, mPaused, mStopped;
     private int mAccountCount;
-    private int mNotBannedCount, mBannedCount, mWrongCredentialsCount, mNotActivatedCount, mLockedCount, mErrorCount;
+    private int mNotBannedCount, mBannedCount, mNewCount, mWrongCredentialsCount, mNotActivatedCount, mLockedCount, mErrorCount;
     private final String PATHNAME = Environment.getExternalStorageDirectory().getPath() + "/PogoAccountChecker";
     private final IBinder binder = new AccountCheckingServiceBinder();
     private final String LOG_TAG = getClass().getSimpleName();
@@ -79,196 +79,193 @@ public class AccountCheckingService extends Service {
         if (mChecking) stop();
     }
 
-    private LoginResult checkAccount(String account, char delimiter) {
+    public enum AccountStatus {
+        NOT_BANNED, BANNED, NEW, WRONG_CREDENTIALS, NOT_ACTIVATED, LOCKED, NOT_CHECKED
+    }
+
+    private AccountStatus checkAccount(String account, char delimiter) {
         int index = account.indexOf(delimiter);
         String username = account.substring(0, index);
         String password = account.substring(index + 1);
 
-        boolean dateOfBirthEntered = false;
-        int errorCount = 0;
+        int wrongScreenCount = 0;
+        Screen currentScreen = Screen.UNKNOWN;
 
+        // Clear app data.
+        mPogoInteractor.clearAppData();
+
+        int errorCount = 0;
         while (errorCount != 10) {
-            while (mPaused && !mStopped) {
-                Utils.sleep(2000);
+            if (!mStopped) {
+                while (mPaused) {
+                    Utils.sleep(2000);
+                }
+                mPogoInteractor.stopPogo();
+            } else {
+                return AccountStatus.NOT_CHECKED;
             }
 
-            if (!dateOfBirthEntered) {
-                // Clear app data.
-                if (!mPogoInteractor.clearAppData()) {
-                    if (mStopped) return LoginResult.INTERRUPTED;
-                    if (mPaused) continue;
-                    errorCount++;
-                    continue;
-                }
+            if (errorCount > 0) mPogoInteractor.clearAppData();
 
-                // Start Pogo.
-                if (!mPogoInteractor.startPogo()) {
-                    if (mStopped) return LoginResult.INTERRUPTED;
-                    if (mPaused) continue;
-                    errorCount++;
-                    continue;
-                }
+            // Start Pogo.
+            mPogoInteractor.startPogo();
 
-                // Check if we are on the DOB screen.
-                if (!mPogoInteractor.isOnDateOfBirthScreen(20)) {
-                    if (mStopped) return LoginResult.INTERRUPTED;
-                    if (mPaused) continue;
-                    errorCount++;
-                    continue;
-                }
-
-                // Select date of birth.
-                if (!mPogoInteractor.selectDateOfBirth()) {
-                    if (mStopped) return LoginResult.INTERRUPTED;
-                    if (mPaused) continue;
-                    errorCount++;
-                    continue;
+            while (wrongScreenCount < 20 && !mPaused && !mStopped) {
+                currentScreen = mPogoInteractor.currentScreen();
+                if (currentScreen == Screen.DATE_OF_BIRTH || currentScreen == Screen.PLAYER_SELECTION) {
+                    wrongScreenCount = 0;
+                    break;
                 } else {
-                    dateOfBirthEntered = true;
+                    wrongScreenCount++;
                 }
+            }
+
+            if (mPaused || mStopped) continue;
+
+            if (currentScreen == Screen.DATE_OF_BIRTH) {
+                mPogoInteractor.selectDateOfBirth();
+
+                if (mPaused || mStopped) continue;
 
                 // Wait while pogo transitions to the returning/new player selection screen.
                 Utils.sleep(Utils.randomWithRange(450, 550));
 
-                // Select returning player.
-                if (!mPogoInteractor.selectReturningPlayer()) {
-                    if (mStopped) return LoginResult.INTERRUPTED;
-                    if (mPaused) continue;
-                    mPogoInteractor.stopPogo();
-                    errorCount++;
-                    continue;
-                }
+                mPogoInteractor.selectReturningPlayer();
+            } else if (currentScreen == Screen.PLAYER_SELECTION) {
+                mPogoInteractor.selectReturningPlayer();
             } else {
-                // Start Pogo.
-                if (!mPogoInteractor.startPogo()) {
-                    if (mStopped) return LoginResult.INTERRUPTED;
-                    if (mPaused) continue;
-                    errorCount++;
-                    continue;
-                }
-
-                // Check if we are on the returning player selection screen.
-                if (!mPogoInteractor.isOnReturningPlayerSelection(20)) {
-                    if (mStopped) return LoginResult.INTERRUPTED;
-                    if (mPaused) continue;
-                    dateOfBirthEntered = false; // DOB might not be entered.
-                    mPogoInteractor.stopPogo();
-                    errorCount++;
-                    continue;
-                }
-
-                // Select returning player.
-                if (!mPogoInteractor.selectReturningPlayer()) {
-                    if (mStopped) return LoginResult.INTERRUPTED;
-                    if (mPaused) continue;
-                    mPogoInteractor.stopPogo();
-                    errorCount++;
-                    continue;
-                }
+                errorCount++;
+                mPogoInteractor.stopPogo();
+                continue;
             }
+
+            if (mPaused || mStopped) continue;
 
             // Wait while pogo transitions to the account type selection screen.
             Utils.sleep(Utils.randomWithRange(450, 550));
 
             // Select PTC.
-            if (!mPogoInteractor.selectPTC()) {
-                if (mStopped) return LoginResult.INTERRUPTED;
-                if (mPaused) continue;
-                mPogoInteractor.stopPogo();
-                errorCount++;
-                continue;
-            }
+            mPogoInteractor.selectPTC();
+
+            if (mPaused || mStopped) continue;
 
             // Wait while pogo transitions to login screen.
             Utils.sleep(Utils.randomWithRange(450, 550));
 
             // Login.
-            if (!mPogoInteractor.login(username, password)) {
-                if (mStopped) return LoginResult.INTERRUPTED;
-                if (mPaused) continue;
-                mPogoInteractor.stopPogo();
-                errorCount++;
-                continue;
+            mPogoInteractor.login(username, password);
+
+            if (mPaused || mStopped) continue;
+
+            while (wrongScreenCount < 20 && !mPaused && !mStopped) {
+                currentScreen = mPogoInteractor.currentScreen();
+                if (currentScreen != Screen.LOGIN && currentScreen != Screen.UNKNOWN) {
+                    wrongScreenCount = 0;
+                    break;
+                } else {
+                    wrongScreenCount++;
+                }
             }
 
-            LoginResult loginResult = mPogoInteractor.getLoginResult(20);
+            if (mPaused || mStopped) continue;
 
-            if (loginResult == LoginResult.NOT_BANNED) {
-                Log.i(LOG_TAG, "Account " + account + " is not banned.");
-                mNotBannedCount++;
-                Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt");
-                return LoginResult.NOT_BANNED;
-            } else if (loginResult == LoginResult.BANNED) {
-                Log.i(LOG_TAG, "Account " + account + " is banned.");
-                mBannedCount++;
-                Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/banned.txt");
-                return LoginResult.BANNED;
-            } else if (loginResult == LoginResult.WRONG_CREDENTIALS) {
-                Log.i(LOG_TAG, "Account " + account + " does not exist or the credentials are wrong.");
-                mWrongCredentialsCount++;
-                Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/wrong_credentials.txt");
-                return LoginResult.WRONG_CREDENTIALS;
-            } else if (loginResult == LoginResult.NOT_ACTIVATED) {
-                Log.i(LOG_TAG, "Account " + account + " is not activated.");
-                mNotActivatedCount++;
-                Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_activated.txt");
-                return LoginResult.NOT_ACTIVATED;
-            } else if (loginResult == LoginResult.LOCKED) {
-                Log.i(LOG_TAG, "Account " + account + " is locked.");
-                mLockedCount++;
-                Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/locked.txt");
-                return LoginResult.LOCKED;
-            } else if (loginResult == LoginResult.ERROR) {
-                Log.e(LOG_TAG, "Error when trying to detect login result for account " + account + ".");
-                mPogoInteractor.stopPogo();
-                errorCount++;
-            } else if (loginResult == LoginResult.INTERRUPTED) {
-                if (mStopped) return LoginResult.INTERRUPTED;
+            switch(currentScreen) {
+                case LOADING:
+                    Utils.sleep(Utils.randomWithRange(450, 550));
+
+                    // Check another time, because the loading screen is shortly visible before the banned screen.
+                    currentScreen = mPogoInteractor.currentScreen();
+                    if (currentScreen == Screen.LOADING) {
+                        mNotBannedCount++;
+                        Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt");
+                        Log.i(LOG_TAG, "Account " + account + " is not banned.");
+                        return AccountStatus.NOT_BANNED;
+                    }
+
+                case ACCOUNT_BANNED:
+                    mBannedCount++;
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/banned.txt");
+                    Log.i(LOG_TAG, "Account " + account + " is banned.");
+                    return AccountStatus.BANNED;
+
+                case ACCOUNT_NEW:
+                    mNewCount++;
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/new.txt");
+                    Log.i(LOG_TAG, "Account " + account + " is a new account.");
+                    return AccountStatus.NEW;
+
+                case ACCOUNT_WRONG_CREDENTIALS:
+                    mWrongCredentialsCount++;
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/wrong_credentials.txt");
+                    Log.i(LOG_TAG, "Account " + account + " does not exist or its credentials are wrong.");
+                    return AccountStatus.WRONG_CREDENTIALS;
+
+                case ACCOUNT_NOT_ACTIVATED:
+                    mNotActivatedCount++;
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_activated.txt");
+                    Log.i(LOG_TAG, "Account " + account + " is not activated.");
+                    return AccountStatus.NOT_ACTIVATED;
+
+                case ACCOUNT_LOCKED:
+                    mLockedCount++;
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/locked.txt");
+                    Log.i(LOG_TAG, "Account " + account + " is locked.");
+                    return AccountStatus.LOCKED;
+
+                default:
+                    errorCount++;
+                    mPogoInteractor.stopPogo();
+                    Log.e(LOG_TAG, "Couldn't detect status of account " + account + ".");
             }
         }
 
         mErrorCount++;
         Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/error.txt");
-        Log.e(LOG_TAG, "Error limit reached. Wrote account " + account + " to error.txt.");
-        return LoginResult.ERROR;
+        Log.e(LOG_TAG, "Error limit reached for account " + account + ".");
+        return AccountStatus.NOT_CHECKED;
     }
 
     public void checkAccounts(final List<String> accounts, final char delimiter) {
         if (mChecking) return;
 
+        mPogoInteractor.resume();
+
+        mPaused = mStopped = false;
+        mChecking = true;
+
+        mNotBannedCount = mBannedCount = mNewCount = mWrongCredentialsCount = mNotActivatedCount = mLockedCount = mErrorCount = 0;
+        mAccountCount = accounts.size();
+
         // Make sure service is not killed when clients unbind.
         Intent intent = new Intent(this, AccountCheckingService.class);
         startService(intent);
 
-        mPaused = mStopped = false;
-        mChecking = true;
-        mNotBannedCount = mBannedCount = mWrongCredentialsCount = mNotActivatedCount = mLockedCount = mErrorCount = 0;
-        mPogoInteractor.resume();
-
-        mAccountCount = accounts.size();
-
         startForeground(CHECKING_NOTIFICATION_ID, mNotificationBuilderChecking.build());
         updateCheckingNotificationText("Checked: 0/" + mAccountCount);
 
-        if (!Shell.runSuCommand("mkdir " + PATHNAME)) {
-            Log.e(LOG_TAG, "Couldn't create folder, aborting program!");
-            System.exit(0);
-        }
+        // Create PogoAccountChecker folder.
+        Shell.runSuCommand("mkdir " + PATHNAME);
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 for (int i=0; i<mAccountCount; i++) {
-                    LoginResult result = checkAccount(accounts.get(i), delimiter);
-                    if (result == LoginResult.INTERRUPTED) return;
+                    checkAccount(accounts.get(i), delimiter);
+
+                    if (mStopped) return;
+
                     updateCheckingNotificationText("Checked: " + getCheckedCount() + "/" + mAccountCount);
                 }
 
                 mChecking = false;
+
                 stopForeground(true);
+
                 startResultActivity();
                 showFinishedNotification("Account checking finished", getStats());
+
                 mPogoInteractor.cleanUp();
+
                 Log.i(LOG_TAG, "Account checking finished. " + getStats());
             }
         }).start();
@@ -324,17 +321,18 @@ public class AccountCheckingService extends Service {
     }
 
     private void showFinishedNotification(String title, String text) {
-        Intent resultIntent = new Intent(this, ResultActivity.class);
-        resultIntent.putExtra("accountCount", mAccountCount);
-        resultIntent.putExtra("notBannedCount", mNotBannedCount);
-        resultIntent.putExtra("bannedCount", mBannedCount);
-        resultIntent.putExtra("wrongCredentialsCount", mWrongCredentialsCount);
-        resultIntent.putExtra("notActivatedCount", mNotActivatedCount);
-        resultIntent.putExtra("lockedCount", mLockedCount);
-        resultIntent.putExtra("errorCount", mErrorCount);
-        resultIntent.putExtra("stopped", mStopped);
+        Intent intent = new Intent(this, ResultActivity.class);
+        intent.putExtra("accountCount", mAccountCount);
+        intent.putExtra("notBannedCount", mNotBannedCount);
+        intent.putExtra("bannedCount", mBannedCount);
+        intent.putExtra("newCount", mNewCount);
+        intent.putExtra("wrongCredentialsCount", mWrongCredentialsCount);
+        intent.putExtra("notActivatedCount", mNotActivatedCount);
+        intent.putExtra("lockedCount", mLockedCount);
+        intent.putExtra("errorCount", mErrorCount);
+        intent.putExtra("stopped", mStopped);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addNextIntentWithParentStack(resultIntent);
+        stackBuilder.addNextIntentWithParentStack(intent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
@@ -354,6 +352,7 @@ public class AccountCheckingService extends Service {
         intent.putExtra("accountCount", mAccountCount);
         intent.putExtra("notBannedCount", mNotBannedCount);
         intent.putExtra("bannedCount", mBannedCount);
+        intent.putExtra("newCount", mNewCount);
         intent.putExtra("wrongCredentialsCount", mWrongCredentialsCount);
         intent.putExtra("notActivatedCount", mNotActivatedCount);
         intent.putExtra("lockedCount", mLockedCount);
@@ -367,31 +366,41 @@ public class AccountCheckingService extends Service {
     }
 
     private int getCheckedCount() {
-        return mNotBannedCount + mBannedCount + mWrongCredentialsCount + mNotActivatedCount + mLockedCount + mErrorCount;
+        return mNotBannedCount + mBannedCount + mNewCount + mWrongCredentialsCount + mNotActivatedCount + mLockedCount + mErrorCount;
     }
 
     private String getStats() {
         String stats = "";
+
         if (mNotBannedCount > 0) {
             stats += "not banned: " + mNotBannedCount + ", ";
         }
+
         if (mBannedCount > 0) {
             stats += "banned: " + mBannedCount + ", ";
         }
+
+        if (mNewCount > 0) {
+            stats += "new: " + mNewCount + ", ";
+        }
+
         if (mWrongCredentialsCount > 0) {
             stats += "wrong un/pass: " + mWrongCredentialsCount + ", ";
         }
+
         if (mNotActivatedCount > 0) {
             stats += "not activated: " + mNotActivatedCount + ", ";
         }
+
         if (mLockedCount > 0) {
             stats += "locked: " + mLockedCount + ", ";
         }
+
         if (mErrorCount > 0) {
             stats += "couldn't be checked: " + mErrorCount + "  ";
         }
 
-        int checkedCount = mNotBannedCount + mBannedCount + mWrongCredentialsCount + mNotActivatedCount + mLockedCount + mErrorCount;
+        int checkedCount = getCheckedCount();
 
         if (stats.isEmpty()) {
             return "Checked: " + checkedCount + "/" + mAccountCount;

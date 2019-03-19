@@ -74,7 +74,7 @@ public class TextInImageRecognizer {
         try {
             if (mDetector != null) mDetector.close();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Exception when closing detector.");
+            Log.e(LOG_TAG, "Exception while closing detector.");
             e.printStackTrace();
         }
     }

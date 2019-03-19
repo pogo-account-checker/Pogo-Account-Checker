@@ -9,24 +9,24 @@ public class Shell {
     private Shell() {
     }
 
-    public static boolean runSuCommand(String command) {
+    public static void runSuCommand(String command) {
         command = command.concat("\n");
         Process process;
         OutputStream stdin;
         try {
             process = Runtime.getRuntime().exec("su");
+
             stdin = process.getOutputStream();
             stdin.write(command.getBytes());
             stdin.write("exit\n".getBytes());
             stdin.flush();
             stdin.close();
+
             process.waitFor();
+            process.destroy();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-            Log.e("Shell", "Exception when executing command: " + command);
-            return false;
+            Log.e("Shell", "Exception while executing command: " + command);
         }
-        process.destroy();
-        return true;
     }
 }
