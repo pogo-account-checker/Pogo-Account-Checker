@@ -5,6 +5,8 @@
     <string name="title_activity_result">ResultActivity</string>
 
     <string name="selected_delimiter_pref_key">selected_delimiter_pref_key</string>
+    <string name="with_mad_pref_key">with_mad_pref_key</string>
+    <string name="webSocket_uri_pref_key">webSocket_uri_pref_key</string>
 
     <string-array name="delimiters">
         <item>,</item>

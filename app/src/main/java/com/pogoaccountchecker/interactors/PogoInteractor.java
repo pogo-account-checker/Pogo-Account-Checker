@@ -54,24 +54,20 @@ public class PogoInteractor {
         if (visionText == null) return Screen.UNKNOWN;
         String text = visionText.getText().toLowerCase();
 
-        if (text.contains("check") || text.contains("exists") || text.contains("correctly")) {
-            return Screen.ACCOUNT_NEW;
+        if (text.contains("username") && text.contains("sign") && text.contains("forgot")) {
+            return Screen.LOGIN;
         }
 
-        if (text.contains("date") || text.contains("birth") || text.contains("submit")) {
-            return Screen.DATE_OF_BIRTH;
+        if (text.contains("check") || text.contains("exists") || text.contains("correctly")) {
+            return Screen.ACCOUNT_NEW;
         }
 
         if (text.contains("returning") || text.contains("player") || text.contains("new")) {
             return Screen.PLAYER_SELECTION;
         }
 
-        if (text.contains("username") && text.contains("sign") && text.contains("forgot")) {
-            return Screen.LOGIN;
-        }
-
-        if (text.contains("remember") || text.contains("alert") || text.contains("surroundings")) {
-            return Screen.LOADING;
+        if (text.contains("date") || text.contains("birth") || text.contains("submit")) {
+            return Screen.DATE_OF_BIRTH;
         }
 
         if (text.contains("termination") || text.contains("permanently") || text.contains("violating")) {
@@ -82,16 +78,20 @@ public class PogoInteractor {
             return Screen.ACCOUNT_WRONG_CREDENTIALS;
         }
 
+        if (text.contains("remember") || text.contains("alert") || text.contains("surroundings")) {
+            return Screen.LOADING;
+        }
+
+        if (text.contains("authenticate") || text.contains("again")) {
+            return Screen.NOT_AUTHENTICATE;
+        }
+
         if (text.contains("activate") || text.contains("order") || text.contains("play")) {
             return Screen.ACCOUNT_NOT_ACTIVATED;
         }
 
         if (text.contains("security") || text.contains("regain") || text.contains("questions")) {
             return Screen.ACCOUNT_LOCKED;
-        }
-
-        if (text.contains("authenticate") || text.contains("again")) {
-            return Screen.NOT_AUTHENTICATE;
         }
 
         return Screen.UNKNOWN;
@@ -219,7 +219,7 @@ public class PogoInteractor {
         mScreenInteractor.resume();
     }
 
-    public void cleanUp() {
+    public void cleanUp(boolean clearAppData) {
         clearAppData();
         mScreenReady = false;
         mScreenInteractor.cleanUp();
