@@ -21,16 +21,20 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.pogoaccountchecker.services.AccountCheckingService;
 import com.pogoaccountchecker.R;
-import com.stericson.RootShell.RootShell;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Spinner mDelimiterSpinner;
     private AccountCheckingService mService;
     private boolean mBound;
+    private boolean mWithMad;
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     private static final int READ_REQUEST_CODE = 1;
 
@@ -51,17 +56,70 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mDelimiterSpinner = findViewById(R.id.spinner);
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        mDelimiterSpinner = findViewById(R.id.delimiterSpinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.delimiters, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         mDelimiterSpinner.setAdapter(adapter);
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         int selectedItem = sharedPref.getInt(getString(R.string.selected_delimiter_pref_key), 0);
         mDelimiterSpinner.setSelection(selectedItem, false);
         mDelimiterSpinner.setOnItemSelectedListener(this);
+
+        mWithMad = sharedPref.getBoolean(getString(R.string.with_mad_pref_key), false);
+
+        final Button accountsButton = findViewById(R.id.accountsButton);
+        if (mWithMad) {
+            accountsButton.setVisibility(View.GONE);
+        }
+
+        final EditText webSocketEditText = findViewById(R.id.webSocketEditText);
+        if (!mWithMad) {
+            webSocketEditText.setVisibility(View.GONE);
+        }
+        String webSocketUri = sharedPref.getString(getString(R.string.webSocket_uri_pref_key), null);
+        if (webSocketUri != null) {
+            webSocketEditText.setText(webSocketUri);
+        }
+        webSocketEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(getString(R.string.webSocket_uri_pref_key), s.toString());
+                editor.apply();
+            }
+        });
+
+        Switch madSwitch = findViewById(R.id.madSwitch);
+        madSwitch.setChecked(mWithMad);
+        madSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mWithMad = isChecked;
+                if (mWithMad) {
+                    webSocketEditText.setVisibility(View.VISIBLE);
+                    accountsButton.setVisibility(View.GONE);
+                } else {
+                    webSocketEditText.setVisibility(View.GONE);
+                    accountsButton.setVisibility(View.VISIBLE);
+                }
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putBoolean(getString(R.string.with_mad_pref_key), mWithMad);
+                editor.apply();
+            }
+        });
     }
 
     @Override
@@ -84,22 +142,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      * @param view the View that was clicked.
      */
     public void startPauseContinue(View view) {
-        if (RootShell.isAccessGiven()) {
-            Button startPauseContinueButton = findViewById(R.id.startPauseContinueButton);
+        //if (RootShell.isAccessGiven()) {
             if (mBound) {
+                char delimiter = ((String) mDelimiterSpinner.getSelectedItem()).charAt(0);
+                Button startPauseContinueButton = findViewById(R.id.startPauseContinueButton);
+
                 if (!mService.isChecking()) {
-                    if (mAccounts != null) {
-                        if (accountsHaveDelimiter()) {
-                            char delimiter = ((String) mDelimiterSpinner.getSelectedItem()).charAt(0);
-                            mService.checkAccounts(mAccounts, delimiter);
-                            startPauseContinueButton.setText("Pause");
-                            Button stopButton = findViewById(R.id.stop);
-                            stopButton.setVisibility(View.VISIBLE);
+                    if (mWithMad) {
+                        EditText webSocketEditText = findViewById(R.id.webSocketEditText);
+                        String webSocketUri = webSocketEditText.getText().toString();
+                        if (!webSocketUri.isEmpty()) {
+                            mService.checkAccountsWithMAD(webSocketUri, delimiter);
                         } else {
-                            Toast.makeText(this, "There is something wrong with your accounts file!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, "Enter a WebSocket URI first!", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(this, "Select TXT file with accounts first!", Toast.LENGTH_SHORT).show();
+                        if (mAccounts != null) {
+                            if (accountsHaveDelimiter()) {
+                                mService.checkAccounts(mAccounts, delimiter);
+                                startPauseContinueButton.setText("Pause");
+                                Button stopButton = findViewById(R.id.stopButton);
+                                stopButton.setVisibility(View.VISIBLE);
+                            } else {
+                                Toast.makeText(this, "There is something wrong with your accounts file!", Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            Toast.makeText(this, "Select TXT file with accounts first!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 } else {
                     if (mService.isPaused()) {
@@ -111,9 +180,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     }
                 }
             }
-        } else {
+        /*} else {
             Toast.makeText(this, "No root access!", Toast.LENGTH_SHORT).show();
-        }
+        }*/
     }
 
     /**
@@ -193,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 returnCursor.moveToFirst();
                 String fileName = returnCursor.getString(nameIndex);
                 returnCursor.close();
-                Button accountsButton = findViewById(R.id.accounts);
+                Button accountsButton = findViewById(R.id.accountsButton);
                 accountsButton.setText(fileName);
 
                 try {
@@ -255,7 +324,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             } else {
                 startPauseContinueButton.setText("Start");
-                Button stopButton = findViewById(R.id.stop);
+                Button stopButton = findViewById(R.id.stopButton);
                 stopButton.setVisibility(View.GONE);
             }
         }

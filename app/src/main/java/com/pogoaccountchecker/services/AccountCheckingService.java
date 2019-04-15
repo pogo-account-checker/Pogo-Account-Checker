@@ -10,6 +10,7 @@ import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.pogoaccountchecker.R;
 import com.pogoaccountchecker.activities.MainActivity;
@@ -18,6 +19,7 @@ import com.pogoaccountchecker.interactors.PogoInteractor;
 import com.pogoaccountchecker.interactors.PogoInteractor.Screen;
 import com.pogoaccountchecker.utils.Shell;
 import com.pogoaccountchecker.utils.Utils;
+import com.pogoaccountchecker.websocket.MadWebSocket;
 
 import java.util.List;
 
@@ -27,10 +29,12 @@ import androidx.core.app.TaskStackBuilder;
 
 import static com.pogoaccountchecker.App.NOTIFICATION_CHANNEL_ID;
 
-public class AccountCheckingService extends Service {
+public class AccountCheckingService extends Service implements MadWebSocket.OnWebSocketEventListener {
     private PogoInteractor mPogoInteractor;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilderChecking;
+    private MadWebSocket mWebSocket;
+    private char mDelimiter;
     private volatile boolean mChecking, mPaused, mStopped;
     private int mAccountCount;
     private int mNotBannedCount, mBannedCount, mNewCount, mWrongCredentialsCount, mNotActivatedCount, mLockedCount, mErrorCount;
@@ -77,6 +81,72 @@ public class AccountCheckingService extends Service {
     @Override
     public void onDestroy() {
         if (mChecking) stop();
+    }
+
+    @Override
+    public void onConnected() {
+        // Make sure service is not killed when client unbinds.
+        initialize();
+    }
+
+    @Override
+    public void onNotConnected() {
+        Toast.makeText(AccountCheckingService.this, "Couldn't connect to MAD server.", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onDisconnected(boolean closedByServer) {
+
+    }
+
+    @Override
+    public void onMessageReceived(final String message) {
+        if (message.contains("account_count") && !message.contains(String.valueOf(mDelimiter))) {
+            mAccountCount = Integer.parseInt(message.substring("account_count ".length()));
+            updateCheckingNotificationText("Checked: 0/" + mAccountCount);
+        } else if (message.contains("finished") && !message.contains(String.valueOf(mDelimiter))) {
+            mChecking = false;
+            stopForeground(true);
+            showFinishedNotification("Account checking finished", getStats());
+
+            if (message.contains("true")) {
+                startResultActivity();
+                mPogoInteractor.cleanUp(true);
+            } else if (message.contains("false")) {
+                mPogoInteractor.cleanUp(false);
+            }
+        } else if (message.contains(String.valueOf(mDelimiter))) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    AccountStatus status = checkAccount(message, mDelimiter);
+                    switch (status) {
+                        case NOT_BANNED:
+                            mWebSocket.sendMessage("not_banned");
+                            break;
+                        case BANNED:
+                            mWebSocket.sendMessage("banned");
+                            break;
+                        case NEW:
+                            mWebSocket.sendMessage("new");
+                            break;
+                        case WRONG_CREDENTIALS:
+                            mWebSocket.sendMessage("wrong_credentials");
+                            break;
+                        case NOT_ACTIVATED:
+                            mWebSocket.sendMessage("not_activated");
+                            break;
+                        case LOCKED:
+                            mWebSocket.sendMessage("locked");
+                            break;
+                        default:
+                            mWebSocket.sendMessage("not_checked");
+                    }
+                }
+            }).start();
+        } else {
+            Shell.runSuCommand("echo '" + message + "' >> " + PATHNAME + "/error.txt");
+        }
     }
 
     public enum AccountStatus {
@@ -181,37 +251,31 @@ public class AccountCheckingService extends Service {
                         Log.i(LOG_TAG, "Account " + account + " is not banned.");
                         return AccountStatus.NOT_BANNED;
                     }
-
                 case ACCOUNT_BANNED:
                     mBannedCount++;
                     Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/banned.txt");
                     Log.i(LOG_TAG, "Account " + account + " is banned.");
                     return AccountStatus.BANNED;
-
                 case ACCOUNT_NEW:
                     mNewCount++;
                     Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/new.txt");
                     Log.i(LOG_TAG, "Account " + account + " is a new account.");
                     return AccountStatus.NEW;
-
                 case ACCOUNT_WRONG_CREDENTIALS:
                     mWrongCredentialsCount++;
                     Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/wrong_credentials.txt");
                     Log.i(LOG_TAG, "Account " + account + " does not exist or its credentials are wrong.");
                     return AccountStatus.WRONG_CREDENTIALS;
-
                 case ACCOUNT_NOT_ACTIVATED:
                     mNotActivatedCount++;
                     Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_activated.txt");
                     Log.i(LOG_TAG, "Account " + account + " is not activated.");
                     return AccountStatus.NOT_ACTIVATED;
-
                 case ACCOUNT_LOCKED:
                     mLockedCount++;
                     Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/locked.txt");
                     Log.i(LOG_TAG, "Account " + account + " is locked.");
                     return AccountStatus.LOCKED;
-
                 default:
                     errorCount++;
                     mPogoInteractor.stopPogo();
@@ -225,18 +289,15 @@ public class AccountCheckingService extends Service {
         return AccountStatus.NOT_CHECKED;
     }
 
-    public void checkAccounts(final List<String> accounts, final char delimiter) {
-        if (mChecking) return;
-
+    private void initialize() {
         mPogoInteractor.resume();
 
         mPaused = mStopped = false;
         mChecking = true;
 
         mNotBannedCount = mBannedCount = mNewCount = mWrongCredentialsCount = mNotActivatedCount = mLockedCount = mErrorCount = 0;
-        mAccountCount = accounts.size();
 
-        // Make sure service is not killed when clients unbind.
+        // Make sure service is not killed when client unbinds.
         Intent intent = new Intent(this, AccountCheckingService.class);
         startService(intent);
 
@@ -245,6 +306,13 @@ public class AccountCheckingService extends Service {
 
         // Create PogoAccountChecker folder.
         Shell.runSuCommand("mkdir " + PATHNAME);
+    }
+
+    public void checkAccounts(final List<String> accounts, final char delimiter) {
+        if (mChecking) return;
+
+        mAccountCount = accounts.size();
+        initialize();
 
         new Thread(new Runnable() {
             @Override
@@ -264,11 +332,20 @@ public class AccountCheckingService extends Service {
                 startResultActivity();
                 showFinishedNotification("Account checking finished", getStats());
 
-                mPogoInteractor.cleanUp();
+                mPogoInteractor.cleanUp(true);
 
                 Log.i(LOG_TAG, "Account checking finished. " + getStats());
             }
         }).start();
+    }
+
+    public void checkAccountsWithMAD(final String webSocketUri, final char delimiter) {
+        if (mChecking) return;
+
+        mDelimiter = delimiter;
+
+        mWebSocket = new MadWebSocket(webSocketUri);
+        mWebSocket.start(this);
     }
 
     public void pause() {
@@ -295,7 +372,7 @@ public class AccountCheckingService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mPogoInteractor.cleanUp();
+                mPogoInteractor.cleanUp(true);
             }
         }).start();
     }
