@@ -37,9 +37,9 @@ public class ResultActivity extends AppCompatActivity {
                 + "Not banned: " + notBannedCount + "\n"
                 + "Banned: " + bannedCount + "\n"
                 + "New: " + newCount + "\n"
-                + "Wrong username/password: " + wrongCredentialsCount + "\n"
                 + "Not activated: " + notActivatedCount + "\n"
                 + "Locked: " + lockedCount + "\n"
+                + "Wrong username/password: " + wrongCredentialsCount + "\n"
                 + "Couldn't be checked: " + errorCount + "\n");
     }
 }
