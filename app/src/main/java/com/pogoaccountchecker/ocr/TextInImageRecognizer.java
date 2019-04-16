@@ -44,7 +44,7 @@ public class TextInImageRecognizer {
                         .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
                             @Override
                             public void onSuccess(FirebaseVisionText firebaseVisionText) {
-                                Log.i(LOG_TAG, "Text recognition completed successfully. Detected: " + firebaseVisionText.getText());
+                                Log.d(LOG_TAG, "Text recognition completed successfully. Detected: \n" + firebaseVisionText.getText());
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {

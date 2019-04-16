@@ -85,7 +85,6 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
 
     @Override
     public void onConnected() {
-        // Make sure service is not killed when client unbinds.
         initialize();
     }
 
@@ -150,7 +149,7 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
     }
 
     public enum AccountStatus {
-        NOT_BANNED, BANNED, NEW, NOT_ACTIVATED, LOCKED, WRONG_CREDENTIALS, NOT_CHECKED
+        BANNED, NOT_BANNED, WRONG_CREDENTIALS, NEW, NOT_ACTIVATED, LOCKED, NOT_CHECKED
     }
 
     private AccountStatus checkAccount(String account, char delimiter) {
@@ -240,6 +239,11 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
             if (mPaused || mStopped) continue;
 
             switch(currentScreen) {
+                case ACCOUNT_BANNED:
+                    mBannedCount++;
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/banned.txt");
+                    Log.i(LOG_TAG, "Account " + account + " is banned.");
+                    return AccountStatus.BANNED;
                 case LOADING:
                     Utils.sleep(Utils.randomWithRange(450, 550));
 
@@ -251,11 +255,11 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
                         Log.i(LOG_TAG, "Account " + account + " is not banned.");
                         return AccountStatus.NOT_BANNED;
                     }
-                case ACCOUNT_BANNED:
-                    mBannedCount++;
-                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/banned.txt");
-                    Log.i(LOG_TAG, "Account " + account + " is banned.");
-                    return AccountStatus.BANNED;
+                case ACCOUNT_WRONG_CREDENTIALS:
+                    mWrongCredentialsCount++;
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/wrong_credentials.txt");
+                    Log.i(LOG_TAG, "Account " + account + " does not exist or its credentials are wrong.");
+                    return AccountStatus.WRONG_CREDENTIALS;
                 case ACCOUNT_NEW:
                     mNewCount++;
                     Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/new.txt");
@@ -271,11 +275,6 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
                     Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/locked.txt");
                     Log.i(LOG_TAG, "Account " + account + " is locked.");
                     return AccountStatus.LOCKED;
-                case ACCOUNT_WRONG_CREDENTIALS:
-                    mWrongCredentialsCount++;
-                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/wrong_credentials.txt");
-                    Log.i(LOG_TAG, "Account " + account + " does not exist or its credentials are wrong.");
-                    return AccountStatus.WRONG_CREDENTIALS;
                 default:
                     errorCount++;
                     mPogoInteractor.stopPogo();
@@ -352,12 +351,14 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
         mPaused = true;
         mPogoInteractor.interrupt();
         updateCheckingNotificationTitle("Account checking paused");
+        Log.i(LOG_TAG, "Account checking paused.");
     }
 
     public void resume() {
         mPaused = false;
         mPogoInteractor.resume();
         updateCheckingNotificationTitle("Checking accounts…");
+        Log.i(LOG_TAG, "Account checking resumed.");
     }
 
     public void stop() {
@@ -375,6 +376,8 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
                 mPogoInteractor.cleanUp(true);
             }
         }).start();
+
+        Log.i(LOG_TAG, "Account checking stopped. " + getStats());
     }
 
     public boolean isChecking() {
