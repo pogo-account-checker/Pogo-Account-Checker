@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.pogoaccountchecker.services.AccountCheckingService;
 import com.pogoaccountchecker.R;
+import com.stericson.RootShell.RootShell;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      * @param view the View that was clicked.
      */
     public void startPauseContinue(View view) {
-        //if (RootShell.isAccessGiven()) {
+        if (RootShell.isAccessGiven()) {
             if (mBound) {
                 char delimiter = ((String) mDelimiterSpinner.getSelectedItem()).charAt(0);
                 Button startPauseContinueButton = findViewById(R.id.startPauseContinueButton);
@@ -180,9 +181,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     }
                 }
             }
-        /*} else {
+        } else {
             Toast.makeText(this, "No root access!", Toast.LENGTH_SHORT).show();
-        }*/
+        }
     }
 
     /**
@@ -250,6 +251,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        super.onActivityResult(requestCode, resultCode, resultData);
+
         if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             Uri uri;
             if (resultData != null) {
@@ -280,7 +283,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mAccounts = new ArrayList<>();
         String line;
         while ((line = reader.readLine()) != null) {
-            mAccounts.add(line.replace("\n", ""));
+            // Remove white space characters from account and add account to account list.
+            mAccounts.add(line.replaceAll("\\s", ""));
         }
         inputStream.close();
         reader.close();

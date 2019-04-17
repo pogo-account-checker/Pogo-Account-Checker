@@ -85,7 +85,6 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
 
     @Override
     public void onConnected() {
-        // Make sure service is not killed when client unbinds.
         initialize();
     }
 
@@ -150,16 +149,14 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
     }
 
     public enum AccountStatus {
-        NOT_BANNED, BANNED, NEW, NOT_ACTIVATED, LOCKED, WRONG_CREDENTIALS, NOT_CHECKED
+        BANNED, NOT_BANNED, WRONG_CREDENTIALS, NEW, NOT_ACTIVATED, LOCKED, NOT_CHECKED
     }
 
     private AccountStatus checkAccount(String account, char delimiter) {
         int index = account.indexOf(delimiter);
         String username = account.substring(0, index);
         String password = account.substring(index + 1);
-
-        int wrongScreenCount = 0;
-        Screen currentScreen = Screen.UNKNOWN;
+        Log.i(LOG_TAG, "Checking account " + username + ".");
 
         // Clear app data.
         mPogoInteractor.clearAppData();
@@ -167,125 +164,129 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
         int errorCount = 0;
         while (errorCount != 10) {
             if (!mStopped) {
-                while (mPaused) {
-                    Utils.sleep(2000);
+                if (mPaused) {
+                    mPogoInteractor.stopPogo();
+                    while (mPaused) {
+                        Utils.sleep(2000);
+                    }
                 }
-                mPogoInteractor.stopPogo();
             } else {
                 return AccountStatus.NOT_CHECKED;
             }
 
-            if (errorCount > 0) mPogoInteractor.clearAppData();
-
             // Start Pogo.
             mPogoInteractor.startPogo();
+            if (mPaused || mStopped) continue;
 
+            Screen currentScreen = Screen.UNKNOWN;
+            int wrongScreenCount = 0;
             while (wrongScreenCount < 20 && !mPaused && !mStopped) {
                 currentScreen = mPogoInteractor.currentScreen();
-                if (currentScreen == Screen.DATE_OF_BIRTH || currentScreen == Screen.PLAYER_SELECTION) {
-                    wrongScreenCount = 0;
+                if (currentScreen == Screen.DATE_OF_BIRTH || currentScreen == Screen.PLAYER_SELECTION || currentScreen == Screen.LOGIN_FAILED || currentScreen == Screen.LOADING) {
                     break;
                 } else {
+                    Log.i(LOG_TAG, "Not on date of birth or player selection screen.");
                     wrongScreenCount++;
                 }
             }
-
             if (mPaused || mStopped) continue;
 
             if (currentScreen == Screen.DATE_OF_BIRTH) {
                 mPogoInteractor.selectDateOfBirth();
-
                 if (mPaused || mStopped) continue;
 
                 // Wait while pogo transitions to the returning/new player selection screen.
-                Utils.sleep(Utils.randomWithRange(450, 550));
-
-                mPogoInteractor.selectReturningPlayer();
-            } else if (currentScreen == Screen.PLAYER_SELECTION) {
-                mPogoInteractor.selectReturningPlayer();
-            } else {
+                Utils.sleepRandom(450, 550);
+                if (mPaused || mStopped) continue;
+            } else if (currentScreen == Screen.LOGIN_FAILED || currentScreen == Screen.LOADING) {
+                mPogoInteractor.clearAppData();
+                continue;
+            } else if (currentScreen != Screen.PLAYER_SELECTION) {
+                Log.e(LOG_TAG, "Date of birth or player selection screen not detected after 20 attempts. Trying again.");
                 errorCount++;
                 mPogoInteractor.stopPogo();
                 continue;
             }
 
+            mPogoInteractor.selectReturningPlayer();
             if (mPaused || mStopped) continue;
 
             // Wait while pogo transitions to the account type selection screen.
-            Utils.sleep(Utils.randomWithRange(450, 550));
+            Utils.sleepRandom(450, 550);
+            if (mPaused || mStopped) continue;
 
             // Select PTC.
             mPogoInteractor.selectPTC();
-
             if (mPaused || mStopped) continue;
 
             // Wait while pogo transitions to login screen.
-            Utils.sleep(Utils.randomWithRange(450, 550));
+            Utils.sleepRandom(450, 550);
+            if (mPaused || mStopped) continue;
 
             // Login.
             mPogoInteractor.login(username, password);
-
             if (mPaused || mStopped) continue;
 
+            wrongScreenCount = 0;
             while (wrongScreenCount < 20 && !mPaused && !mStopped) {
                 currentScreen = mPogoInteractor.currentScreen();
                 if (currentScreen != Screen.LOGIN && currentScreen != Screen.UNKNOWN) {
-                    wrongScreenCount = 0;
                     break;
                 } else {
+                    Log.i(LOG_TAG, "Account is not yet logged in.");
                     wrongScreenCount++;
                 }
             }
-
             if (mPaused || mStopped) continue;
 
             switch(currentScreen) {
+                case ACCOUNT_BANNED:
+                    Log.i(LOG_TAG, "Account " + username + " is banned.");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/banned.txt.");
+                    mBannedCount++;
+                    return AccountStatus.BANNED;
                 case LOADING:
-                    Utils.sleep(Utils.randomWithRange(450, 550));
+                    Utils.sleepRandom(950, 1050);
+                    if (mPaused || mStopped) continue;
 
                     // Check another time, because the loading screen is shortly visible before the banned screen.
                     currentScreen = mPogoInteractor.currentScreen();
                     if (currentScreen == Screen.LOADING) {
+                        Log.i(LOG_TAG, "Account " + username + " is not banned.");
+                        Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt.");
                         mNotBannedCount++;
-                        Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt");
-                        Log.i(LOG_TAG, "Account " + account + " is not banned.");
                         return AccountStatus.NOT_BANNED;
                     }
-                case ACCOUNT_BANNED:
-                    mBannedCount++;
-                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/banned.txt");
-                    Log.i(LOG_TAG, "Account " + account + " is banned.");
-                    return AccountStatus.BANNED;
+                case ACCOUNT_WRONG_CREDENTIALS:
+                    Log.i(LOG_TAG, "Account " + username + " does not exist or its credentials are wrong.");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/wrong_credentials.txt.");
+                    mWrongCredentialsCount++;
+                    return AccountStatus.WRONG_CREDENTIALS;
                 case ACCOUNT_NEW:
+                    Log.i(LOG_TAG, "Account " + username + " is a new account.");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/new.txt.");
                     mNewCount++;
-                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/new.txt");
-                    Log.i(LOG_TAG, "Account " + account + " is a new account.");
                     return AccountStatus.NEW;
                 case ACCOUNT_NOT_ACTIVATED:
+                    Log.i(LOG_TAG, "Account " + username + " is not activated.");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_activated.txt.");
                     mNotActivatedCount++;
-                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_activated.txt");
-                    Log.i(LOG_TAG, "Account " + account + " is not activated.");
                     return AccountStatus.NOT_ACTIVATED;
                 case ACCOUNT_LOCKED:
+                    Log.i(LOG_TAG, "Account " + username + " is locked.");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/locked.txt.");
                     mLockedCount++;
-                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/locked.txt");
-                    Log.i(LOG_TAG, "Account " + account + " is locked.");
                     return AccountStatus.LOCKED;
-                case ACCOUNT_WRONG_CREDENTIALS:
-                    mWrongCredentialsCount++;
-                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/wrong_credentials.txt");
-                    Log.i(LOG_TAG, "Account " + account + " does not exist or its credentials are wrong.");
-                    return AccountStatus.WRONG_CREDENTIALS;
                 default:
+                    Log.e(LOG_TAG, "Couldn't detect status of account " + username + ". Trying again.");
                     errorCount++;
                     mPogoInteractor.stopPogo();
-                    Log.e(LOG_TAG, "Couldn't detect status of account " + account + ".");
             }
         }
 
-        mErrorCount++;
+        Log.e(LOG_TAG, "Checking for account " + username + " failed 10 times in a row.");
         Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/error.txt");
-        Log.e(LOG_TAG, "Error limit reached for account " + account + ".");
+        mErrorCount++;
         return AccountStatus.NOT_CHECKED;
     }
 
@@ -319,22 +320,16 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
             public void run() {
                 for (int i=0; i<mAccountCount; i++) {
                     checkAccount(accounts.get(i), delimiter);
-
                     if (mStopped) return;
-
                     updateCheckingNotificationText("Checked: " + getCheckedCount() + "/" + mAccountCount);
                 }
 
-                mChecking = false;
-
-                stopForeground(true);
-
+                Log.i(LOG_TAG, "Account checking finished. " + getStats() + ".");
                 startResultActivity();
                 showFinishedNotification("Account checking finished", getStats());
-
+                stopForeground(true);
                 mPogoInteractor.cleanUp(true);
-
-                Log.i(LOG_TAG, "Account checking finished. " + getStats());
+                mChecking = false;
             }
         }).start();
     }
@@ -349,12 +344,14 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
     }
 
     public void pause() {
+        Log.i(LOG_TAG, "Account checking paused.");
         mPaused = true;
         mPogoInteractor.interrupt();
         updateCheckingNotificationTitle("Account checking paused");
     }
 
     public void resume() {
+        Log.i(LOG_TAG, "Account checking resumed.");
         mPaused = false;
         mPogoInteractor.resume();
         updateCheckingNotificationTitle("Checking accounts…");
@@ -363,12 +360,13 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
     public void stop() {
         if (!mChecking) return;
 
+        Log.i(LOG_TAG, "Account checking stopped. " + getStats());
         mChecking = false;
         mStopped = true;
         mPogoInteractor.interrupt();
-        stopForeground(true);
         showFinishedNotification("Account checking stopped", getStats());
         startResultActivity();
+        stopForeground(true);
         new Thread(new Runnable() {
             @Override
             public void run() {
