@@ -15,4 +15,8 @@ public final class Utils {
             e.printStackTrace();
         }
     }
+
+    public static void sleepRandom(int min, int max) {
+        sleep(randomWithRange(min, max));
+    }
 }

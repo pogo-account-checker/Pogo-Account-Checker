@@ -43,13 +43,17 @@ public class PogoInteractor {
     }
 
     public enum Screen {
-        DATE_OF_BIRTH, PLAYER_SELECTION, LOGIN, LOADING, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE, UNKNOWN
+        LOGIN_FAILED, DATE_OF_BIRTH, PLAYER_SELECTION, LOGIN, LOADING, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE, UNKNOWN
     }
 
     public Screen currentScreen() {
         FirebaseVisionText visionText = mScreenInteractor.getVisionText();
         if (visionText == null) return Screen.UNKNOWN;
         String text = visionText.getText().toLowerCase();
+
+        if (text.contains("failed") && text.contains("retry") && text.contains("different")) {
+            return Screen.LOGIN_FAILED;
+        }
 
         if (text.contains("date") && text.contains("birth") && text.contains("submit")) {
             return Screen.DATE_OF_BIRTH;
@@ -67,7 +71,8 @@ public class PogoInteractor {
             return Screen.LOADING;
         }
 
-        if (text.contains("termination") && text.contains("permanently") && text.contains("violating")) {
+        if ((text.contains("termination") && text.contains("permanently") && text.contains("violating"))
+                || (text.contains("failed") && text.contains("game") && text.contains("server"))) {
             return Screen.ACCOUNT_BANNED;
         }
 
@@ -83,7 +88,8 @@ public class PogoInteractor {
             return Screen.ACCOUNT_NOT_ACTIVATED;
         }
 
-        if ((text.contains("security") && text.contains("regain") && text.contains("questions")) || (text.contains("measure") && text.contains("failed") && text.contains("back"))) {
+        if ((text.contains("security") && text.contains("regain") && text.contains("questions"))
+                || (text.contains("measure") && text.contains("failed") && text.contains("back"))) {
             return Screen.ACCOUNT_LOCKED;
         }
 
@@ -121,12 +127,10 @@ public class PogoInteractor {
 
         // Open year selector.
         mScreenInteractor.tapRandom(xYearSelector, yYearSelector, widthYearSelector, heightYearSelector);
-
         if (mInterrupted) return;
 
         // Wait for animation.
-        Utils.sleep(Utils.randomWithRange(450, 550));
-
+        Utils.sleepRandom(450, 550);
         if (mInterrupted) return;
 
         if (!mItemsLocated) {
@@ -145,18 +149,15 @@ public class PogoInteractor {
 
         // Select year of birth.
         mScreenInteractor.tapRandom(x2010, y2010, width2010, height2010);
-
         if (mInterrupted) return;
 
         // Wait for animation.
-        Utils.sleep(Utils.randomWithRange(450, 550));
-
+        Utils.sleepRandom(450, 550);
         if (mInterrupted) return;
 
         // Submit date of birth.
         mScreenInteractor.tapRandom(xSubmit, ySubmit, widthSubmit, heightSubmit);
-
-        Log.i(LOG_TAG, "Year of birth submitted.");
+        Log.i(LOG_TAG, "Date of birth submitted.");
     }
 
     public void selectReturningPlayer() {
@@ -175,8 +176,7 @@ public class PogoInteractor {
         }
 
         mScreenInteractor.tapRandom(xReturningPlayer, yReturningPlayer, widthReturningPlayer, heightReturningPlayer);
-
-        Log.i(LOG_TAG, "Selected returning player.");
+        Log.i(LOG_TAG, "Returning player selected.");
     }
 
     public void selectPTC() {
@@ -200,8 +200,7 @@ public class PogoInteractor {
         }
 
         mScreenInteractor.tapRandom(xPtc, yPtc, widthPtc, heightPtc);
-
-        Log.i(LOG_TAG, "Selected pokémon trainer club.");
+        Log.i(LOG_TAG, "PTC selected.");
     }
 
     public void login(String username, String password) {
@@ -242,47 +241,38 @@ public class PogoInteractor {
 
         // Tap in username box.
         mScreenInteractor.tapRandom(xUsername, yUsername, widthUsername, heightUsername);
-
         if (mInterrupted) return;
 
         // Type the username.
         mScreenInteractor.insertText(username);
-
         if (mInterrupted) return;
 
         // Tap to hide keyboard.
         mScreenInteractor.tap(Utils.randomWithRange(50, 100), Utils.randomWithRange(100, 150));
-
         if (mInterrupted) return;
 
         // Wait for keyboard to disappear.
-        Utils.sleep(Utils.randomWithRange(450, 550));
-
+        Utils.sleepRandom(450, 550);
         if (mInterrupted) return;
 
         // Tap in password box.
         mScreenInteractor.tapRandom(xPassword, yPassword, widthPassword, heightPassword);
-
         if (mInterrupted) return;
 
         // Type the username.
         mScreenInteractor.insertText(password);
-
         if (mInterrupted) return;
 
         // Tap to hide keyboard.
         mScreenInteractor.tap(Utils.randomWithRange(50, 100), Utils.randomWithRange(100, 150));
-
         if (mInterrupted) return;
 
         // Wait for keyboard to disappear.
-        Utils.sleep(Utils.randomWithRange(450, 550));
-
+        Utils.sleepRandom(450, 550);
         if (mInterrupted) return;
 
         mScreenInteractor.tapRandom(xSignIn, ySignIn, widthSignIn, heightSignIn);
-
-        Log.i(LOG_TAG, "Signed in account.");
+        Log.i(LOG_TAG, "Account signed in.");
     }
 
     public void interrupt() {
@@ -294,9 +284,7 @@ public class PogoInteractor {
     }
 
     public void cleanUp(boolean clearAppData) {
-        if (clearAppData) {
-            clearAppData();
-        }
+        if (clearAppData) clearAppData();
         mScreenInteractor.cleanUp();
     }
 }
