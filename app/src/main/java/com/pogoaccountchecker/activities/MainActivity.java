@@ -2,6 +2,7 @@ package com.pogoaccountchecker.activities;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -21,16 +22,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.pogoaccountchecker.services.AccountCheckingService;
@@ -43,9 +38,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
     private ArrayList<String> mAccounts;
-    private Spinner mDelimiterSpinner;
     private AccountCheckingService mService;
     private boolean mBound;
     private boolean mWithMad;
@@ -57,70 +51,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        mDelimiterSpinner = findViewById(R.id.delimiterSpinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.delimiters, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        mDelimiterSpinner.setAdapter(adapter);
-        int selectedItem = sharedPref.getInt(getString(R.string.selected_delimiter_pref_key), 0);
-        mDelimiterSpinner.setSelection(selectedItem, false);
-        mDelimiterSpinner.setOnItemSelectedListener(this);
-
-        mWithMad = sharedPref.getBoolean(getString(R.string.with_mad_pref_key), false);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         final Button accountsButton = findViewById(R.id.accountsButton);
         if (mWithMad) {
             accountsButton.setVisibility(View.GONE);
         }
 
-        final EditText webSocketEditText = findViewById(R.id.webSocketEditText);
-        if (!mWithMad) {
-            webSocketEditText.setVisibility(View.GONE);
-        }
-        String webSocketUri = sharedPref.getString(getString(R.string.webSocket_uri_pref_key), null);
-        if (webSocketUri != null) {
-            webSocketEditText.setText(webSocketUri);
-        }
-        webSocketEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString(getString(R.string.webSocket_uri_pref_key), s.toString());
-                editor.apply();
-            }
-        });
-
-        Switch madSwitch = findViewById(R.id.madSwitch);
-        madSwitch.setChecked(mWithMad);
-        madSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mWithMad = isChecked;
-                if (mWithMad) {
-                    webSocketEditText.setVisibility(View.VISIBLE);
-                    accountsButton.setVisibility(View.GONE);
-                } else {
-                    webSocketEditText.setVisibility(View.GONE);
-                    accountsButton.setVisibility(View.VISIBLE);
-                }
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putBoolean(getString(R.string.with_mad_pref_key), mWithMad);
-                editor.apply();
-            }
-        });
+        SharedPreferences sharedPreferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        mWithMad = sharedPreferences.getBoolean(getString(R.string.with_mad_pref_key), false);
     }
 
     @Override
@@ -137,6 +77,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mBound = false;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the main_menu, this adds items to the action bar if it is present
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     /**
      * Called when the start/pause/continue button is pressed.
      *
@@ -145,22 +107,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void startPauseContinue(View view) {
         if (RootShell.isAccessGiven()) {
             if (mBound) {
-                char delimiter = ((String) mDelimiterSpinner.getSelectedItem()).charAt(0);
                 Button startPauseContinueButton = findViewById(R.id.startPauseContinueButton);
 
                 if (!mService.isChecking()) {
                     if (mWithMad) {
-                        EditText webSocketEditText = findViewById(R.id.webSocketEditText);
-                        String webSocketUri = webSocketEditText.getText().toString();
-                        if (!webSocketUri.isEmpty()) {
-                            mService.checkAccountsWithMAD(webSocketUri, delimiter);
-                        } else {
-                            Toast.makeText(this, "Enter a WebSocket URI first!", Toast.LENGTH_SHORT).show();
-                        }
+                        mService.checkAccountsWithMAD();
                     } else {
                         if (mAccounts != null) {
                             if (accountsHaveDelimiter()) {
-                                mService.checkAccounts(mAccounts, delimiter);
+                                mService.checkAccounts(mAccounts);
                                 startPauseContinueButton.setText("Pause");
                                 Button stopButton = findViewById(R.id.stopButton);
                                 stopButton.setVisibility(View.VISIBLE);
@@ -291,23 +246,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private boolean accountsHaveDelimiter() {
-        String delimiter = (String) mDelimiterSpinner.getSelectedItem();
+        SharedPreferences sharedPreferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        String delimiter = sharedPreferences.getString(getString(R.string.delimiter_pref_key), ":");
         for (String account : mAccounts) {
             if (!account.contains(delimiter)) return false;
         }
         return true;
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(getString(R.string.selected_delimiter_pref_key), position);
-        editor.apply();
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
     }
 
     /** Defines callbacks for service binding, passed to bindService() */

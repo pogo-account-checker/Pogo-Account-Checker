@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
@@ -26,6 +27,7 @@ import java.util.List;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
+import androidx.preference.PreferenceManager;
 
 import static com.pogoaccountchecker.App.NOTIFICATION_CHANNEL_ID;
 
@@ -293,6 +295,10 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
     private void initialize() {
         mPogoInteractor.resume();
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String delimiter = sharedPreferences.getString(getString(R.string.delimiter_pref_key), ":");
+        mDelimiter = delimiter.charAt(0);
+
         mPaused = mStopped = false;
         mChecking = true;
 
@@ -309,7 +315,7 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
         Shell.runSuCommand("mkdir " + PATHNAME);
     }
 
-    public void checkAccounts(final List<String> accounts, final char delimiter) {
+    public void checkAccounts(final List<String> accounts) {
         if (mChecking) return;
 
         mAccountCount = accounts.size();
@@ -319,7 +325,7 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
             @Override
             public void run() {
                 for (int i=0; i<mAccountCount; i++) {
-                    checkAccount(accounts.get(i), delimiter);
+                    checkAccount(accounts.get(i), mDelimiter);
                     if (mStopped) return;
                     updateCheckingNotificationText("Checked: " + getCheckedCount() + "/" + mAccountCount);
                 }
@@ -334,11 +340,11 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
         }).start();
     }
 
-    public void checkAccountsWithMAD(final String webSocketUri, final char delimiter) {
+    public void checkAccountsWithMAD() {
         if (mChecking) return;
 
-        mDelimiter = delimiter;
-
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String webSocketUri = sharedPreferences.getString(getString(R.string.webSocket_uri_pref_key), "");
         mWebSocket = new MadWebSocket(webSocketUri);
         mWebSocket.start(this);
     }
