@@ -12,17 +12,29 @@ import com.pogoaccountchecker.utils.Shell;
 import com.pogoaccountchecker.utils.Utils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 
 public class ScreenInteractor {
+    private Context mContext;
     private TextInImageRecognizer mTextRecognizer;
     private final String APP_PATH;
     private final String LOG_TAG = getClass().getSimpleName();
 
     public ScreenInteractor(Context context) {
-        mTextRecognizer = new TextInImageRecognizer(context);
+        mContext = context;
+        mTextRecognizer = new TextInImageRecognizer(mContext);
         APP_PATH = Environment.getExternalStorageDirectory().getPath() + "/PogoAccountChecker";
+    }
+
+    public int getScreenWidth() {
+        return mContext.getResources().getDisplayMetrics().widthPixels;
+    }
+
+    public int getScreenHeight() {
+        return mContext.getResources().getDisplayMetrics().heightPixels;
     }
 
     public void tap(int x, int y) {
@@ -61,14 +73,36 @@ public class ScreenInteractor {
                             if (element.getText().toLowerCase().equals(elementText)) {
                                 return element.getCornerPoints();
                             }
-                        }    
+                        }
                     }
-                    
+
                 }
             }
         }
 
         return null;
+    }
+
+    public List<Point[]> getAllElementCornerPoints(FirebaseVisionText visionText, String elementText) {
+        List<Point[]> cornerPointsList = new ArrayList<>();
+        elementText = elementText.toLowerCase();
+
+        for (FirebaseVisionText.TextBlock block: visionText.getTextBlocks()) {
+            if (block.getText().toLowerCase().contains(elementText)) {
+                for (FirebaseVisionText.Line line: block.getLines()) {
+                    if (line.getText().toLowerCase().contains(elementText)) {
+                        for (FirebaseVisionText.Element element: line.getElements()) {
+                            if (element.getText().toLowerCase().equals(elementText)) {
+                                cornerPointsList.add(element.getCornerPoints());
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        return cornerPointsList;
     }
 
     public Point[] getLineCornerPoints(FirebaseVisionText visionText, String lineText) {

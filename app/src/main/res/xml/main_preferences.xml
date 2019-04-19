@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ListPreference
+        android:defaultValue=":"
+        android:entries="@array/delimiters"
+        android:entryValues="@array/delimiters"
+        android:key="@string/delimiter_pref_key"
+        android:title="Delimiter"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
+    <Preference
+        app:iconSpaceReserved="false"
+        app:key="button_activity"
+        app:title="Button settings">
+        <intent
+            android:targetClass="com.pogoaccountchecker.activities.ButtonSettingsActivity"
+            android:targetPackage="com.pogoaccountchecker" />
+    </Preference>
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/detect_account_level_pref_key"
+        android:title="Detect account level"
+        app:iconSpaceReserved="false" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/with_mad_pref_key"
+        android:title="With MAD"
+        app:iconSpaceReserved="false"
+        app:isPreferenceVisible="false" />
+    <EditTextPreference
+        android:defaultValue="ws://example:8080"
+        android:key="@string/webSocket_uri_pref_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="MAD WebSocket"
+        app:iconSpaceReserved="false"
+        app:isPreferenceVisible="false"
+        app:useSimpleSummaryProvider="true" />
+</PreferenceScreen>

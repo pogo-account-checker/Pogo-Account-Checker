@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
@@ -26,6 +27,7 @@ import java.util.List;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
+import androidx.preference.PreferenceManager;
 
 import static com.pogoaccountchecker.App.NOTIFICATION_CHANNEL_ID;
 
@@ -165,10 +167,10 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
         while (errorCount != 10) {
             if (!mStopped) {
                 if (mPaused) {
-                    mPogoInteractor.stopPogo();
                     while (mPaused) {
                         Utils.sleep(2000);
                     }
+                    mPogoInteractor.stopPogo();
                 }
             } else {
                 return AccountStatus.NOT_CHECKED;
@@ -240,23 +242,108 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
             if (mPaused || mStopped) continue;
 
             switch(currentScreen) {
+                case LOADING:
+                    SharedPreferences sharedPreferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+                    boolean detectLevel = sharedPreferences.getBoolean(getString(R.string.detect_account_level_pref_key), false);
+
+                    if (detectLevel) {
+                        wrongScreenCount = 0;
+                        while (wrongScreenCount < 20 && !mPaused && !mStopped) {
+                            currentScreen = mPogoInteractor.currentScreen();
+                            if (currentScreen == Screen.LOCATION_PERMISSION) {
+                                break;
+                            } else {
+                                Log.i(LOG_TAG, "Still loading.");
+                                wrongScreenCount++;
+                            }
+                        }
+                        if (mPaused || mStopped) continue;
+
+                        if (currentScreen == Screen.LOCATION_PERMISSION) {
+                            mPogoInteractor.allowLocationAccess();
+                            if (mPaused || mStopped) continue;
+
+                            Utils.sleepRandom(450, 550);
+                            if (mPaused || mStopped) continue;
+
+                            mPogoInteractor.allowCameraAccess();
+                            if (mPaused || mStopped) continue;
+
+                            Utils.sleepRandom(2950, 3050);
+                            if (mPaused || mStopped) continue;
+
+                            mPogoInteractor.closeSafetyWarning();
+                            if (mPaused || mStopped) continue;
+
+                            Utils.sleepRandom(950, 1050);
+                            if (mPaused || mStopped) continue;
+
+                            mPogoInteractor.closeNotificationPopup();
+                            if (mPaused || mStopped) continue;
+
+                            mPogoInteractor.openPlayerProfile();
+                            if (mPaused || mStopped) continue;
+
+                            Utils.sleepRandom(1950, 2050);
+                            if (mPaused || mStopped) continue;
+
+                            wrongScreenCount = 0;
+                            while (wrongScreenCount < 20 && !mPaused && !mStopped) {
+                                currentScreen = mPogoInteractor.currentScreen();
+                                if (currentScreen == Screen.PLAYER_PROFILE) {
+                                    break;
+                                } else if (currentScreen == Screen.CHEATING_WARNING_1) {
+                                    mPogoInteractor.closeCheatingWarning1();
+                                } else if (currentScreen == Screen.CHEATING_WARNING_2) {
+                                    mPogoInteractor.closeCheatingWarning2();
+                                } else if (currentScreen == Screen.CHEATING_WARNING_3) {
+                                    mPogoInteractor.closeCheatingWarning3();
+                                } else if (currentScreen == Screen.SUSPENSION_WARNING) {
+                                    mPogoInteractor.closeSuspensionsWarning();
+                                } else if (currentScreen == Screen.NOTIFICATION_POPUP) {
+                                    mPogoInteractor.closeNotificationPopup();
+                                } else {
+                                    Log.e(LOG_TAG, "Not on player profile screen.");
+                                    wrongScreenCount++;
+                                    // Assume that we are on the main screen.
+                                    mPogoInteractor.openPlayerProfile();
+                                    if (mPaused || mStopped) continue;
+
+                                    Utils.sleepRandom(1950, 2050);
+                                }
+                            }
+
+                            if (currentScreen != Screen.PLAYER_PROFILE) {
+                                Log.e(LOG_TAG, "Player profile screen not detected after 20 attempts. Trying again.");
+                                errorCount++;
+                                mPogoInteractor.clearAppData();
+                                continue;
+                            }
+
+                            int accountLevel = mPogoInteractor.getAccountLevel();
+                            Log.i(LOG_TAG, "Account " + username + ", with level " + accountLevel + ", is not banned.");
+                            Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/L" + accountLevel + "_not_banned.txt.");
+                            mNotBannedCount++;
+                            return AccountStatus.NOT_BANNED;
+                        }
+                    } else {
+                        Utils.sleepRandom(950, 1050);
+                        if (mPaused || mStopped) continue;
+
+                        // Check another time, because the loading screen is shortly visible before the banned screen.
+                        currentScreen = mPogoInteractor.currentScreen();
+                        if (currentScreen == Screen.LOADING) {
+                            Log.i(LOG_TAG, "Account " + username + " is not banned.");
+                            Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt.");
+                            mNotBannedCount++;
+                            return AccountStatus.NOT_BANNED;
+                        }
+                    }
                 case ACCOUNT_BANNED:
                     Log.i(LOG_TAG, "Account " + username + " is banned.");
                     Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/banned.txt.");
                     mBannedCount++;
                     return AccountStatus.BANNED;
-                case LOADING:
-                    Utils.sleepRandom(950, 1050);
-                    if (mPaused || mStopped) continue;
-
-                    // Check another time, because the loading screen is shortly visible before the banned screen.
-                    currentScreen = mPogoInteractor.currentScreen();
-                    if (currentScreen == Screen.LOADING) {
-                        Log.i(LOG_TAG, "Account " + username + " is not banned.");
-                        Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt.");
-                        mNotBannedCount++;
-                        return AccountStatus.NOT_BANNED;
-                    }
                 case ACCOUNT_WRONG_CREDENTIALS:
                     Log.i(LOG_TAG, "Account " + username + " does not exist or its credentials are wrong.");
                     Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/wrong_credentials.txt.");
@@ -293,6 +380,10 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
     private void initialize() {
         mPogoInteractor.resume();
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String delimiter = sharedPreferences.getString(getString(R.string.delimiter_pref_key), ":");
+        mDelimiter = delimiter.charAt(0);
+
         mPaused = mStopped = false;
         mChecking = true;
 
@@ -309,7 +400,7 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
         Shell.runSuCommand("mkdir " + PATHNAME);
     }
 
-    public void checkAccounts(final List<String> accounts, final char delimiter) {
+    public void checkAccounts(final List<String> accounts) {
         if (mChecking) return;
 
         mAccountCount = accounts.size();
@@ -319,7 +410,7 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
             @Override
             public void run() {
                 for (int i=0; i<mAccountCount; i++) {
-                    checkAccount(accounts.get(i), delimiter);
+                    checkAccount(accounts.get(i), mDelimiter);
                     if (mStopped) return;
                     updateCheckingNotificationText("Checked: " + getCheckedCount() + "/" + mAccountCount);
                 }
@@ -334,11 +425,11 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
         }).start();
     }
 
-    public void checkAccountsWithMAD(final String webSocketUri, final char delimiter) {
+    public void checkAccountsWithMAD() {
         if (mChecking) return;
 
-        mDelimiter = delimiter;
-
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String webSocketUri = sharedPreferences.getString(getString(R.string.webSocket_uri_pref_key), "");
         mWebSocket = new MadWebSocket(webSocketUri);
         mWebSocket.start(this);
     }
