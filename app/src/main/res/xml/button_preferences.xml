@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        android:defaultValue="0"
+        android:key="@string/player_profile_x_coord_pref_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Player profile x coordinate"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        android:defaultValue="0"
+        android:key="@string/player_profile_y_coord_pref_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Player profile y coordinate"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
+</PreferenceScreen>

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import android.Manifest;
 
@@ -20,7 +21,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,6 +39,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    private SharedPreferences mSharedPreferences;
     private ArrayList<String> mAccounts;
     private AccountCheckingService mService;
     private boolean mBound;
@@ -51,16 +52,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.result_toolbar);
         setSupportActionBar(toolbar);
 
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mWithMad = mSharedPreferences.getBoolean(getString(R.string.with_mad_pref_key), false);
         final Button accountsButton = findViewById(R.id.accountsButton);
         if (mWithMad) {
             accountsButton.setVisibility(View.GONE);
         }
-
-        SharedPreferences sharedPreferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        mWithMad = sharedPreferences.getBoolean(getString(R.string.with_mad_pref_key), false);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
+                Intent intent = new Intent(this, MainSettingsActivity.class);
                 startActivity(intent);
                 return true;
 
@@ -110,6 +110,16 @@ public class MainActivity extends AppCompatActivity {
                 Button startPauseContinueButton = findViewById(R.id.startPauseContinueButton);
 
                 if (!mService.isChecking()) {
+                    boolean detectAccountLevel = mSharedPreferences.getBoolean(getString(R.string.detect_account_level_pref_key), false);
+                    if (detectAccountLevel) {
+                        int xPlayerProfile = Integer.parseInt(mSharedPreferences.getString(getString(R.string.player_profile_x_coord_pref_key), "0"));
+                        int yPlayerProfile = Integer.parseInt(mSharedPreferences.getString(getString(R.string.player_profile_y_coord_pref_key), "0"));
+                        if (xPlayerProfile == 0 || yPlayerProfile == 0) {
+                            Toast.makeText(this, "Set the x and y coordinate of the player profile button in settings first!", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+
                     if (mWithMad) {
                         mService.checkAccountsWithMAD();
                     } else {

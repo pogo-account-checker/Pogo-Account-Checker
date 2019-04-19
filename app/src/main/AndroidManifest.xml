@@ -14,9 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.SettingsActivity"
+            android:name=".activities.MainSettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".activities.MainActivity"></activity>
+        <activity
+            android:name=".activities.ButtonSettingsActivity"
+            android:label="@string/title_activity_button_settings"
+            android:parentActivityName=".activities.MainSettingsActivity"></activity>
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
@@ -32,8 +36,7 @@
         <activity
             android:name=".activities.ResultActivity"
             android:label="@string/title_activity_result"
-            android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:parentActivityName=".activities.MainActivity"></activity>
 
         <service
             android:name=".services.AccountCheckingService"

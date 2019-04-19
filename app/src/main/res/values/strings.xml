@@ -4,11 +4,14 @@
     <string name="notification_title">Checking accounts…</string>
     <string name="title_activity_result">ResultActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_button_settings">ButtonSettingsActivity</string>
 
     <string name="delimiter_pref_key">selected_delimiter_pref_key</string>
     <string name="detect_account_level_pref_key">detect_account_level_pref_key</string>
     <string name="with_mad_pref_key">with_mad_pref_key</string>
     <string name="webSocket_uri_pref_key">webSocket_uri_pref_key</string>
+    <string name="player_profile_x_coord_pref_key">player_profile_x_coord_pref_key</string>
+    <string name="player_profile_y_coord_pref_key">player_profile_y_coord_pref_key</string>
 
     <string-array name="delimiters">
         <item>,</item>

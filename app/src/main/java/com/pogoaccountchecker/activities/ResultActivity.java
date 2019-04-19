@@ -2,7 +2,9 @@ package com.pogoaccountchecker.activities;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.widget.TextView;
 
@@ -14,6 +16,12 @@ public class ResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
+        Toolbar childToolbar = findViewById(R.id.result_toolbar);
+        setSupportActionBar(childToolbar);
+
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
         int accountCount = getIntent().getIntExtra("accountCount", 0);
         int notBannedCount = getIntent().getIntExtra("notBannedCount", 0);
         int bannedCount = getIntent().getIntExtra("bannedCount", 0);
@@ -24,16 +32,15 @@ public class ResultActivity extends AppCompatActivity {
         int errorCount = getIntent().getIntExtra("errorCount", 0);
         boolean stopped = getIntent().getBooleanExtra("stopped", true);
 
-        TextView resultTitleView = findViewById(R.id.resultTitle);
         if (stopped) {
-            resultTitleView.setText("Account checking stopped");
+            ab.setTitle("Account checking stopped");
         } else {
-            resultTitleView.setText("Account checking finished");
+            ab.setTitle("Account checking finished");
         }
 
         int numAccountsChecked = notBannedCount + bannedCount + newCount + wrongCredentialsCount + notActivatedCount + lockedCount + errorCount;
         TextView resultView = findViewById(R.id.result);
-        resultView.setText(numAccountsChecked + "/" +accountCount + " accounts have been checked.\n"
+        resultView.setText(numAccountsChecked + "/" +accountCount + " accounts have been checked.\n\n"
                 + "Not banned: " + notBannedCount + "\n"
                 + "Banned: " + bannedCount + "\n"
                 + "New: " + newCount + "\n"

@@ -1,16 +1,24 @@
 package com.pogoaccountchecker.interactors;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.util.Log;
 
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.pogoaccountchecker.R;
 import com.pogoaccountchecker.utils.Shell;
 import com.pogoaccountchecker.utils.Utils;
 
+import java.util.List;
+
+import androidx.preference.PreferenceManager;
+
 public class PogoInteractor {
+    private Context mContext;
+    private SharedPreferences mSharedPreferences;
     private ScreenInteractor mScreenInteractor;
-    private boolean mItemsLocated;
+    private boolean mItemsNoLevelLocated, mItemsLevelLocated;
     private volatile boolean mInterrupted;
     private int xYearSelector, yYearSelector, widthYearSelector, heightYearSelector;
     private int x2010, y2010, width2010, height2010;
@@ -20,11 +28,21 @@ public class PogoInteractor {
     private int xUsername, yUsername, widthUsername, heightUsername;
     private int xPassword, yPassword, widthPassword, heightPassword;
     private int xSignIn, ySignIn, widthSignIn, heightSignIn;
+    private int xAllowLocation, yAllowLocation, widthAllowLocation, heightAllowLocation;
+    private int xAllowCamera, yAllowCamera, widthAllowCamera, heightAllowCamera;
+    private int xSafetyWarningOk, ySafetyWarningOk, widthSafetyWarningOk, heightSafetyWarningOk;
+    private int xCheatingWarning1, yCheatingWarning1, widthCheatingWarning1, heightCheatingWarning1;
+    private int xCheatingWarning2, yCheatingWarning2, widthCheatingWarning2, heightCheatingWarning2;
+    private int xCheatingWarning3, yCheatingWarning3, widthCheatingWarning3, heightCheatingWarning3;
+    private int xSuspensionWarning, ySuspensionWarning, widthSuspensionWarning, heightSuspensionWarning;
+    private int mAccountLevel;
     private final String POGO_PACKAGE = "com.nianticlabs.pokemongo";
     private final String LOG_TAG = getClass().getSimpleName();
 
     public PogoInteractor(Context context) {
-        mScreenInteractor = new ScreenInteractor(context);
+        mContext = context;
+        mScreenInteractor = new ScreenInteractor(mContext);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
     }
 
     public void startPogo() {
@@ -33,17 +51,20 @@ public class PogoInteractor {
     }
 
     public void stopPogo() {
+        mAccountLevel = -1;
         Shell.runSuCommand("am force-stop " + POGO_PACKAGE);
         Log.i(LOG_TAG, "Pogo stopped.");
     }
 
     public void clearAppData() {
+        mAccountLevel = -1;
         Shell.runSuCommand("pm clear " + POGO_PACKAGE);
         Log.i(LOG_TAG, "Pogo app data cleared.");
     }
 
     public enum Screen {
-        LOGIN_FAILED, DATE_OF_BIRTH, PLAYER_SELECTION, LOGIN, LOADING, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE, UNKNOWN
+        LOGIN_FAILED, DATE_OF_BIRTH, PLAYER_SELECTION, LOGIN, LOADING, SAFETY_WARNING, LOCATION_PERMISSION, CAMERA_PERMISSION, NOTIFICATION_POPUP, CHEATING_WARNING_1, CHEATING_WARNING_2,
+        CHEATING_WARNING_3, SUSPENSION_WARNING, PLAYER_PROFILE, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE, UNKNOWN
     }
 
     public Screen currentScreen() {
@@ -67,9 +88,50 @@ public class PogoInteractor {
             return Screen.LOGIN;
         }
 
+        if (text.contains("allow") && text.contains("access") && text.contains("location")) {
+            return Screen.LOCATION_PERMISSION;
+        }
+
+        if (text.contains("allow") && text.contains("pictures") && text.contains("record")) {
+            return Screen.CAMERA_PERMISSION;
+        }
+
         if (text.contains("remember") && text.contains("alert") && text.contains("surroundings")) {
             return Screen.LOADING;
         }
+
+        if ((text.contains("play") && text.contains("while") && text.contains("driving"))
+                || (text.contains("trespass") && text.contains("while") && text.contains("playing"))
+                || (text.contains("enter") && text.contains("dangerous") && text.contains("areas"))) {
+            return Screen.SAFETY_WARNING;
+        }
+
+        if (text.contains("see") && text.contains("details") && text.contains("dismiss")) {
+            return Screen.NOTIFICATION_POPUP;
+        }
+
+        if (text.contains("suggests") && text.contains("accesses") && text.contains("compromised")) {
+            return Screen.CHEATING_WARNING_1;
+        }
+
+        if (text.contains("modified") && text.contains("degraded") && text.contains("transgressions")) {
+            return Screen.CHEATING_WARNING_2;
+        }
+
+        if (text.contains("modified") && text.contains("strike") && text.contains("transgressions")) {
+            return Screen.CHEATING_WARNING_3;
+        }
+
+        if (text.contains("indicated") && text.contains("opportunity") && text.contains("permanently")) {
+            return Screen.SUSPENSION_WARNING;
+        }
+
+        if (text.contains("level") && text.contains("buddy") && text.contains("style")) {
+            // Store account level, since it will most likely be needed later on.
+            setAccountLevelFromVisionText(visionText);
+            return Screen.PLAYER_PROFILE;
+        }
+
 
         if ((text.contains("termination") && text.contains("permanently") && text.contains("violating"))
                 || (text.contains("failed") && text.contains("game") && text.contains("server"))) {
@@ -101,7 +163,7 @@ public class PogoInteractor {
     }
 
     public void selectDateOfBirth() {
-        if (!mItemsLocated) {
+        if (!mItemsNoLevelLocated) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
 
             Point[] cornerPoints2019 = mScreenInteractor.getElementCornerPoints(visionText, "2019");
@@ -133,7 +195,7 @@ public class PogoInteractor {
         Utils.sleepRandom(450, 550);
         if (mInterrupted) return;
 
-        if (!mItemsLocated) {
+        if (!mItemsNoLevelLocated) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
             Point[] cornerPoints2010 = mScreenInteractor.getElementCornerPoints(visionText, "2010");
             if (cornerPoints2010 == null) {
@@ -161,7 +223,7 @@ public class PogoInteractor {
     }
 
     public void selectReturningPlayer() {
-        if (!mItemsLocated) {
+        if (!mItemsNoLevelLocated) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
             Point[] cornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "returning player");
             if (cornerPoints == null) {
@@ -180,7 +242,7 @@ public class PogoInteractor {
     }
 
     public void selectPTC() {
-        if (!mItemsLocated) {
+        if (!mItemsNoLevelLocated) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
             Point[] cornerPoints;
             if (visionText.getText().toLowerCase().contains("pokémon")) {
@@ -204,7 +266,7 @@ public class PogoInteractor {
     }
 
     public void login(String username, String password) {
-        if (!mItemsLocated) {
+        if (!mItemsNoLevelLocated) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
 
             Point[] cornerPointsUsername = mScreenInteractor.getElementCornerPoints(visionText, "username");
@@ -234,7 +296,7 @@ public class PogoInteractor {
             widthSignIn = cornerPointsSignIn[1].x - cornerPointsSignIn[0].x;
             heightSignIn = cornerPointsSignIn[2].y - cornerPointsSignIn[0].y;
 
-            mItemsLocated = true;
+            mItemsNoLevelLocated = true;
 
             if (mInterrupted) return;
         }
@@ -273,6 +335,192 @@ public class PogoInteractor {
 
         mScreenInteractor.tapRandom(xSignIn, ySignIn, widthSignIn, heightSignIn);
         Log.i(LOG_TAG, "Account signed in.");
+    }
+
+    public void allowLocationAccess() {
+        if (!mItemsLevelLocated) {
+            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            List<Point[]> cornerPointsList = mScreenInteractor.getAllElementCornerPoints(visionText, "allow");
+            if (cornerPointsList.isEmpty()) return;
+
+            Point[] cornerPoints;
+            if (cornerPointsList.get(0)[0].y > cornerPointsList.get(1)[0].y) {
+                cornerPoints = cornerPointsList.get(0);
+            } else {
+                cornerPoints = cornerPointsList.get(1);
+            }
+            xAllowLocation = (cornerPoints[0].x + cornerPoints[1].x) / 2;
+            yAllowLocation = (cornerPoints[0].y + cornerPoints[2].y) / 2;
+            widthAllowLocation = cornerPoints[1].x - cornerPoints[0].x;
+            heightAllowLocation = cornerPoints[2].y - cornerPoints[0].y;
+
+            if (mInterrupted) return;
+        }
+
+        mScreenInteractor.tapRandom(xAllowLocation, yAllowLocation, widthAllowLocation, heightAllowLocation);
+        Log.i(LOG_TAG, "Location access allowed.");
+    }
+
+    public void allowCameraAccess() {
+        if (!mItemsLevelLocated) {
+            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            List<Point[]> cornerPointsList = mScreenInteractor.getAllElementCornerPoints(visionText, "allow");
+            if (cornerPointsList.isEmpty()) return;
+
+            Point[] cornerPoints;
+            if (cornerPointsList.get(0)[0].y > cornerPointsList.get(1)[0].y) {
+                cornerPoints = cornerPointsList.get(0);
+            } else {
+                cornerPoints = cornerPointsList.get(1);
+            }
+            xAllowCamera = (cornerPoints[0].x + cornerPoints[1].x) / 2;
+            yAllowCamera = (cornerPoints[0].y + cornerPoints[2].y) / 2;
+            widthAllowCamera = cornerPoints[1].x - cornerPoints[0].x;
+            heightAllowCamera = cornerPoints[2].y - cornerPoints[0].y;
+
+            if (mInterrupted) return;
+        }
+
+        mScreenInteractor.tapRandom(xAllowCamera, yAllowCamera, widthAllowCamera, heightAllowCamera);
+        Log.i(LOG_TAG, "Camera access allowed.");
+    }
+
+    public void closeSafetyWarning() {
+        if (!mItemsLevelLocated) {
+            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            Point[] cornerPoints;
+            cornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "ok");
+            if (cornerPoints == null) {
+                return;
+            }
+            xSafetyWarningOk = (cornerPoints[0].x + cornerPoints[1].x) / 2;
+            ySafetyWarningOk = (cornerPoints[0].y + cornerPoints[2].y) / 2;
+            widthSafetyWarningOk = cornerPoints[1].x - cornerPoints[0].x;
+            heightSafetyWarningOk = cornerPoints[2].y - cornerPoints[0].y;
+
+            if (mInterrupted) return;
+        }
+
+        mScreenInteractor.tapRandom(xSafetyWarningOk, ySafetyWarningOk, widthSafetyWarningOk, heightSafetyWarningOk);
+        Log.i(LOG_TAG, "Safety warning confirmed.");
+    }
+
+    public void closeNotificationPopup() {
+        mScreenInteractor.tap(0, mScreenInteractor.getScreenHeight() / 2);
+        Log.i(LOG_TAG, "Notification popup dismissed.");
+    }
+
+    public void closeCheatingWarning1() {
+        if (!mItemsLevelLocated) {
+            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            Point[] cornerPoints;
+            cornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "got it");
+            if (cornerPoints == null) {
+                return;
+            }
+            xCheatingWarning1 = (cornerPoints[0].x + cornerPoints[1].x) / 2;
+            yCheatingWarning1 = (cornerPoints[0].y + cornerPoints[2].y) / 2;
+            widthCheatingWarning1 = cornerPoints[1].x - cornerPoints[0].x;
+            heightCheatingWarning1 = cornerPoints[2].y - cornerPoints[0].y;
+
+            if (mInterrupted) return;
+        }
+
+        mScreenInteractor.tapRandom(xCheatingWarning1, yCheatingWarning1, widthCheatingWarning1, heightCheatingWarning1);
+        Log.i(LOG_TAG, "Cheating warning 1 dismissed");
+    }
+
+    public void closeCheatingWarning2() {
+        if (!mItemsLevelLocated) {
+            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            Point[] cornerPoints;
+            cornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "got it");
+            if (cornerPoints == null) {
+                return;
+            }
+            xCheatingWarning2 = (cornerPoints[0].x + cornerPoints[1].x) / 2;
+            yCheatingWarning2 = (cornerPoints[0].y + cornerPoints[2].y) / 2;
+            widthCheatingWarning2 = cornerPoints[1].x - cornerPoints[0].x;
+            heightCheatingWarning2 = cornerPoints[2].y - cornerPoints[0].y;
+
+            if (mInterrupted) return;
+        }
+
+        mScreenInteractor.tapRandom(xCheatingWarning2, yCheatingWarning2, widthCheatingWarning2, heightCheatingWarning2);
+        Log.i(LOG_TAG, "Cheating warning 2 dismissed");
+    }
+
+    public void closeCheatingWarning3() {
+        if (!mItemsLevelLocated) {
+            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            Point[] cornerPoints;
+            cornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "got it");
+            if (cornerPoints == null) {
+                return;
+            }
+            xCheatingWarning3 = (cornerPoints[0].x + cornerPoints[1].x) / 2;
+            yCheatingWarning3 = (cornerPoints[0].y + cornerPoints[2].y) / 2;
+            widthCheatingWarning3 = cornerPoints[1].x - cornerPoints[0].x;
+            heightCheatingWarning3 = cornerPoints[2].y - cornerPoints[0].y;
+
+            if (mInterrupted) return;
+        }
+
+        mScreenInteractor.tapRandom(xCheatingWarning3, yCheatingWarning3, widthCheatingWarning3, heightCheatingWarning3);
+        Log.i(LOG_TAG, "Cheating warning 3 dismissed");
+    }
+
+    public void closeSuspensionsWarning() {
+        if (!mItemsLevelLocated) {
+            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            Point[] cornerPoints;
+            cornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "got it");
+            if (cornerPoints == null) {
+                return;
+            }
+            xSuspensionWarning = (cornerPoints[0].x + cornerPoints[1].x) / 2;
+            ySuspensionWarning = (cornerPoints[0].y + cornerPoints[2].y) / 2;
+            widthSuspensionWarning = cornerPoints[1].x - cornerPoints[0].x;
+            heightSuspensionWarning = cornerPoints[2].y - cornerPoints[0].y;
+
+            if (mInterrupted) return;
+        }
+
+        mScreenInteractor.tapRandom(xSuspensionWarning, ySuspensionWarning, widthSuspensionWarning, heightSuspensionWarning);
+        Log.i(LOG_TAG, "Suspension warning dismissed");
+    }
+
+    public void openPlayerProfile() {
+        int xPlayerProfile = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.player_profile_x_coord_pref_key), "0"));
+        int yPlayerProfile = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.player_profile_y_coord_pref_key), "0"));
+        mScreenInteractor.tap(xPlayerProfile, yPlayerProfile);
+        Log.i(LOG_TAG, "Player profile opened.");
+    }
+
+    private void setAccountLevelFromVisionText(FirebaseVisionText visionText) {
+        Point[] levelCornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "level");
+
+        for (FirebaseVisionText.TextBlock block: visionText.getTextBlocks()) {
+            for (FirebaseVisionText.Line line: block.getLines()) {
+                for (FirebaseVisionText.Element element: line.getElements()) {
+                    Point[] levelValueCornerPoints = element.getCornerPoints();
+                    if (levelValueCornerPoints[0].y < levelCornerPoints[0].y && levelValueCornerPoints[0].x < mScreenInteractor.getScreenWidth() / 2 &&
+                            levelValueCornerPoints[0].y > mScreenInteractor.getScreenHeight() / 2) {
+                        mAccountLevel = Integer.parseInt(element.getText());
+                    }
+                }
+            }
+        }
+    }
+
+    public int getAccountLevel() {
+        if (mAccountLevel == -1) {
+            setAccountLevelFromVisionText(mScreenInteractor.getVisionText());
+        }
+
+        mItemsLevelLocated = true;
+
+        return mAccountLevel;
     }
 
     public void interrupt() {
