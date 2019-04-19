@@ -302,7 +302,13 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
                                     mPogoInteractor.closeSuspensionsWarning();
                                 } else if (currentScreen == Screen.NOTIFICATION_POPUP) {
                                     mPogoInteractor.closeNotificationPopup();
+                                } else if (currentScreen == Screen.TUTORIAL_CATCH_POKEMON) {
+                                    Log.i(LOG_TAG, "Account " + username + " is not banned.");
+                                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt.");
+                                    mNotBannedCount++;
+                                    return AccountStatus.NOT_BANNED;
                                 } else {
+
                                     Log.e(LOG_TAG, "Not on player profile screen.");
                                     wrongScreenCount++;
                                     // Assume that we are on the main screen.

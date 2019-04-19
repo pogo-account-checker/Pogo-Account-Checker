@@ -64,7 +64,8 @@ public class PogoInteractor {
 
     public enum Screen {
         LOGIN_FAILED, DATE_OF_BIRTH, PLAYER_SELECTION, LOGIN, LOADING, SAFETY_WARNING, LOCATION_PERMISSION, CAMERA_PERMISSION, NOTIFICATION_POPUP, CHEATING_WARNING_1, CHEATING_WARNING_2,
-        CHEATING_WARNING_3, SUSPENSION_WARNING, PLAYER_PROFILE, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE, UNKNOWN
+        CHEATING_WARNING_3, SUSPENSION_WARNING, TUTORIAL_CATCH_POKEMON, PLAYER_PROFILE, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE,
+        UNKNOWN
     }
 
     public Screen currentScreen() {
@@ -124,6 +125,10 @@ public class PogoInteractor {
 
         if (text.contains("indicated") && text.contains("opportunity") && text.contains("permanently")) {
             return Screen.SUSPENSION_WARNING;
+        }
+
+        if (text.contains("catch") && (text.contains("pokémon") || text.contains("pokemon"))) {
+            return Screen.TUTORIAL_CATCH_POKEMON;
         }
 
         if (text.contains("level") && text.contains("buddy") && text.contains("style")) {
