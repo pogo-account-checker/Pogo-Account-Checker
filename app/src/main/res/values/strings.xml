@@ -3,16 +3,8 @@
     <string name="notification_channel_name">Account checking status</string>
     <string name="notification_title">Checking accounts…</string>
     <string name="title_activity_result">ResultActivity</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_main_settings">SettingsActivity</string>
     <string name="title_activity_button_settings">ButtonSettingsActivity</string>
-
-    <string name="delimiter_pref_key">selected_delimiter_pref_key</string>
-    <string name="detect_account_level_pref_key">detect_account_level_pref_key</string>
-    <string name="with_mad_pref_key">with_mad_pref_key</string>
-    <string name="webSocket_uri_pref_key">webSocket_uri_pref_key</string>
-    <string name="player_profile_x_coord_pref_key">player_profile_x_coord_pref_key</string>
-    <string name="player_profile_y_coord_pref_key">player_profile_y_coord_pref_key</string>
-
     <string-array name="delimiters">
         <item>,</item>
         <item>:</item>
@@ -20,4 +12,73 @@
         <item>/</item>
         <item>|</item>
     </string-array>
+
+    <string name="delimiter_pref_key">selected_delimiter_pref_key</string>
+    <string name="detect_account_level_pref_key">detect_account_level_pref_key</string>
+    <string name="with_mad_pref_key">with_mad_pref_key</string>
+    <string name="webSocket_uri_pref_key">webSocket_uri_pref_key</string>
+
+    <!--Button properties-->
+    <string name="year_selector_x_pref_key">year_selector_x_pref_key</string>
+    <string name="year_selector_y_pref_key">year_selector_y_pref_key</string>
+    <string name="year_selector_width_pref_key">year_selector_width_pref_key</string>
+    <string name="year_selector_height_pref_key">year_selector_height_pref_key</string>
+    <string name="yob_2010_x_pref_key">yob_2010_x_pref_key</string>
+    <string name="yob_2010_y_pref_key">yob_2010_y_pref_key</string>
+    <string name="yob_2010_width_pref_key">yob_2010_width_pref_key</string>
+    <string name="yob_2010_height_pref_key">yob_2010_height_pref_key</string>
+    <string name="submit_dob_button_x_pref_key">submit_dob_button_x_pref_key</string>
+    <string name="submit_dob_button_y_pref_key">submit_dob_button_y_pref_key</string>
+    <string name="submit_dob_button_width_pref_key">submit_dob_button_width_pref_key</string>
+    <string name="submit_dob_button_height_pref_key">submit_dob_button_height_pref_key</string>
+    <string name="returning_player_button_x_pref_key">returning_player_button_x_pref_key</string>
+    <string name="returning_player_button_y_pref_key">returning_player_button_y_pref_key</string>
+    <string name="returning_player_button_width_pref_key">returning_player_button_width_pref_key</string>
+    <string name="returning_player_button_height_pref_key">returning_player_button_height_pref_key</string>
+    <string name="ptc_button_x_pref_key">ptc_button_x_pref_key</string>
+    <string name="ptc_button_y_pref_key">ptc_button_y_pref_key</string>
+    <string name="ptc_button_width_pref_key">ptc_button_width_pref_key</string>
+    <string name="ptc_button_height_pref_key">ptc_button_height_pref_key</string>
+    <string name="username_text_field_x_pref_key">username_text_field_x_pref_key</string>
+    <string name="username_text_field_y_pref_key">username_text_field_y_pref_key</string>
+    <string name="username_text_field_width_pref_key">username_text_field_width_pref_key</string>
+    <string name="username_text_field_height_pref_key">username_text_field_height_pref_key</string>
+    <string name="password_text_field_x_pref_key">password_text_field_x_pref_key</string>
+    <string name="password_text_field_y_pref_key">password_text_field_y_pref_key</string>
+    <string name="password_text_field_width_pref_key">password_text_field_width_pref_key</string>
+    <string name="password_text_field_height_pref_key">password_text_field_height_pref_key</string>
+    <string name="sign_in_button_x_pref_key">sign_in_button_x_pref_key</string>
+    <string name="sign_in_button_y_pref_key">sign_in_button_y_pref_key</string>
+    <string name="sign_in_button_width_pref_key">sign_in_button_width_pref_key</string>
+    <string name="sign_in_button_height_pref_key">sign_in_button_height_pref_key</string>
+    <string name="allow_location_button_x_pref_key">allow_location_button_x_pref_key</string>
+    <string name="allow_location_button_y_pref_key">allow_location_button_y_pref_key</string>
+    <string name="allow_location_button_width_pref_key">allow_location_button_width_pref_key</string>
+    <string name="allow_location_button_height_pref_key">allow_location_button_height_pref_key</string>
+    <string name="allow_camera_button_x_pref_key">allow_camera_button_x_pref_key</string>
+    <string name="allow_camera_button_y_pref_key">allow_camera_button_y_pref_key</string>
+    <string name="allow_camera_button_width_pref_key">allow_camera_button_width_pref_key</string>
+    <string name="allow_camera_button_height_pref_key">allow_camera_button_height_pref_key</string>
+    <string name="close_safety_warning_button_x_pref_key">close_safety_warning_button_x_pref_key</string>
+    <string name="close_safety_warning_button_y_pref_key">close_safety_warning_button_y_pref_key</string>
+    <string name="close_safety_warning_button_width_pref_key">close_safety_warning_button_width_pref_key</string>
+    <string name="close_safety_warning_button_height_pref_key">close_safety_warning_button_height_pref_key</string>
+    <string name="close_cheating_warning_1_button_x_pref_key">close_cheating_warning_1_button_x_pref_key</string>
+    <string name="close_cheating_warning_1_button_y_pref_key">close_cheating_warning_1_button_y_pref_key</string>
+    <string name="close_cheating_warning_1_button_width_pref_key">close_cheating_warning_1_button_width_pref_key</string>
+    <string name="close_cheating_warning_1_button_height_pref_key">close_cheating_warning_1_button_height_pref_key</string>
+    <string name="close_cheating_warning_2_button_x_pref_key">close_cheating_warning_2_button_x_pref_key</string>
+    <string name="close_cheating_warning_2_button_y_pref_key">close_cheating_warning_2_button_y_pref_key</string>
+    <string name="close_cheating_warning_2_button_width_pref_key">close_cheating_warning_2_button_width_pref_key</string>
+    <string name="close_cheating_warning_2_button_height_pref_key">close_cheating_warning_2_button_height_pref_key</string>
+    <string name="close_cheating_warning_3_button_x_pref_key">close_cheating_warning_3_button_x_pref_key</string>
+    <string name="close_cheating_warning_3_button_y_pref_key">close_cheating_warning_3_button_y_pref_key</string>
+    <string name="close_cheating_warning_3_button_width_pref_key">close_cheating_warning_3_button_width_pref_key</string>
+    <string name="close_cheating_warning_3_button_height_pref_key">close_cheating_warning_3_button_height_pref_key</string>
+    <string name="close_suspension_warning_button_x_pref_key">close_suspension_warning_button_x_pref_key</string>
+    <string name="close_suspension_warning_button_y_pref_key">close_suspension_warning_button_y_pref_key</string>
+    <string name="close_suspension_warning_button_width_pref_key">close_suspension_warning_button_width_pref_key</string>
+    <string name="close_suspension_warning_button_height_pref_key">close_suspension_warning_button_height_pref_key</string>
+    <string name="player_profile_button_x_pref_key">player_profile_button_x_pref_key</string>
+    <string name="player_profile_button_y_pref_key">player_profile_button_y_pref_key</string>
 </resources>

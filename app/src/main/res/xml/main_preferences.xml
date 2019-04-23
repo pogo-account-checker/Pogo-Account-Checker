@@ -13,7 +13,7 @@
     <Preference
         app:iconSpaceReserved="false"
         app:key="button_activity"
-        app:title="Button settings">
+        app:title="Button properties">
         <intent
             android:targetClass="com.pogoaccountchecker.activities.ButtonSettingsActivity"
             android:targetPackage="com.pogoaccountchecker" />

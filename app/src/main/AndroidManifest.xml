@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activities.MainSettingsActivity"
-            android:label="@string/title_activity_settings"
+            android:label="@string/title_activity_main_settings"
             android:parentActivityName=".activities.MainActivity"></activity>
         <activity
             android:name=".activities.ButtonSettingsActivity"

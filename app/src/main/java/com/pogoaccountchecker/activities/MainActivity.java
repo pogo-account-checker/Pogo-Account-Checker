@@ -112,9 +112,9 @@ public class MainActivity extends AppCompatActivity {
                 if (!mService.isChecking()) {
                     boolean detectAccountLevel = mSharedPreferences.getBoolean(getString(R.string.detect_account_level_pref_key), false);
                     if (detectAccountLevel) {
-                        int xPlayerProfile = Integer.parseInt(mSharedPreferences.getString(getString(R.string.player_profile_x_coord_pref_key), "0"));
-                        int yPlayerProfile = Integer.parseInt(mSharedPreferences.getString(getString(R.string.player_profile_y_coord_pref_key), "0"));
-                        if (xPlayerProfile == 0 || yPlayerProfile == 0) {
+                        int playerProfileX = Integer.parseInt(mSharedPreferences.getString(getString(R.string.player_profile_button_x_pref_key), "0"));
+                        int playerProfileY = Integer.parseInt(mSharedPreferences.getString(getString(R.string.player_profile_button_y_pref_key), "0"));
+                        if (playerProfileX == 0 || playerProfileY == 0) {
                             Toast.makeText(this, "Set the x and y coordinate of the player profile button in settings first!", Toast.LENGTH_LONG).show();
                             return;
                         }
