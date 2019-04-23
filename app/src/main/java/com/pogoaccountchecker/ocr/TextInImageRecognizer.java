@@ -38,22 +38,20 @@ public class TextInImageRecognizer {
             return null;
         }
 
-        mDetector.processImage(image);
-        Task<FirebaseVisionText> result =
-                mDetector.processImage(image)
-                        .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-                            @Override
-                            public void onSuccess(FirebaseVisionText firebaseVisionText) {
-                                Log.d(LOG_TAG, "Text recognition completed successfully. Detected: \n" + firebaseVisionText.getText());
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e(LOG_TAG, "Failure during text recognition.");
-                                e.printStackTrace();
-                            }
-                        });
+        Task<FirebaseVisionText> result = mDetector.processImage(image)
+                .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                    @Override
+                    public void onSuccess(FirebaseVisionText firebaseVisionText) {
+                        Log.d(LOG_TAG, "Text recognition completed successfully. Detected: \n" + firebaseVisionText.getText());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                     @Override
+                     public void onFailure(@NonNull Exception e) {
+                         Log.e(LOG_TAG, "Failure during text recognition.");
+                         e.printStackTrace();
+                     }
+                });
 
         int count = 0;
         while (count != 1000) {
@@ -61,8 +59,9 @@ public class TextInImageRecognizer {
             if (result.isComplete()) {
                 if (result.isSuccessful()) {
                      return result.getResult();
+                } else {
+                    return null;
                 }
-                return null;
             }
             count++;
         }
