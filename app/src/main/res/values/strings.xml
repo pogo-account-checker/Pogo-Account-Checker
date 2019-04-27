@@ -51,14 +51,6 @@
     <string name="sign_in_button_y_pref_key">sign_in_button_y_pref_key</string>
     <string name="sign_in_button_width_pref_key">sign_in_button_width_pref_key</string>
     <string name="sign_in_button_height_pref_key">sign_in_button_height_pref_key</string>
-    <string name="allow_location_button_x_pref_key">allow_location_button_x_pref_key</string>
-    <string name="allow_location_button_y_pref_key">allow_location_button_y_pref_key</string>
-    <string name="allow_location_button_width_pref_key">allow_location_button_width_pref_key</string>
-    <string name="allow_location_button_height_pref_key">allow_location_button_height_pref_key</string>
-    <string name="allow_camera_button_x_pref_key">allow_camera_button_x_pref_key</string>
-    <string name="allow_camera_button_y_pref_key">allow_camera_button_y_pref_key</string>
-    <string name="allow_camera_button_width_pref_key">allow_camera_button_width_pref_key</string>
-    <string name="allow_camera_button_height_pref_key">allow_camera_button_height_pref_key</string>
     <string name="close_safety_warning_button_x_pref_key">close_safety_warning_button_x_pref_key</string>
     <string name="close_safety_warning_button_y_pref_key">close_safety_warning_button_y_pref_key</string>
     <string name="close_safety_warning_button_width_pref_key">close_safety_warning_button_width_pref_key</string>

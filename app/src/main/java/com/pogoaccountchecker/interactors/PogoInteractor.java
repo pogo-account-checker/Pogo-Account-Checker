@@ -10,8 +10,6 @@ import com.pogoaccountchecker.R;
 import com.pogoaccountchecker.utils.Shell;
 import com.pogoaccountchecker.utils.Utils;
 
-import java.util.List;
-
 import androidx.preference.PreferenceManager;
 
 public class PogoInteractor {
@@ -44,6 +42,16 @@ public class PogoInteractor {
         mAccountLevel = -1;
         Shell.runSuCommand("pm clear " + POGO_PACKAGE);
         Log.i(LOG_TAG, "Pogo app data cleared.");
+    }
+
+    public void grantLocationPermission() {
+        Shell.runSuCommand("pm grant " + POGO_PACKAGE + " android.permission.ACCESS_FINE_LOCATION");
+        Log.i(LOG_TAG, "Location permission granted.");
+    }
+
+    public void grantCameraPermission() {
+        Shell.runSuCommand("pm grant " + POGO_PACKAGE + " android.permission.CAMERA");
+        Log.i(LOG_TAG, "Camera permission granted.");
     }
 
     public enum Screen {
@@ -428,78 +436,6 @@ public class PogoInteractor {
 
         mScreenInteractor.tapRandom(signInX, signInY, signInWidth, signInHeight);
         Log.i(LOG_TAG, "Account signed in.");
-    }
-
-    public void allowLocationAccess() {
-        int allowLocationX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.allow_location_button_x_pref_key), "0"));
-        int allowLocationY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.allow_location_button_y_pref_key), "0"));
-        int allowLocationWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.allow_location_button_width_pref_key), "0"));
-        int allowLocationHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.allow_location_button_height_pref_key), "0"));
-
-        if (allowLocationX == 0 || allowLocationY == 0 || allowLocationWidth == 0 || allowLocationHeight == 0) {
-            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
-            List<Point[]> cornerPointsList = mScreenInteractor.getAllElementCornerPoints(visionText, "allow");
-            if (cornerPointsList.isEmpty()) return;
-            Point[] cornerPoints;
-            if (cornerPointsList.get(0)[0].y > cornerPointsList.get(1)[0].y) {
-                cornerPoints = cornerPointsList.get(0);
-            } else {
-                cornerPoints = cornerPointsList.get(1);
-            }
-
-            allowLocationX = (cornerPoints[0].x + cornerPoints[1].x) / 2;
-            allowLocationY = (cornerPoints[0].y + cornerPoints[2].y) / 2;
-            allowLocationWidth = cornerPoints[1].x - cornerPoints[0].x;
-            allowLocationHeight = cornerPoints[2].y - cornerPoints[0].y;
-
-            SharedPreferences.Editor editor = mSharedPreferences.edit();
-            editor.putString(mContext.getString(R.string.allow_location_button_x_pref_key), Integer.toString(allowLocationX));
-            editor.putString(mContext.getString(R.string.allow_location_button_y_pref_key), Integer.toString(allowLocationY));
-            editor.putString(mContext.getString(R.string.allow_location_button_width_pref_key), Integer.toString(allowLocationWidth));
-            editor.putString(mContext.getString(R.string.allow_location_button_height_pref_key), Integer.toString(allowLocationHeight));
-            editor.apply();
-
-            if (mInterrupted) return;
-        }
-
-        mScreenInteractor.tapRandom(allowLocationX, allowLocationY, allowLocationWidth, allowLocationHeight);
-        Log.i(LOG_TAG, "Location access allowed.");
-    }
-
-    public void allowCameraAccess() {
-        int allowCameraX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.allow_camera_button_x_pref_key), "0"));
-        int allowCameraY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.allow_camera_button_y_pref_key), "0"));
-        int allowCameraWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.allow_camera_button_width_pref_key), "0"));
-        int allowCameraHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.allow_camera_button_height_pref_key), "0"));
-
-        if (allowCameraX == 0 || allowCameraY == 0 || allowCameraWidth == 0 || allowCameraHeight == 0) {
-            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
-            List<Point[]> cornerPointsList = mScreenInteractor.getAllElementCornerPoints(visionText, "allow");
-            if (cornerPointsList.isEmpty()) return;
-            Point[] cornerPoints;
-            if (cornerPointsList.get(0)[0].y > cornerPointsList.get(1)[0].y) {
-                cornerPoints = cornerPointsList.get(0);
-            } else {
-                cornerPoints = cornerPointsList.get(1);
-            }
-
-            allowCameraX = (cornerPoints[0].x + cornerPoints[1].x) / 2;
-            allowCameraY = (cornerPoints[0].y + cornerPoints[2].y) / 2;
-            allowCameraWidth = cornerPoints[1].x - cornerPoints[0].x;
-            allowCameraHeight = cornerPoints[2].y - cornerPoints[0].y;
-
-            SharedPreferences.Editor editor = mSharedPreferences.edit();
-            editor.putString(mContext.getString(R.string.allow_camera_button_x_pref_key), Integer.toString(allowCameraX));
-            editor.putString(mContext.getString(R.string.allow_camera_button_y_pref_key), Integer.toString(allowCameraY));
-            editor.putString(mContext.getString(R.string.allow_camera_button_width_pref_key), Integer.toString(allowCameraWidth));
-            editor.putString(mContext.getString(R.string.allow_camera_button_height_pref_key), Integer.toString(allowCameraHeight));
-            editor.apply();
-
-            if (mInterrupted) return;
-        }
-
-        mScreenInteractor.tapRandom(allowCameraX, allowCameraY, allowCameraWidth, allowCameraHeight);
-        Log.i(LOG_TAG, "Camera access allowed.");
     }
 
     public void closeSafetyWarning() {

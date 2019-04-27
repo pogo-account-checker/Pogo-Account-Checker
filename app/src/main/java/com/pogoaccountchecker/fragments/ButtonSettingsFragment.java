@@ -164,38 +164,6 @@ public class ButtonSettingsFragment extends PreferenceFragmentCompat {
         signInButtonHeightPreference.setOnBindEditTextListener(onBindEditTextListener);
         signInButtonHeightPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
 
-        EditTextPreference allowLocationButtonXPreference = findPreference(getString(R.string.allow_location_button_x_pref_key));
-        allowLocationButtonXPreference.setOnBindEditTextListener(onBindEditTextListener);
-        allowLocationButtonXPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-
-        EditTextPreference allowLocationButtonYPreference = findPreference(getString(R.string.allow_location_button_y_pref_key));
-        allowLocationButtonYPreference.setOnBindEditTextListener(onBindEditTextListener);
-        allowLocationButtonYPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-
-        EditTextPreference allowLocationButtonWidthPreference = findPreference(getString(R.string.allow_location_button_width_pref_key));
-        allowLocationButtonWidthPreference.setOnBindEditTextListener(onBindEditTextListener);
-        allowLocationButtonWidthPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-
-        EditTextPreference allowLocationButtonHeightPreference = findPreference(getString(R.string.allow_location_button_height_pref_key));
-        allowLocationButtonHeightPreference.setOnBindEditTextListener(onBindEditTextListener);
-        allowLocationButtonHeightPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-
-        EditTextPreference allowCameraButtonXPreference = findPreference(getString(R.string.allow_camera_button_x_pref_key));
-        allowCameraButtonXPreference.setOnBindEditTextListener(onBindEditTextListener);
-        allowCameraButtonXPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-
-        EditTextPreference allowCameraButtonYPreference = findPreference(getString(R.string.allow_camera_button_y_pref_key));
-        allowCameraButtonYPreference.setOnBindEditTextListener(onBindEditTextListener);
-        allowCameraButtonYPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-
-        EditTextPreference allowCameraButtonWidthPreference = findPreference(getString(R.string.allow_camera_button_width_pref_key));
-        allowCameraButtonWidthPreference.setOnBindEditTextListener(onBindEditTextListener);
-        allowCameraButtonWidthPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-
-        EditTextPreference allowCameraButtonHeightPreference = findPreference(getString(R.string.allow_camera_button_height_pref_key));
-        allowCameraButtonHeightPreference.setOnBindEditTextListener(onBindEditTextListener);
-        allowCameraButtonHeightPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-
         EditTextPreference closeSafetyWarningButtonXPreference = findPreference(getString(R.string.close_safety_warning_button_x_pref_key));
         closeSafetyWarningButtonXPreference.setOnBindEditTextListener(onBindEditTextListener);
         closeSafetyWarningButtonXPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);

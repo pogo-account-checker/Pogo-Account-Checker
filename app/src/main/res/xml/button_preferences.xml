@@ -279,80 +279,6 @@
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="Location permission screen"
-        app:iconSpaceReserved="false">
-
-        <EditTextPreference
-            android:defaultValue="0"
-            android:key="@string/allow_location_button_x_pref_key"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="Allow location access button x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            android:defaultValue="0"
-            android:key="@string/allow_location_button_y_pref_key"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="Allow location access button y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            android:defaultValue="0"
-            android:key="@string/allow_location_button_width_pref_key"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="Allow location access button width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            android:defaultValue="0"
-            android:key="@string/allow_location_button_height_pref_key"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="Allow location access button height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:title="Camera permission screen"
-        app:iconSpaceReserved="false">
-
-        <EditTextPreference
-            android:defaultValue="0"
-            android:key="@string/allow_camera_button_x_pref_key"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="Allow camera access button x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            android:defaultValue="0"
-            android:key="@string/allow_camera_button_y_pref_key"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="Allow camera access button y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            android:defaultValue="0"
-            android:key="@string/allow_camera_button_width_pref_key"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="Allow camera access button width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            android:defaultValue="0"
-            android:key="@string/allow_camera_button_height_pref_key"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="Allow camera access button height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
-    <PreferenceCategory
         android:title="Safety warning screen"
         app:iconSpaceReserved="false">
 
@@ -478,7 +404,7 @@
             android:key="@string/close_cheating_warning_3_button_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Close cheating warning 1 button width"
+            android:title="Close cheating warning 3 button width"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference

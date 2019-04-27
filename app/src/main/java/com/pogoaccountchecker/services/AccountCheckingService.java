@@ -210,7 +210,7 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
         int wrongScreenCount = 0;
         while (wrongScreenCount < 20 && !mPaused && !mStopped) {
             Screen currentScreen = mPogoInteractor.currentScreen();
-            if (currentScreen == Screen.LOCATION_PERMISSION) {
+            if (currentScreen == Screen.SAFETY_WARNING) {
                 return currentScreen;
             } else {
                 Log.i(LOG_TAG, "Still on loading screen.");
@@ -235,17 +235,7 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
 
     private int detectAccountLevel() {
         Screen currentScreen = getScreenAfterLoading();
-        if (currentScreen == Screen.LOCATION_PERMISSION) {
-            mPogoInteractor.allowLocationAccess();
-            if (mPaused || mStopped) return -1;
-            Utils.sleepRandom(450, 550);
-            if (mPaused || mStopped) return -1;
-
-            mPogoInteractor.allowCameraAccess();
-            if (mPaused || mStopped) return -1;
-            Utils.sleepRandom(2950, 3050);
-            if (mPaused || mStopped) return -1;
-
+        if (currentScreen == Screen.SAFETY_WARNING) {
             mPogoInteractor.closeSafetyWarning();
             if (mPaused || mStopped) return -1;
             Utils.sleepRandom(950, 1050);
@@ -371,15 +361,17 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
 
             currentScreen = getScreenAfterLogin();
             if (mPaused || mStopped) continue;
-
             switch (currentScreen) {
                 case LOADING:
                     boolean detectLevel = mSharedPreferences.getBoolean(getString(R.string.detect_account_level_pref_key), false);
                     if (detectLevel) {
+                        mPogoInteractor.grantLocationPermission();
+                        mPogoInteractor.grantCameraPermission();
+
                         int accountLevel = detectAccountLevel();
                         if (accountLevel >= 0) {
                             Log.i(LOG_TAG, "Account " + username + " (L" + accountLevel + ") is not banned.");
-                            Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/L" + accountLevel + "_not_banned.txt.");
+                            Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned_L" + accountLevel + ".txt.");
                             mNotBannedCount++;
                             return AccountStatus.NOT_BANNED;
                         } else if (accountLevel == -1) {
@@ -395,7 +387,7 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
                             break;
                         } else if (accountLevel == -2) {
                             Log.i(LOG_TAG, "Account " + username + " is not banned but needs to catch the tutorial starter pokemon.");
-                            Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt.");
+                            Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned_tutorial.txt.");
                             mNotBannedCount++;
                             return AccountStatus.NOT_BANNED;
                         }
