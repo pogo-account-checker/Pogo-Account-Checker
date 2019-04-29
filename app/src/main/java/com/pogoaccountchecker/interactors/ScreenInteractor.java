@@ -39,7 +39,7 @@ public class ScreenInteractor {
 
     public void tap(int x, int y) {
         Shell.runSuCommand("input tap " + x + " " + y);
-        Log.d(LOG_TAG, "Tapped screen at: " + Float.toString(x) + "," + Float.toString(y));
+        Log.d(LOG_TAG, "Tapped screen at: " + x + "," + y);
     }
 
     public void tapRandom(int x, int y, int offsetX, int offsetY) {

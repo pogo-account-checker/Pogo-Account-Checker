@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        android:defaultValue="500"
+        android:key="@string/year_selector_delay_pref_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Delay after opening year selector"
+        app:iconSpaceReserved="false" />
+    <EditTextPreference
+        android:defaultValue="500"
+        android:key="@string/yob_2010_delay_pref_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Delay after selecting YOB 2010"
+        app:iconSpaceReserved="false" />
+    <EditTextPreference
+        android:defaultValue="500"
+        android:key="@string/submit_dob_delay_pref_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Delay after submitting DOB"
+        app:iconSpaceReserved="false" />
+    <EditTextPreference
+        android:defaultValue="500"
+        android:key="@string/returning_player_delay_pref_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Delay after selecting returning player"
+        app:iconSpaceReserved="false" />
+    <EditTextPreference
+        android:defaultValue="500"
+        android:key="@string/ptc_delay_pref_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Delay after selecting PTC"
+        app:iconSpaceReserved="false" />
+    <EditTextPreference
+        android:defaultValue="1000"
+        android:key="@string/safety_warning_delay_pref_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Delay after closing safety warning"
+        app:iconSpaceReserved="false" />
+    <EditTextPreference
+        android:defaultValue="500"
+        android:key="@string/notification_popup_delay_pref_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Delay after closing notification popup"
+        app:iconSpaceReserved="false" />
+    <EditTextPreference
+        android:defaultValue="2000"
+        android:key="@string/player_profile_delay_pref_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Delay after opening player profile"
+        app:iconSpaceReserved="false" />
+    <EditTextPreference
+        android:defaultValue="500"
+        android:key="@string/cheating_warning_delay_pref_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Delay after closing cheating warning"
+        app:iconSpaceReserved="false" />
+</PreferenceScreen>

@@ -12,6 +12,8 @@ import com.pogoaccountchecker.utils.Utils;
 
 import androidx.preference.PreferenceManager;
 
+import java.util.List;
+
 public class PogoInteractor {
     private Context mContext;
     private SharedPreferences mSharedPreferences;
@@ -55,12 +57,12 @@ public class PogoInteractor {
     }
 
     public enum Screen {
-        LOGIN_FAILED, DATE_OF_BIRTH, PLAYER_SELECTION, LOGIN, LOADING, SAFETY_WARNING, LOCATION_PERMISSION, CAMERA_PERMISSION, NOTIFICATION_POPUP, CHEATING_WARNING_1, CHEATING_WARNING_2,
-        CHEATING_WARNING_3, SUSPENSION_WARNING, TUTORIAL_CATCH_POKEMON, PLAYER_PROFILE, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE,
-        UNKNOWN
+        LOGIN_FAILED, DATE_OF_BIRTH, PLAYER_SELECTION, LOGIN, LOADING, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE,
+        TERMS_OF_SERVICE, PRIVACY_POLICY, TUTORIAL_GREETING, TUTORIAL_CATCH_POKEMON, TUTORIAL_FIRST_POKEMON, TUTORIAL_POKESTOPS, SAFETY_WARNING, NOTIFICATION_POPUP, CHEATING_WARNING_1,
+        CHEATING_WARNING_2, CHEATING_WARNING_3, SUSPENSION_WARNING, PLAYER_PROFILE, UNKNOWN
     }
 
-    public Screen currentScreen() {
+    public Screen getCurrentScreen() {
         FirebaseVisionText visionText = mScreenInteractor.getVisionText();
         if (visionText == null) return Screen.UNKNOWN;
         String text = visionText.getText().toLowerCase();
@@ -81,52 +83,8 @@ public class PogoInteractor {
             return Screen.LOGIN;
         }
 
-        if (text.contains("allow") && text.contains("access") && text.contains("location")) {
-            return Screen.LOCATION_PERMISSION;
-        }
-
-        if (text.contains("allow") && text.contains("pictures") && text.contains("record")) {
-            return Screen.CAMERA_PERMISSION;
-        }
-
         if (text.contains("remember") && text.contains("alert") && text.contains("surroundings")) {
             return Screen.LOADING;
-        }
-
-        if ((text.contains("play") && text.contains("while") && text.contains("driving"))
-                || (text.contains("trespass") && text.contains("while") && text.contains("playing"))
-                || (text.contains("enter") && text.contains("dangerous") && text.contains("areas"))) {
-            return Screen.SAFETY_WARNING;
-        }
-
-        if (text.contains("see") && text.contains("details") && text.contains("dismiss")) {
-            return Screen.NOTIFICATION_POPUP;
-        }
-
-        if (text.contains("suggests") && text.contains("accesses") && text.contains("compromised")) {
-            return Screen.CHEATING_WARNING_1;
-        }
-
-        if (text.contains("modified") && text.contains("degraded") && text.contains("transgressions")) {
-            return Screen.CHEATING_WARNING_2;
-        }
-
-        if (text.contains("modified") && text.contains("strike") && text.contains("transgressions")) {
-            return Screen.CHEATING_WARNING_3;
-        }
-
-        if (text.contains("indicated") && text.contains("opportunity") && text.contains("permanently")) {
-            return Screen.SUSPENSION_WARNING;
-        }
-
-        if (text.contains("catch") && (text.contains("pokémon") || text.contains("pokemon"))) {
-            return Screen.TUTORIAL_CATCH_POKEMON;
-        }
-
-        if (text.contains("level") && text.contains("buddy") && text.contains("style")) {
-            // Store account level, since it will most likely be needed later on.
-            setAccountLevelFromVisionText(visionText);
-            return Screen.PLAYER_PROFILE;
         }
 
         if ((text.contains("termination") && text.contains("permanently") && text.contains("violating"))
@@ -155,6 +113,63 @@ public class PogoInteractor {
             return Screen.NOT_AUTHENTICATE;
         }
 
+        if (text.contains("terms") && text.contains("service") && text.contains("accept")) {
+            return Screen.TERMS_OF_SERVICE;
+        }
+
+        if (text.contains("privacy") && text.contains("policy") && text.contains("personal")) {
+            return Screen.PRIVACY_POLICY;
+        }
+
+        if (text.contains("hello") && text.contains("there") && text.contains("professor")) {
+            return Screen.TUTORIAL_GREETING;
+        }
+
+        if (((text.contains("there") && (text.contains("pokémon") || text.contains("pokemon")) && text.contains("nearby"))) ||
+                (text.contains("catch") && (text.contains("pokémon") || text.contains("pokemon")))) {
+            return Screen.TUTORIAL_CATCH_POKEMON;
+        }
+
+        if (text.contains("congratulations") && text.contains("caught") && (text.contains("pokémon") || text.contains("pokemon"))) {
+            return Screen.TUTORIAL_FIRST_POKEMON;
+        }
+
+        if (text.contains("you") && text.contains("find") && text.contains("items")) {
+            return Screen.TUTORIAL_POKESTOPS;
+        }
+
+        if ((text.contains("play") && text.contains("while") && text.contains("driving"))
+                || (text.contains("trespass") && text.contains("while") && text.contains("playing"))
+                || (text.contains("enter") && text.contains("dangerous") && text.contains("areas"))) {
+            return Screen.SAFETY_WARNING;
+        }
+
+        if (text.contains("see") && text.contains("details") && text.contains("dismiss")) {
+            return Screen.NOTIFICATION_POPUP;
+        }
+
+        if (text.contains("suggests") && text.contains("accesses") && text.contains("compromised")) {
+            return Screen.CHEATING_WARNING_1;
+        }
+
+        if (text.contains("modified") && text.contains("degraded") && text.contains("transgressions")) {
+            return Screen.CHEATING_WARNING_2;
+        }
+
+        if (text.contains("modified") && text.contains("strike") && text.contains("transgressions")) {
+            return Screen.CHEATING_WARNING_3;
+        }
+
+        if (text.contains("indicated") && text.contains("opportunity") && text.contains("permanently")) {
+            return Screen.SUSPENSION_WARNING;
+        }
+
+        if (text.contains("level") && text.contains("buddy") && text.contains("style")) {
+            // Store account level, since it will most likely be needed later on.
+            setAccountLevelFromVisionText(visionText);
+            return Screen.PLAYER_PROFILE;
+        }
+
         return Screen.UNKNOWN;
     }
 
@@ -177,6 +192,7 @@ public class PogoInteractor {
         FirebaseVisionText visionText = null;
         if (yearSelectorX == 0 || yearSelectorY == 0 || yearSelectorWidth == 0 || yearSelectorHeight == 0) {
             visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
             Point[] yearSelectorCornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "2019");
             if (yearSelectorCornerPoints == null) return;
 
@@ -191,12 +207,13 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.year_selector_width_pref_key), Integer.toString(yearSelectorWidth));
             editor.putString(mContext.getString(R.string.year_selector_height_pref_key), Integer.toString(yearSelectorHeight));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         if (submitX == 0 || submitY == 0 || submitWidth == 0 || submitHeight == 0) {
-            if (visionText == null) visionText = mScreenInteractor.getVisionText();
+            if (visionText == null) {
+                visionText = mScreenInteractor.getVisionText();
+                if (mInterrupted) return;
+            }
             Point[] dateOfBirthSubmitCornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "submit");
             if (dateOfBirthSubmitCornerPoints == null) return;
 
@@ -211,8 +228,6 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.submit_dob_button_width_pref_key), Integer.toString(submitWidth));
             editor.putString(mContext.getString(R.string.submit_dob_button_height_pref_key), Integer.toString(submitHeight));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         // Open year selector.
@@ -220,11 +235,12 @@ public class PogoInteractor {
         if (mInterrupted) return;
 
         // Wait for animation.
-        Utils.sleepRandom(450, 550);
+        Utils.sleep(Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.year_selector_delay_pref_key), "500")));
         if (mInterrupted) return;
 
         if (yob2010X == 0 || yob2010Y == 0 || yob2010Width == 0 || yob2010Height == 0 ) {
             visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
             Point[] yearOfBirth2010CornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "2010");
             if (yearOfBirth2010CornerPoints == null) return;
 
@@ -239,8 +255,6 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.yob_2010_width_pref_key), Integer.toString(yob2010Width));
             editor.putString(mContext.getString(R.string.yob_2010_height_pref_key), Integer.toString(yob2010Height));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         // Select year of birth.
@@ -248,7 +262,7 @@ public class PogoInteractor {
         if (mInterrupted) return;
 
         // Wait for animation.
-        Utils.sleepRandom(450, 550);
+        Utils.sleep(Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.yob_2010_delay_pref_key), "500")));
         if (mInterrupted) return;
 
         // Submit date of birth.
@@ -264,6 +278,7 @@ public class PogoInteractor {
 
         if (returningPlayerX == 0 || returningPlayerY == 0 || returningPlayerWidth == 0 || returningPlayerHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
             Point[] cornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "returning player");
             if (cornerPoints == null) return;
 
@@ -278,8 +293,6 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.returning_player_button_width_pref_key), Integer.toString(returningPlayerWidth));
             editor.putString(mContext.getString(R.string.returning_player_button_height_pref_key), Integer.toString(returningPlayerHeight));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         mScreenInteractor.tapRandom(returningPlayerX, returningPlayerY, returningPlayerWidth, returningPlayerHeight);
@@ -294,6 +307,7 @@ public class PogoInteractor {
 
         if (ptcX == 0 || ptcY == 0 || ptcWidth == 0 || ptcHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
             String ptcText;
             if (visionText.getText().contains("pokémon")) {
                 ptcText = "pokémon trainer club";
@@ -314,8 +328,6 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.ptc_button_width_pref_key), Integer.toString(ptcWidth));
             editor.putString(mContext.getString(R.string.ptc_button_height_pref_key), Integer.toString(ptcHeight));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         mScreenInteractor.tapRandom(ptcX, ptcY, ptcWidth, ptcHeight);
@@ -341,6 +353,7 @@ public class PogoInteractor {
         FirebaseVisionText visionText = null;
         if (usernameX == 0 || usernameY == 0 || usernameWidth == 0 || usernameHeight == 0) {
             visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
             Point[] usernameCornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "username");
             if (usernameCornerPoints == null) return;
 
@@ -355,12 +368,13 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.username_text_field_width_pref_key), Integer.toString(usernameWidth));
             editor.putString(mContext.getString(R.string.username_text_field_height_pref_key), Integer.toString(usernameHeight));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         if (passwordX == 0 || passwordY == 0 || passwordWidth == 0 || passwordHeight == 0) {
-            if (visionText == null) visionText = mScreenInteractor.getVisionText();
+            if (visionText == null) {
+                visionText = mScreenInteractor.getVisionText();
+                if (mInterrupted) return;
+            }
             Point[] passwordCornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "password");
             if (passwordCornerPoints == null) return;
 
@@ -375,12 +389,13 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.password_text_field_width_pref_key), Integer.toString(passwordWidth));
             editor.putString(mContext.getString(R.string.password_text_field_height_pref_key), Integer.toString(passwordHeight));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         if (signInX == 0 || signInY == 0 || signInWidth == 0 || signInHeight == 0) {
-            if (visionText == null) visionText = mScreenInteractor.getVisionText();
+            if (visionText == null) {
+                visionText = mScreenInteractor.getVisionText();
+                if (mInterrupted) return;
+            }
             Point[] signInCornerPoints;
             if (visionText.getText().contains("sign in")) {
                 signInCornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "sign in");
@@ -400,8 +415,6 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.sign_in_button_width_pref_key), Integer.toString(signInWidth));
             editor.putString(mContext.getString(R.string.sign_in_button_height_pref_key), Integer.toString(signInHeight));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         // Tap in username box.
@@ -415,9 +428,6 @@ public class PogoInteractor {
         // Tap to hide keyboard.
         mScreenInteractor.tap(Utils.randomWithRange(0, 50), Utils.randomWithRange(100, 150));
         if (mInterrupted) return;
-        // Wait for keyboard to disappear.
-        Utils.sleepRandom(450, 550);
-        if (mInterrupted) return;
 
         // Tap in password box.
         mScreenInteractor.tapRandom(passwordX, passwordY, passwordWidth, passwordHeight);
@@ -430,12 +440,74 @@ public class PogoInteractor {
         // Tap to hide keyboard.
         mScreenInteractor.tap(Utils.randomWithRange(0, 50), Utils.randomWithRange(100, 150));
         if (mInterrupted) return;
-        // Wait for keyboard to disappear.
-        Utils.sleepRandom(450, 550);
-        if (mInterrupted) return;
 
+        // Login.
         mScreenInteractor.tapRandom(signInX, signInY, signInWidth, signInHeight);
         Log.i(LOG_TAG, "Account signed in.");
+    }
+
+    public void acceptTermsOfService() {
+        int acceptWarningX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.accept_tos_button_x_pref_key), "0"));
+        int acceptWarningY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.accept_tos_button_y_pref_key), "0"));
+        int acceptWarningWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.accept_tos_button_width_pref_key), "0"));
+        int acceptWarningHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.accept_tos_button_height_pref_key), "0"));
+
+        if (acceptWarningX == 0 || acceptWarningY == 0 || acceptWarningWidth == 0 || acceptWarningHeight == 0) {
+            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
+            List<Point[]> cornerPointsArray = mScreenInteractor.getAllElementCornerPoints(visionText, "accept");
+            if (cornerPointsArray.size() != 2) return;
+            Point[] cornerPoints;
+            if (cornerPointsArray.get(0)[0].y < cornerPointsArray.get(1)[0].y) {
+                cornerPoints = cornerPointsArray.get(1);
+            } else {
+                cornerPoints = cornerPointsArray.get(0);
+            }
+
+            acceptWarningX = (cornerPoints[0].x + cornerPoints[1].x) / 2;
+            acceptWarningY = (cornerPoints[0].y + cornerPoints[2].y) / 2;
+            acceptWarningWidth = cornerPoints[1].x - cornerPoints[0].x;
+            acceptWarningHeight = cornerPoints[2].y - cornerPoints[0].y;
+
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            editor.putString(mContext.getString(R.string.accept_tos_button_x_pref_key), Integer.toString(acceptWarningX));
+            editor.putString(mContext.getString(R.string.accept_tos_button_y_pref_key), Integer.toString(acceptWarningY));
+            editor.putString(mContext.getString(R.string.accept_tos_button_width_pref_key), Integer.toString(acceptWarningWidth));
+            editor.putString(mContext.getString(R.string.accept_tos_button_height_pref_key), Integer.toString(acceptWarningHeight));
+            editor.apply();
+        }
+
+        mScreenInteractor.tapRandom(acceptWarningX, acceptWarningY, acceptWarningWidth, acceptWarningHeight);
+        Log.i(LOG_TAG, "Terms of Service accepted.");
+    }
+
+    public void closePrivacyPolicy() {
+        int closeWarningX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_privacy_policy_button_x_pref_key), "0"));
+        int closeWarningY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_privacy_policy_button_y_pref_key), "0"));
+        int closeWarningWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_privacy_policy_button_width_pref_key), "0"));
+        int closeWarningHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_privacy_policy_button_height_pref_key), "0"));
+
+        if (closeWarningX == 0 || closeWarningY == 0 || closeWarningWidth == 0 || closeWarningHeight == 0) {
+            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
+            Point[] cornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "ok");
+            if (cornerPoints == null) return;
+
+            closeWarningX = (cornerPoints[0].x + cornerPoints[1].x) / 2;
+            closeWarningY = (cornerPoints[0].y + cornerPoints[2].y) / 2;
+            closeWarningWidth = cornerPoints[1].x - cornerPoints[0].x;
+            closeWarningHeight = cornerPoints[2].y - cornerPoints[0].y;
+
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            editor.putString(mContext.getString(R.string.close_privacy_policy_button_x_pref_key), Integer.toString(closeWarningX));
+            editor.putString(mContext.getString(R.string.close_privacy_policy_button_y_pref_key), Integer.toString(closeWarningY));
+            editor.putString(mContext.getString(R.string.close_privacy_policy_button_width_pref_key), Integer.toString(closeWarningWidth));
+            editor.putString(mContext.getString(R.string.close_privacy_policy_button_height_pref_key), Integer.toString(closeWarningHeight));
+            editor.apply();
+        }
+
+        mScreenInteractor.tapRandom(closeWarningX, closeWarningY, closeWarningWidth, closeWarningHeight);
+        Log.i(LOG_TAG, "Privacy policy closed.");
     }
 
     public void closeSafetyWarning() {
@@ -446,6 +518,7 @@ public class PogoInteractor {
 
         if (closeWarningX == 0 || closeWarningY == 0 || closeWarningWidth == 0 || closeWarningHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
             Point[] cornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "ok");
             if (cornerPoints == null) return;
 
@@ -460,8 +533,6 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.close_safety_warning_button_width_pref_key), Integer.toString(closeWarningWidth));
             editor.putString(mContext.getString(R.string.close_safety_warning_button_height_pref_key), Integer.toString(closeWarningHeight));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         mScreenInteractor.tapRandom(closeWarningX, closeWarningY, closeWarningWidth, closeWarningHeight);
@@ -482,6 +553,7 @@ public class PogoInteractor {
 
         if (closeWarningX == 0 || closeWarningY == 0 || closeWarningWidth == 0 || closeWarningHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
             Point[] cornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "got it");
             if (cornerPoints == null) return;
 
@@ -496,8 +568,6 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.close_cheating_warning_1_button_width_pref_key), Integer.toString(closeWarningWidth));
             editor.putString(mContext.getString(R.string.close_cheating_warning_1_button_height_pref_key), Integer.toString(closeWarningHeight));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         mScreenInteractor.tapRandom(closeWarningX, closeWarningY, closeWarningWidth, closeWarningHeight);
@@ -512,6 +582,7 @@ public class PogoInteractor {
 
         if (closeWarningX == 0 || closeWarningY == 0 || closeWarningWidth == 0 || closeWarningHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
             Point[] cornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "got it");
             if (cornerPoints == null) return;
 
@@ -526,8 +597,6 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.close_cheating_warning_2_button_width_pref_key), Integer.toString(closeWarningWidth));
             editor.putString(mContext.getString(R.string.close_cheating_warning_2_button_height_pref_key), Integer.toString(closeWarningHeight));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         mScreenInteractor.tapRandom(closeWarningX, closeWarningY, closeWarningWidth, closeWarningHeight);
@@ -542,6 +611,7 @@ public class PogoInteractor {
 
         if (closeWarningX == 0 || closeWarningY == 0 || closeWarningWidth == 0 || closeWarningHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
             Point[] cornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "got it");
             if (cornerPoints == null) return;
 
@@ -556,8 +626,6 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.close_cheating_warning_3_button_width_pref_key), Integer.toString(closeWarningWidth));
             editor.putString(mContext.getString(R.string.close_cheating_warning_3_button_height_pref_key), Integer.toString(closeWarningHeight));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         mScreenInteractor.tapRandom(closeWarningX, closeWarningY, closeWarningWidth, closeWarningHeight);
@@ -572,6 +640,7 @@ public class PogoInteractor {
 
         if (closeWarningX == 0 || closeWarningY == 0 || closeWarningWidth == 0 || closeWarningHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
             Point[] cornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "got it");
             if (cornerPoints == null) return;
 
@@ -586,8 +655,6 @@ public class PogoInteractor {
             editor.putString(mContext.getString(R.string.close_suspension_warning_button_width_pref_key), Integer.toString(closeWarningWidth));
             editor.putString(mContext.getString(R.string.close_suspension_warning_button_height_pref_key), Integer.toString(closeWarningHeight));
             editor.apply();
-
-            if (mInterrupted) return;
         }
 
         mScreenInteractor.tapRandom(closeWarningX, closeWarningY, closeWarningWidth, closeWarningHeight);

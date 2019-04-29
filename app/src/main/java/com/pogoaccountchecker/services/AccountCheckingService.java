@@ -55,15 +55,13 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
 
     @Override
     public void onCreate() {
-        mPogoInteractor = new PogoInteractor(this);
-
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mPogoInteractor = new PogoInteractor(this);
 
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
         mNotificationBuilderChecking = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(getText(R.string.notification_title))
                 .setSmallIcon(R.drawable.ic_outline_running_24px)
@@ -178,8 +176,8 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
 
     private Screen getScreenAfterBoot() {
         int wrongScreenCount = 0;
-        while (wrongScreenCount < 20 && !mPaused && !mStopped) {
-            Screen currentScreen = mPogoInteractor.currentScreen();
+        while (wrongScreenCount < 20 && !isInterrupted()) {
+            Screen currentScreen = mPogoInteractor.getCurrentScreen();
             if (currentScreen == Screen.DATE_OF_BIRTH || currentScreen == Screen.PLAYER_SELECTION) {
                 return currentScreen;
             } else {
@@ -193,12 +191,16 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
 
     private Screen getScreenAfterLogin() {
         int wrongScreenCount = 0;
-        while (wrongScreenCount < 20 && !mPaused && !mStopped) {
-            Screen currentScreen = mPogoInteractor.currentScreen();
+        while (wrongScreenCount < 20 && !isInterrupted()) {
+            Screen currentScreen = mPogoInteractor.getCurrentScreen();
             if (currentScreen != Screen.LOGIN && currentScreen != Screen.UNKNOWN) {
                 return currentScreen;
             } else {
-                Log.i(LOG_TAG, "Account is not yet logged in.");
+                if (currentScreen == Screen.LOGIN) {
+                    Log.i(LOG_TAG, "Account is not yet logged in.");
+                } else {
+                    Log.e(LOG_TAG, "Could not recognize current screen.");
+                }
                 wrongScreenCount++;
             }
         }
@@ -208,12 +210,16 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
 
     private Screen getScreenAfterLoading() {
         int wrongScreenCount = 0;
-        while (wrongScreenCount < 20 && !mPaused && !mStopped) {
-            Screen currentScreen = mPogoInteractor.currentScreen();
-            if (currentScreen == Screen.SAFETY_WARNING) {
+        while (wrongScreenCount < 20 && !isInterrupted()) {
+            Screen currentScreen = mPogoInteractor.getCurrentScreen();
+            if (currentScreen != Screen.LOADING && currentScreen != Screen.UNKNOWN) {
                 return currentScreen;
             } else {
-                Log.i(LOG_TAG, "Still on loading screen.");
+                if (currentScreen == Screen.LOADING) {
+                    Log.i(LOG_TAG, "Still on loading screen.");
+                } else {
+                    Log.e(LOG_TAG, "Could not recognize current screen.");
+                }
                 wrongScreenCount++;
             }
         }
@@ -221,89 +227,115 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
         return Screen.UNKNOWN;
     }
 
-    private void closeNotificationPopupAndOpenPlayerProfile() {
-        mPogoInteractor.closeNotificationPopup();
-        if (mPaused || mStopped) return;
-        Utils.sleepRandom(450, 550);
-        if (mPaused || mStopped) return;
+    private Screen getScreenAfterTos() {
+        int wrongScreenCount = 0;
+        while (wrongScreenCount < 5 && !isInterrupted()) {
+            Screen currentScreen = mPogoInteractor.getCurrentScreen();
+            if (currentScreen != Screen.TERMS_OF_SERVICE && currentScreen != Screen.UNKNOWN) {
+                return currentScreen;
+            } else {
+                if (currentScreen == Screen.TERMS_OF_SERVICE) {
+                    Log.i(LOG_TAG, "Still on terms of service screen.");
+                } else {
+                    Log.e(LOG_TAG, "Could not recognize current screen.");
+                }
+                wrongScreenCount++;
+            }
+        }
 
-        mPogoInteractor.openPlayerProfile();
-        if (mPaused || mStopped) return;
-        Utils.sleepRandom(1950, 2050);
+        return Screen.UNKNOWN;
     }
 
-
-    private int detectAccountLevel() {
-        Screen currentScreen = getScreenAfterLoading();
-        if (currentScreen == Screen.SAFETY_WARNING) {
-            mPogoInteractor.closeSafetyWarning();
-            if (mPaused || mStopped) return -1;
-            Utils.sleepRandom(950, 1050);
-            if (mPaused || mStopped) return -1;
-
-            closeNotificationPopupAndOpenPlayerProfile();
-            if (mPaused || mStopped) return -1;
-
-            int wrongScreenCount = 0;
-            while (wrongScreenCount < 20 && !mPaused && !mStopped) {
-                currentScreen = mPogoInteractor.currentScreen();
-                if (currentScreen == Screen.PLAYER_PROFILE) {
-                    return mPogoInteractor.getAccountLevel();
-                } else if (currentScreen == Screen.CHEATING_WARNING_1) {
-                    mPogoInteractor.closeCheatingWarning1();
-                    if (mPaused || mStopped) break;
-                    Utils.sleepRandom(450, 550);
-                    if (mPaused || mStopped) break;
-
-                    closeNotificationPopupAndOpenPlayerProfile();
-                } else if (currentScreen == Screen.CHEATING_WARNING_2) {
-                    mPogoInteractor.closeCheatingWarning2();
-                    if (mPaused || mStopped) break;
-                    Utils.sleepRandom(450, 550);
-                    if (mPaused || mStopped) break;
-
-                    closeNotificationPopupAndOpenPlayerProfile();
-                } else if (currentScreen == Screen.CHEATING_WARNING_3) {
-                    mPogoInteractor.closeCheatingWarning3();
-                    if (mPaused || mStopped) break;
-                    Utils.sleepRandom(450, 550);
-                    if (mPaused || mStopped) break;
-
-                    closeNotificationPopupAndOpenPlayerProfile();
-                } else if (currentScreen == Screen.SUSPENSION_WARNING) {
-                    mPogoInteractor.closeSuspensionsWarning();
-                    if (mPaused || mStopped) break;
-                    Utils.sleepRandom(450, 550);
-                    if (mPaused || mStopped) break;
-
-                    closeNotificationPopupAndOpenPlayerProfile();
-                } else if (currentScreen == Screen.NOTIFICATION_POPUP) {
-                    mPogoInteractor.closeNotificationPopup();
-                } else if (currentScreen == Screen.TUTORIAL_CATCH_POKEMON) {
-                    return -2;
-                } else if (currentScreen == Screen.SAFETY_WARNING) {
-                    mPogoInteractor.closeSafetyWarning();
-                    if (mPaused || mStopped) break;
-                    Utils.sleepRandom(950, 1050);
-                    if (mPaused || mStopped) break;
-
-                    closeNotificationPopupAndOpenPlayerProfile();
+    private Screen getScreenAfterPrivacyPolicy() {
+        int wrongScreenCount = 0;
+        while (wrongScreenCount < 5 && !isInterrupted()) {
+            Screen currentScreen = mPogoInteractor.getCurrentScreen();
+            if (currentScreen != Screen.PRIVACY_POLICY && currentScreen != Screen.UNKNOWN) {
+                return currentScreen;
+            } else {
+                if (currentScreen == Screen.PRIVACY_POLICY) {
+                    Log.i(LOG_TAG, "Still on privacy policy screen.");
                 } else {
+                    Log.e(LOG_TAG, "Could not recognize current screen.");
+                }
+                wrongScreenCount++;
+            }
+        }
+
+        return Screen.UNKNOWN;
+    }
+
+    private void closeNotificationOpenPlayerProfile() {
+        mPogoInteractor.closeNotificationPopup();
+        if (isInterrupted()) return;
+        Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.notification_popup_delay_pref_key), "500")));
+        if (isInterrupted()) return;
+
+        mPogoInteractor.openPlayerProfile();
+        if (isInterrupted()) return;
+        Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.player_profile_delay_pref_key), "2000")));
+    }
+
+    private boolean getOnPlayerProfile() {
+        // Close notification popup before opening player profile, since most accounts that need to be checked will probably have unread messages.
+        closeNotificationOpenPlayerProfile();
+
+        int wrongScreenCount = 0;
+        while (wrongScreenCount < 10 && !isInterrupted()) {
+            Screen currentScreen = mPogoInteractor.getCurrentScreen();
+            switch (currentScreen) {
+                case PLAYER_PROFILE:
+                    return true;
+                case NOTIFICATION_POPUP:
+                    mPogoInteractor.closeNotificationPopup();
+                    break;
+                case CHEATING_WARNING_1:
+                    mPogoInteractor.closeCheatingWarning1();
+                    if (isInterrupted()) return false;
+                    Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.cheating_warning_delay_pref_key), "500")));
+                    if (isInterrupted()) return false;
+
+                    closeNotificationOpenPlayerProfile();
+                    break;
+                case CHEATING_WARNING_2:
+                    mPogoInteractor.closeCheatingWarning2();
+                    if (isInterrupted()) return false;
+                    Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.cheating_warning_delay_pref_key), "500")));
+                    if (isInterrupted()) return false;
+
+                    closeNotificationOpenPlayerProfile();
+                    break;
+                case CHEATING_WARNING_3:
+                    mPogoInteractor.closeCheatingWarning3();
+                    if (isInterrupted()) return false;
+                    Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.cheating_warning_delay_pref_key), "500")));
+                    if (isInterrupted()) return false;
+
+                    closeNotificationOpenPlayerProfile();
+                    break;
+                case SUSPENSION_WARNING:
+                    mPogoInteractor.closeSuspensionsWarning();
+                    if (isInterrupted()) return false;
+                    Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.cheating_warning_delay_pref_key), "500")));
+                    if (isInterrupted()) return false;
+
+                    closeNotificationOpenPlayerProfile();
+                    break;
+                default:
                     Log.e(LOG_TAG, "Not on player profile screen.");
                     wrongScreenCount++;
                     // Assume that we are on the overworld screen.
                     mPogoInteractor.openPlayerProfile();
-                    if (mPaused || mStopped) break;
-                    Utils.sleepRandom(1950, 2050);
-                }
+                    if (isInterrupted()) return false;
+                    Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.player_profile_delay_pref_key), "2000")));
             }
         }
 
-        return -1;
+        return false;
     }
 
     public enum AccountStatus {
-        BANNED, NOT_BANNED, WRONG_CREDENTIALS, NEW, NOT_ACTIVATED, LOCKED, NOT_CHECKED
+        BANNED, NOT_BANNED, NOT_BANNED_TUTORIAL, WRONG_CREDENTIALS, NEW, NOT_ACTIVATED, LOCKED, NOT_CHECKED
     }
 
     private AccountStatus checkAccount(String account, char delimiter) {
@@ -318,26 +350,26 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
         while (errorCount != 10) {
             if (mStopped) {
                 return AccountStatus.NOT_CHECKED;
-            } else {
-                if (mPaused) {
-                    while (mPaused) {
-                        Utils.sleep(2000);
-                    }
-                    mPogoInteractor.clearAppData();
+            } else if (mPaused) {
+                while (mPaused) {
+                    Utils.sleep(2000);
                 }
+                mPogoInteractor.clearAppData();
+                if (isInterrupted()) continue;
             }
 
             mPogoInteractor.startPogo();
-            if (mPaused || mStopped) continue;
+            if (isInterrupted()) continue;
 
             Screen currentScreen = getScreenAfterBoot();
-            if (mPaused || mStopped) continue;
+            if (isInterrupted()) continue;
             if (currentScreen == Screen.DATE_OF_BIRTH) {
+                Log.i(LOG_TAG, "On date of birth screen.");
                 mPogoInteractor.selectDateOfBirth();
-                if (mPaused || mStopped) continue;
+                if (isInterrupted()) continue;
                 // Wait while pogo transitions to the new/existing account screen.
-                Utils.sleepRandom(450, 550);
-                if (mPaused || mStopped) continue;
+                Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.submit_dob_delay_pref_key), "500")));
+                if (isInterrupted()) continue;
             } else if (currentScreen != Screen.PLAYER_SELECTION) {
                 Log.e(LOG_TAG, "Not on date of birth or new/existing account screen after 20 tries.");
                 errorCount++;
@@ -345,88 +377,116 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
             }
 
             mPogoInteractor.selectReturningPlayer();
-            if (mPaused || mStopped) continue;
+            if (isInterrupted()) continue;
             // Wait while pogo transitions to the new/existing account screen.
-            Utils.sleepRandom(450, 550);
-            if (mPaused || mStopped) continue;
+            Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.returning_player_delay_pref_key), "500")));
+            if (isInterrupted()) continue;
 
             mPogoInteractor.selectPtc();
-            if (mPaused || mStopped) continue;
+            if (isInterrupted()) continue;
             // Wait while pogo transitions to login screen.
-            Utils.sleepRandom(450, 550);
-            if (mPaused || mStopped) continue;
+            Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.ptc_delay_pref_key), "500")));
+            if (isInterrupted()) continue;
 
             mPogoInteractor.login(username, password);
-            if (mPaused || mStopped) continue;
+            if (isInterrupted()) continue;
 
             currentScreen = getScreenAfterLogin();
-            if (mPaused || mStopped) continue;
+            if (isInterrupted()) continue;
             switch (currentScreen) {
                 case LOADING:
+                    Log.i(LOG_TAG, "On loading screen.");
                     boolean detectLevel = mSharedPreferences.getBoolean(getString(R.string.detect_account_level_pref_key), false);
-                    if (detectLevel) {
+                    boolean checkTutorial = mSharedPreferences.getBoolean(getString(R.string.check_tutorial_pref_key), false);
+                    if (detectLevel || checkTutorial) {
                         mPogoInteractor.grantLocationPermission();
+                        if (isInterrupted()) continue;
                         mPogoInteractor.grantCameraPermission();
+                        if (isInterrupted()) continue;
 
-                        int accountLevel = detectAccountLevel();
-                        if (accountLevel >= 0) {
-                            Log.i(LOG_TAG, "Account " + username + " (L" + accountLevel + ") is not banned.");
-                            Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned_L" + accountLevel + ".txt.");
+                        currentScreen = getScreenAfterLoading();
+                        if (isInterrupted()) continue;
+                        if (currentScreen == Screen.TERMS_OF_SERVICE) {
+                            mPogoInteractor.acceptTermsOfService();
+                            if (isInterrupted()) continue;
+                            Utils.sleepRandom(450, 550);
+                            if (isInterrupted()) continue;
+
+                            currentScreen = getScreenAfterTos();
+                            if (isInterrupted()) continue;
+                        }
+
+                        if (currentScreen == Screen.PRIVACY_POLICY) {
+                            mPogoInteractor.closePrivacyPolicy();
+                            if (isInterrupted()) continue;
+                            Utils.sleepRandom(450, 550);
+                            if (isInterrupted()) continue;
+
+                            currentScreen = getScreenAfterPrivacyPolicy();
+                            if (isInterrupted()) continue;
+                        }
+
+                        if (currentScreen == Screen.TUTORIAL_GREETING || currentScreen == Screen.TUTORIAL_CATCH_POKEMON || currentScreen == Screen.TUTORIAL_FIRST_POKEMON
+                                || currentScreen == Screen.TUTORIAL_POKESTOPS) {
+                            Log.i(LOG_TAG, "Account " + username + " is not banned but needs to complete the tutorial.");
+                            Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned_tutorial.txt");
                             mNotBannedCount++;
-                            return AccountStatus.NOT_BANNED;
-                        } else if (accountLevel == -1) {
-                            if (mPaused || mStopped) continue;
-                            if (++errorCount == 10) {
-                                Log.e(LOG_TAG, "Couldn't detect level of account " + username + " 10 times in a row.");
-                                Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt.");
+                            return AccountStatus.NOT_BANNED_TUTORIAL;
+                        }
+
+                        if (currentScreen == Screen.SAFETY_WARNING) {
+                            if (detectLevel) {
+                                mPogoInteractor.closeSafetyWarning();
+                                if (mPaused || mStopped) continue;
+                                Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.safety_warning_delay_pref_key), "1000")));
+                                if (mPaused || mStopped) continue;
+
+                                if (getOnPlayerProfile()) {
+                                    int accountLevel = mPogoInteractor.getAccountLevel();
+                                    Log.i(LOG_TAG, "Account " + username + " (L" + accountLevel + ") is not banned.");
+                                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned_L" + accountLevel + ".txt");
+                                    mNotBannedCount++;
+                                    return AccountStatus.NOT_BANNED;
+                                }
+                            } else {
+                                Log.i(LOG_TAG, "Account " + username + " is not banned.");
+                                Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt");
                                 mNotBannedCount++;
-                                return AccountStatus.NOT_BANNED;
                             }
-                            Log.e(LOG_TAG, "Couldn't detect level of account " + username + ". Trying again.");
-                            mPogoInteractor.clearAppData();
-                            break;
-                        } else if (accountLevel == -2) {
-                            Log.i(LOG_TAG, "Account " + username + " is not banned but needs to catch the tutorial starter pokemon.");
-                            Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned_tutorial.txt.");
-                            mNotBannedCount++;
-                            return AccountStatus.NOT_BANNED;
                         }
                     } else {
-                        Utils.sleepRandom(950, 1050);
-                        if (mPaused || mStopped) continue;
-
                         // Check another time, because the loading screen is shortly visible before the banned screen.
-                        currentScreen = mPogoInteractor.currentScreen();
+                        currentScreen = mPogoInteractor.getCurrentScreen();
                         if (currentScreen == Screen.LOADING) {
                             Log.i(LOG_TAG, "Account " + username + " is not banned.");
-                            Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt.");
+                            Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_banned.txt");
                             mNotBannedCount++;
                             return AccountStatus.NOT_BANNED;
                         }
                     }
                 case ACCOUNT_BANNED:
                     Log.i(LOG_TAG, "Account " + username + " is banned.");
-                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/banned.txt.");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/banned.txt");
                     mBannedCount++;
                     return AccountStatus.BANNED;
                 case ACCOUNT_WRONG_CREDENTIALS:
                     Log.i(LOG_TAG, "Account " + username + " does not exist or its credentials are wrong.");
-                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/wrong_credentials.txt.");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/wrong_credentials.txt");
                     mWrongCredentialsCount++;
                     return AccountStatus.WRONG_CREDENTIALS;
                 case ACCOUNT_NEW:
                     Log.i(LOG_TAG, "Account " + username + " is a new account.");
-                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/new.txt.");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/new.txt");
                     mNewCount++;
                     return AccountStatus.NEW;
                 case ACCOUNT_NOT_ACTIVATED:
                     Log.i(LOG_TAG, "Account " + username + " is not activated.");
-                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_activated.txt.");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/not_activated.txt");
                     mNotActivatedCount++;
                     return AccountStatus.NOT_ACTIVATED;
                 case ACCOUNT_LOCKED:
                     Log.i(LOG_TAG, "Account " + username + " is locked.");
-                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/locked.txt.");
+                    Shell.runSuCommand("echo '" + account + "' >> " + PATHNAME + "/locked.txt");
                     mLockedCount++;
                     return AccountStatus.LOCKED;
                 default:
@@ -506,6 +566,10 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
                 mPogoInteractor.cleanUp(true);
             }
         }).start();
+    }
+
+    private boolean isInterrupted() {
+        return mPaused || mStopped;
     }
 
     public boolean isChecking() {

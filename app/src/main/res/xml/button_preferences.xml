@@ -12,96 +12,84 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Year selector x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/year_selector_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Year selector y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/year_selector_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Year selector width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/year_selector_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Year selector height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/yob_2010_x_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Year of birth 2010 x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/yob_2010_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Year of birth 2010 y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/yob_2010_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Year of birth 2010 width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/yob_2010_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Year of birth 2010 height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/submit_dob_button_x_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Submit date of birth button x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/submit_dob_button_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Submit date of birth button y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/submit_dob_button_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Submit date of birth button width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/submit_dob_button_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Submit date of birth button height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="New/existing account screen"
@@ -113,32 +101,28 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Returning player button x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/returning_player_button_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Returning player button y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/returning_player_button_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Returning player button width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/returning_player_button_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Returning player button height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="Existing account screen"
@@ -150,32 +134,28 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Pokémon trainer club button x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/ptc_button_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Pokémon trainer button club y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/ptc_button_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Pokémon trainer club button width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/ptc_button_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Pokémon trainer club button height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="Login screen"
@@ -187,96 +167,150 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Username text field x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/username_text_field_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Username text field y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/username_text_field_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Username text field width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/username_text_field_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Username text field height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/password_text_field_x_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Password text field x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/password_text_field_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Password text field y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/password_text_field_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Password text field width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/password_text_field_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Password text field height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/sign_in_button_x_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Sign in button x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/sign_in_button_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Sign in button y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/sign_in_button_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Sign in button width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/sign_in_button_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Sign in button height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Terms of Service screen"
+        app:iconSpaceReserved="false">
+
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/accept_tos_button_x_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Accept Terms of Service button x"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/accept_tos_button_y_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Accept Terms of Service button y"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/accept_tos_button_width_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Accept Terms of Service button width"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/accept_tos_button_height_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Accept Terms of Service button height"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Privacy policy screen"
+        app:iconSpaceReserved="false">
+
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/close_privacy_policy_button_x_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Close privacy policy button x"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/close_privacy_policy_button_y_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Close privacy policy button y"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/close_privacy_policy_button_width_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Close privacy policy button width"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/close_privacy_policy_button_height_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Close privacy policy button height"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="Safety warning screen"
@@ -288,32 +322,28 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close safety warning button x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_safety_warning_button_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close safety warning button y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_safety_warning_button_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close safety warning button width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_safety_warning_button_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close safety warning button height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="Cheating/suspension warning screen"
@@ -325,128 +355,112 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close cheating warning 1 button x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_cheating_warning_1_button_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close cheating warning 1 button y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_cheating_warning_1_button_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close cheating warning 1 button width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_cheating_warning_1_button_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close cheating warning 1 button height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_cheating_warning_2_button_x_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close cheating warning 2 button x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_cheating_warning_2_button_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close cheating warning 2 button y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_cheating_warning_2_button_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close cheating warning 2 button width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_cheating_warning_2_button_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close cheating warning 2 button height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_cheating_warning_3_button_x_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close cheating warning 3 button x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_cheating_warning_3_button_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close cheating warning 3 button y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_cheating_warning_3_button_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close cheating warning 3 button width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_cheating_warning_3_button_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close cheating warning 3 button height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_suspension_warning_button_x_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close suspension warning button x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_suspension_warning_button_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close suspension warning button y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_suspension_warning_button_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close suspension warning button width"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/close_suspension_warning_button_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close suspension warning button height"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="Overworld screen"
@@ -458,15 +472,13 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Player profile button x"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
             android:key="@string/player_profile_button_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Player profile button y"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>

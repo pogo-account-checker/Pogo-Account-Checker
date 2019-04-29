@@ -13,15 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".activities.MainSettingsActivity"
-            android:label="@string/title_activity_main_settings"
-            android:parentActivityName=".activities.MainActivity"></activity>
-        <activity
-            android:name=".activities.ButtonSettingsActivity"
-            android:label="@string/title_activity_button_settings"
-            android:parentActivityName=".activities.MainSettingsActivity"></activity>
-
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="ocr" />
@@ -37,6 +28,18 @@
             android:name=".activities.ResultActivity"
             android:label="@string/title_activity_result"
             android:parentActivityName=".activities.MainActivity"></activity>
+        <activity
+            android:name=".activities.MainSettingsActivity"
+            android:label="@string/title_activity_main_settings"
+            android:parentActivityName=".activities.MainActivity"></activity>
+        <activity
+            android:name=".activities.ButtonSettingsActivity"
+            android:label="@string/title_activity_button_settings"
+            android:parentActivityName=".activities.MainSettingsActivity"></activity>
+        <activity
+            android:name=".activities.DelaySettingsActivity"
+            android:label="@string/title_activity_delay_settings"
+            android:parentActivityName=".activities.MainSettingsActivity"></activity>
 
         <service
             android:name=".services.AccountCheckingService"

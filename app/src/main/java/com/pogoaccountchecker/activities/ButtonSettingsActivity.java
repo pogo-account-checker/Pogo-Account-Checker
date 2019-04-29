@@ -22,7 +22,7 @@ public class ButtonSettingsActivity extends AppCompatActivity {
         // Replace the existing Fragment with the new Fragment
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.settings_container, settingsFragment)
+                .replace(R.id.button_settings_container, settingsFragment)
                 .commit();
 
         Toolbar childToolbar = findViewById(R.id.button_settings_toolbar);

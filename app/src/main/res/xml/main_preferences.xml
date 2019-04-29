@@ -10,18 +10,15 @@
         android:title="Delimiter"
         app:iconSpaceReserved="false"
         app:useSimpleSummaryProvider="true" />
-    <Preference
-        app:iconSpaceReserved="false"
-        app:key="button_activity"
-        app:title="Button properties">
-        <intent
-            android:targetClass="com.pogoaccountchecker.activities.ButtonSettingsActivity"
-            android:targetPackage="com.pogoaccountchecker" />
-    </Preference>
     <SwitchPreference
         android:defaultValue="false"
         android:key="@string/detect_account_level_pref_key"
         android:title="Detect account level"
+        app:iconSpaceReserved="false" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/check_tutorial_pref_key"
+        android:title="Check for tutorial"
         app:iconSpaceReserved="false" />
     <SwitchPreference
         android:defaultValue="false"
@@ -38,4 +35,20 @@
         app:iconSpaceReserved="false"
         app:isPreferenceVisible="false"
         app:useSimpleSummaryProvider="true" />
+    <Preference
+        app:iconSpaceReserved="false"
+        app:key="button_activity"
+        app:title="Button properties">
+        <intent
+            android:targetClass="com.pogoaccountchecker.activities.ButtonSettingsActivity"
+            android:targetPackage="com.pogoaccountchecker" />
+    </Preference>
+    <Preference
+        app:iconSpaceReserved="false"
+        app:key="delay_activity"
+        app:title="Delays">
+        <intent
+            android:targetClass="com.pogoaccountchecker.activities.DelaySettingsActivity"
+            android:targetPackage="com.pogoaccountchecker" />
+    </Preference>
 </PreferenceScreen>

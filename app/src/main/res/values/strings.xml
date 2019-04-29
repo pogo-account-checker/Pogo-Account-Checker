@@ -5,6 +5,7 @@
     <string name="title_activity_result">ResultActivity</string>
     <string name="title_activity_main_settings">SettingsActivity</string>
     <string name="title_activity_button_settings">ButtonSettingsActivity</string>
+    <string name="title_activity_delay_settings">DelaySettingsActivity</string>
     <string-array name="delimiters">
         <item>,</item>
         <item>:</item>
@@ -15,6 +16,7 @@
 
     <string name="delimiter_pref_key">selected_delimiter_pref_key</string>
     <string name="detect_account_level_pref_key">detect_account_level_pref_key</string>
+    <string name="check_tutorial_pref_key">check_tutorial_pref_key</string>
     <string name="with_mad_pref_key">with_mad_pref_key</string>
     <string name="webSocket_uri_pref_key">webSocket_uri_pref_key</string>
 
@@ -51,6 +53,14 @@
     <string name="sign_in_button_y_pref_key">sign_in_button_y_pref_key</string>
     <string name="sign_in_button_width_pref_key">sign_in_button_width_pref_key</string>
     <string name="sign_in_button_height_pref_key">sign_in_button_height_pref_key</string>
+    <string name="accept_tos_button_x_pref_key">accept_tos_button_x_pref_key</string>
+    <string name="accept_tos_button_y_pref_key">accept_tos_button_y_pref_key</string>
+    <string name="accept_tos_button_width_pref_key">accept_tos_button_width_pref_key</string>
+    <string name="accept_tos_button_height_pref_key">accept_tos_button_height_pref_key</string>
+    <string name="close_privacy_policy_button_x_pref_key">close_privacy_policy_button_x_pref_key</string>
+    <string name="close_privacy_policy_button_y_pref_key">close_privacy_policy_button_y_pref_key</string>
+    <string name="close_privacy_policy_button_width_pref_key">close_privacy_policy_button_width_pref_key</string>
+    <string name="close_privacy_policy_button_height_pref_key">close_privacy_policy_button_height_pref_key</string>
     <string name="close_safety_warning_button_x_pref_key">close_safety_warning_button_x_pref_key</string>
     <string name="close_safety_warning_button_y_pref_key">close_safety_warning_button_y_pref_key</string>
     <string name="close_safety_warning_button_width_pref_key">close_safety_warning_button_width_pref_key</string>
@@ -73,4 +83,15 @@
     <string name="close_suspension_warning_button_height_pref_key">close_suspension_warning_button_height_pref_key</string>
     <string name="player_profile_button_x_pref_key">player_profile_button_x_pref_key</string>
     <string name="player_profile_button_y_pref_key">player_profile_button_y_pref_key</string>
+
+    <!--Delays-->
+    <string name="year_selector_delay_pref_key">year_selector_delay_pref_key</string>
+    <string name="yob_2010_delay_pref_key">yob_2010_delay_pref_key</string>
+    <string name="submit_dob_delay_pref_key">submit_dob_delay_pref_key</string>
+    <string name="returning_player_delay_pref_key">returning_player_delay_pref_key</string>
+    <string name="ptc_delay_pref_key">ptc_delay_pref_key</string>
+    <string name="safety_warning_delay_pref_key">safety_warning_delay_pref_key</string>
+    <string name="notification_popup_delay_pref_key">notification_popup_delay_pref_key</string>
+    <string name="player_profile_delay_pref_key">player_profile_delay_pref_key</string>
+    <string name="cheating_warning_delay_pref_key">cheating_warning_delay_pref_key</string>
 </resources>

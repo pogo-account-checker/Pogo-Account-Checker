@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.MainSettingsActivity">
+    tools:context=".activities.ButtonSettingsActivity">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/button_settings_toolbar"
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:title="Button properties" />
     <LinearLayout
-        android:id="@+id/settings_container"
+        android:id="@+id/button_settings_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" />
