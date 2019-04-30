@@ -16,7 +16,7 @@ You can get the APK by directly downloading it from Github [here](https://github
 3. The application uses the [ML Kit's text recognition APIs](https://firebase.google.com/docs/ml-kit/recognize-text). In order for the text recognition to work a `google-services.json` file must be downloaded and placed in the `app` folder. This file contains confidential information, hence it's not added to this repo. [Here](https://firebase.google.com/docs/android/setup) is explained how to obtain this file.
 4. Install the app on your phone by clicking the green play button in Android Studio.
 ## Checking accounts
-First you have to put your PTC accounts in a `.txt` file, username and password should be seperated by a delimiter of choice. The delimter can be chosen in the settings menu. Make sure to place each account on a new line. `.txt` file example:
+First you have to put your PTC accounts in a `.txt` file, username and password should be seperated by a delimiter of choice. The delimiter can be chosen in the settings menu. Make sure to place each account on a new line. `.txt` file example:
 ```txt
 username01,password01
 username02,password02
