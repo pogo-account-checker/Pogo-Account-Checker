@@ -57,7 +57,7 @@ public class PogoInteractor {
     }
 
     public enum Screen {
-        LOGIN_FAILED, DATE_OF_BIRTH, PLAYER_SELECTION, LOGIN, LOADING, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE,
+        BOOT, DATE_OF_BIRTH, NEW_EXISTING_ACCOUNT, LOGIN, LOGIN_FAILED, LOADING, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE,
         TERMS_OF_SERVICE, PRIVACY_POLICY, TUTORIAL_GREETING, TUTORIAL_CATCH_POKEMON, TUTORIAL_FIRST_POKEMON, TUTORIAL_POKESTOPS, SAFETY_WARNING, NOTIFICATION_POPUP, CHEATING_WARNING_1,
         CHEATING_WARNING_2, CHEATING_WARNING_3, SUSPENSION_WARNING, PLAYER_PROFILE, UNKNOWN
     }
@@ -67,8 +67,8 @@ public class PogoInteractor {
         if (visionText == null) return Screen.UNKNOWN;
         String text = visionText.getText().toLowerCase();
 
-        if (text.contains("failed") && text.contains("retry") && text.contains("different")) {
-            return Screen.LOGIN_FAILED;
+        if (text.contains("the") && (text.contains("pokemon") || text.contains("pokémon")) && text.contains("company")) {
+            return Screen.BOOT;
         }
 
         if (text.contains("date") && text.contains("birth") && text.contains("submit")) {
@@ -76,11 +76,15 @@ public class PogoInteractor {
         }
 
         if (text.contains("returning player") && text.contains("new player")) {
-            return Screen.PLAYER_SELECTION;
+            return Screen.NEW_EXISTING_ACCOUNT;
         }
 
         if (text.contains("username") && text.contains("sign") && text.contains("forgot")) {
             return Screen.LOGIN;
+        }
+
+        if (text.contains("failed") && text.contains("retry") && text.contains("different")) {
+            return Screen.LOGIN_FAILED;
         }
 
         if (text.contains("remember") && text.contains("alert") && text.contains("surroundings")) {
