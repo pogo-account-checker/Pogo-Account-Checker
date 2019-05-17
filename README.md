@@ -16,16 +16,18 @@ You can get the APK by directly downloading it from Github [here](https://github
 3. The application uses the [ML Kit's text recognition APIs](https://firebase.google.com/docs/ml-kit/recognize-text). In order for the text recognition to work a `google-services.json` file must be downloaded and placed in the `app` folder. This file contains confidential information, hence it's not added to this repo. [Here](https://firebase.google.com/docs/android/setup) is explained how to obtain this file.
 4. Install the app on your phone by clicking the green play button in Android Studio.
 ## Checking accounts
-First you have to put your PTC accounts in a `.txt` file, username and password should be seperated by a comma. Make sure to place each account on a new line. `.txt` file example:
+First you have to put your PTC accounts in a `.txt` file, username and password should be seperated by a delimiter of choice. The delimiter can be chosen in the settings menu. Make sure to place each account on a new line. `.txt` file example:
 ```txt
 username01,password01
 username02,password02
 ```
-Then transfer the file to your phone. Next open the app, press the `set accounts` button, grant root permission forever, and select the file. Press start to start checking the accounts. The checked accounts can be found in the `PogoAccountChecker` folder on your phone. In this folder there will be a maximum of seven files:
+Then transfer the file to your phone. Next open the app, press the `set accounts` button, grant root permission forever, and select the file. Press start to start checking the accounts. The checked accounts can be found in the `PogoAccountChecker` folder on your phone. In this folder you can find the following files:
 * `not_banned.txt` - contains accounts that still work.
+* `not_banned_L{lvl}.txt` - contains accounts with level `lvl` that still work. Check `Detect account level` in settings to enable level detection.
+* `not_banned_tutorial.txt` - contains unbanned accounts that still need to complete the tutorial. Check `Check for tutorial` in settings for tutorial detection.
 * `banned.txt` - contains accounts that are banned.
 * `wrong_credentials.txt` - contains accounts that don't exist or have a wrong username/password.
 * `new.txt` - contains accounts that have never been logged in to Pokémon Go.
-* `locked.txt` - contains accounts that are locked. Locked accounts can't be accessed untill their password gets changed.
 * `not_activated.txt` - contains accounts that have not been activated via the activation email.
+* `locked.txt` - contains accounts that are locked. Locked accounts can't be accessed untill their password gets changed.
 * `error.txt` - contains accounts for which checking failed 10 times in a row, this can for example happen when there is no internet connection.
