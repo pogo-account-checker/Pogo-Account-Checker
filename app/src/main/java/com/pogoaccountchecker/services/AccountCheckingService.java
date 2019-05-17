@@ -571,11 +571,11 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
                 }
 
                 Log.i(LOG_TAG, "Account checking finished. " + getStats() + ".");
+                mChecking = false;
                 startResultActivity();
                 showFinishedNotification("Account checking finished", getStats());
                 stopForeground(true);
                 mPogoInteractor.cleanUp(true);
-                mChecking = false;
             }
         }).start();
     }
@@ -607,11 +607,11 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
         if (!mChecking) return;
 
         Log.i(LOG_TAG, "Account checking stopped. " + getStats());
-        mChecking = false;
         mStopped = true;
+        mChecking = false;
         mPogoInteractor.interrupt();
-        showFinishedNotification("Account checking stopped", getStats());
         startResultActivity();
+        showFinishedNotification("Account checking stopped", getStats());
         stopForeground(true);
         new Thread(new Runnable() {
             @Override

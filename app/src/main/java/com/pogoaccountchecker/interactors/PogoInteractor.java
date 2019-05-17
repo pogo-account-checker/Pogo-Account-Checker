@@ -121,7 +121,7 @@ public class PogoInteractor {
             return Screen.TERMS_OF_SERVICE;
         }
 
-        if (text.contains("privacy") && text.contains("policy") && text.contains("personal")) {
+        if (text.contains("privacy") && text.contains("policy") && (text.contains("personal") || text.contains("collection"))) {
             return Screen.PRIVACY_POLICY;
         }
 
