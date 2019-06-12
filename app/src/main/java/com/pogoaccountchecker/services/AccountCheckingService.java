@@ -504,7 +504,11 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
 
                                 if (getOnPlayerProfile()) {
                                     int level = mPogoInteractor.getAccountLevel();
-                                    processNotBannedLevelAccount(account, username, level);
+                                    if (level == -1) {
+                                        processBannedAccount(account, username);
+                                    } else {
+                                        processNotBannedLevelAccount(account, username, level);
+                                    }
                                     return AccountStatus.NOT_BANNED;
                                 } else if (isInterrupted()) continue;
                             } else {

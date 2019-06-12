@@ -682,7 +682,13 @@ public class PogoInteractor {
                     Point[] levelValueCornerPoints = element.getCornerPoints();
                     if (levelValueCornerPoints[0].y < levelCornerPoints[0].y && levelValueCornerPoints[0].x < mScreenInteractor.getScreenWidth() / 2 &&
                             levelValueCornerPoints[0].y > mScreenInteractor.getScreenHeight() / 2) {
-                        mAccountLevel = Integer.parseInt(element.getText());
+                        try {
+                            mAccountLevel = Integer.parseInt(element.getText());
+                        } catch (NumberFormatException e) {
+                            mAccountLevel = -1;
+                            e.printStackTrace();
+                            Log.e(LOG_TAG, "Couldn't parse level string, level string is not an integer.");
+                        }
                     }
                 }
             }
