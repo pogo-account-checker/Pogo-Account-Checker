@@ -87,7 +87,7 @@ public class PogoInteractor {
             return Screen.LOGIN_FAILED;
         }
 
-        if (text.contains("remember") && text.contains("alert") && text.contains("surroundings")) {
+        if (text.contains("remember") || text.contains("alert") || text.contains("times")) {
             return Screen.LOADING;
         }
 
