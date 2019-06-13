@@ -558,7 +558,7 @@ public class PogoInteractor {
         if (closeWarningX == 0 || closeWarningY == 0 || closeWarningWidth == 0 || closeWarningHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
             if (mInterrupted) return;
-            Point[] cornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "got it");
+            Point[] cornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "got it");
             if (cornerPoints == null) return;
 
             closeWarningX = (cornerPoints[0].x + cornerPoints[1].x) / 2;
@@ -587,7 +587,7 @@ public class PogoInteractor {
         if (closeWarningX == 0 || closeWarningY == 0 || closeWarningWidth == 0 || closeWarningHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
             if (mInterrupted) return;
-            Point[] cornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "got it");
+            Point[] cornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "got it");
             if (cornerPoints == null) return;
 
             closeWarningX = (cornerPoints[0].x + cornerPoints[1].x) / 2;
@@ -616,7 +616,7 @@ public class PogoInteractor {
         if (closeWarningX == 0 || closeWarningY == 0 || closeWarningWidth == 0 || closeWarningHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
             if (mInterrupted) return;
-            Point[] cornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "got it");
+            Point[] cornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "got it");
             if (cornerPoints == null) return;
 
             closeWarningX = (cornerPoints[0].x + cornerPoints[1].x) / 2;
@@ -636,7 +636,7 @@ public class PogoInteractor {
         Log.i(LOG_TAG, "Cheating warning 3 closed.");
     }
 
-    public void closeSuspensionsWarning() {
+    public void closeSuspensionWarning() {
         int closeWarningX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_suspension_warning_button_x_pref_key), "0"));
         int closeWarningY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_suspension_warning_button_y_pref_key), "0"));
         int closeWarningWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_suspension_warning_button_width_pref_key), "0"));
@@ -645,7 +645,7 @@ public class PogoInteractor {
         if (closeWarningX == 0 || closeWarningY == 0 || closeWarningWidth == 0 || closeWarningHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
             if (mInterrupted) return;
-            Point[] cornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "got it");
+            Point[] cornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "got it");
             if (cornerPoints == null) return;
 
             closeWarningX = (cornerPoints[0].x + cornerPoints[1].x) / 2;
