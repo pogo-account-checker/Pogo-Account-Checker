@@ -313,7 +313,7 @@ public class PogoInteractor {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
             if (mInterrupted) return;
             String ptcText;
-            if (visionText.getText().contains("pokémon")) {
+            if (visionText.getText().toLowerCase().contains("pokémon")) {
                 ptcText = "pokémon trainer club";
             } else {
                 ptcText = "pokemon trainer club";
