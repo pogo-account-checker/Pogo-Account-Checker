@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> mAccounts;
     private AccountCheckingService mService;
     private boolean mBound;
-    private boolean mWithMad;
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     private static final int READ_REQUEST_CODE = 1;
 
@@ -56,11 +55,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mWithMad = mSharedPreferences.getBoolean(getString(R.string.with_mad_pref_key), false);
-        final Button accountsButton = findViewById(R.id.accountsButton);
-        if (mWithMad) {
-            accountsButton.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -120,21 +114,17 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    if (mWithMad) {
-                        mService.checkAccountsWithMAD();
-                    } else {
-                        if (mAccounts != null) {
-                            if (accountsHaveDelimiter()) {
-                                mService.checkAccounts(mAccounts);
-                                startPauseContinueButton.setText("Pause");
-                                Button stopButton = findViewById(R.id.stopButton);
-                                stopButton.setVisibility(View.VISIBLE);
-                            } else {
-                                Toast.makeText(this, "There is something wrong with your accounts file!", Toast.LENGTH_LONG).show();
-                            }
+                    if (mAccounts != null) {
+                        if (accountsHaveDelimiter()) {
+                            mService.checkAccounts(mAccounts);
+                            startPauseContinueButton.setText("Pause");
+                            Button stopButton = findViewById(R.id.stopButton);
+                            stopButton.setVisibility(View.VISIBLE);
                         } else {
-                            Toast.makeText(this, "Select TXT file with accounts first!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "There is something wrong with your accounts file!", Toast.LENGTH_LONG).show();
                         }
+                    } else {
+                        Toast.makeText(this, "Select TXT file with accounts first!", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     if (mService.isPaused()) {

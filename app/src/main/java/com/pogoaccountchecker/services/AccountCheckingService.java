@@ -11,7 +11,6 @@ import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.pogoaccountchecker.R;
 import com.pogoaccountchecker.activities.MainActivity;
@@ -20,7 +19,6 @@ import com.pogoaccountchecker.interactors.PogoInteractor;
 import com.pogoaccountchecker.interactors.PogoInteractor.Screen;
 import com.pogoaccountchecker.utils.Shell;
 import com.pogoaccountchecker.utils.Utils;
-import com.pogoaccountchecker.websocket.MadWebSocket;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -31,12 +29,11 @@ import java.util.List;
 
 import static com.pogoaccountchecker.App.NOTIFICATION_CHANNEL_ID;
 
-public class AccountCheckingService extends Service implements MadWebSocket.OnWebSocketEventListener {
+public class AccountCheckingService extends Service {
     private SharedPreferences mSharedPreferences;
     private PogoInteractor mPogoInteractor;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilderChecking;
-    private MadWebSocket mWebSocket;
     private char mDelimiter;
     private volatile boolean mChecking, mPaused, mStopped;
     private int mAccountCount;
@@ -88,71 +85,6 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
     @Override
     public void onDestroy() {
         if (mChecking) stop();
-    }
-
-    @Override
-    public void onConnected() {
-        initialize();
-    }
-
-    @Override
-    public void onNotConnected() {
-        Toast.makeText(AccountCheckingService.this, "Couldn't connect to MAD server.", Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onDisconnected(boolean closedByServer) {
-
-    }
-
-    @Override
-    public void onMessageReceived(final String message) {
-        if (message.contains("account_count") && !message.contains(String.valueOf(mDelimiter))) {
-            mAccountCount = Integer.parseInt(message.substring("account_count ".length()));
-            updateCheckingNotificationText("Checked: 0/" + mAccountCount);
-        } else if (message.contains("finished") && !message.contains(String.valueOf(mDelimiter))) {
-            mChecking = false;
-            stopForeground(true);
-            showFinishedNotification("Account checking finished", getStats());
-
-            if (message.contains("true")) {
-                startResultActivity();
-                mPogoInteractor.cleanUp(true);
-            } else if (message.contains("false")) {
-                mPogoInteractor.cleanUp(false);
-            }
-        } else if (message.contains(String.valueOf(mDelimiter))) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    AccountStatus status = checkAccount(message, mDelimiter);
-                    switch (status) {
-                        case NOT_BANNED:
-                            mWebSocket.sendMessage("not_banned");
-                            break;
-                        case BANNED:
-                            mWebSocket.sendMessage("banned");
-                            break;
-                        case NEW:
-                            mWebSocket.sendMessage("new");
-                            break;
-                        case NOT_ACTIVATED:
-                            mWebSocket.sendMessage("not_activated");
-                            break;
-                        case LOCKED:
-                            mWebSocket.sendMessage("locked");
-                            break;
-                        case WRONG_CREDENTIALS:
-                            mWebSocket.sendMessage("wrong_credentials");
-                            break;
-                        default:
-                            mWebSocket.sendMessage("not_checked");
-                    }
-                }
-            }).start();
-        } else {
-            Shell.runSuCommand("echo '" + message + "' >> " + PATHNAME + "/error.txt");
-        }
     }
 
     private void initialize() {
@@ -414,6 +346,16 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
             mPogoInteractor.startPogo();
             if (isInterrupted()) continue;
 
+            boolean detectLevel = mSharedPreferences.getBoolean(getString(R.string.detect_account_level_pref_key), false);
+            boolean checkTutorial = mSharedPreferences.getBoolean(getString(R.string.check_tutorial_pref_key), false);
+            if (!permissionsGranted && (detectLevel || checkTutorial)) {
+                mPogoInteractor.grantLocationPermission();
+                if (isInterrupted()) continue;
+                mPogoInteractor.grantCameraPermission();
+                if (isInterrupted()) continue;
+                permissionsGranted = true;
+            }
+
             Screen currentScreen = getScreenAfterBoot();
             if (isInterrupted()) continue;
             if (currentScreen == Screen.DATE_OF_BIRTH || currentScreen == Screen.NEW_EXISTING_ACCOUNT) {
@@ -456,17 +398,7 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
             switch (currentScreen) {
                 case LOADING:
                     Log.i(LOG_TAG, "On loading screen.");
-                    boolean detectLevel = mSharedPreferences.getBoolean(getString(R.string.detect_account_level_pref_key), false);
-                    boolean checkTutorial = mSharedPreferences.getBoolean(getString(R.string.check_tutorial_pref_key), false);
                     if (detectLevel || checkTutorial) {
-                        if (!permissionsGranted) {
-                            mPogoInteractor.grantLocationPermission();
-                            if (isInterrupted()) continue;
-                            mPogoInteractor.grantCameraPermission();
-                            if (isInterrupted()) continue;
-                            permissionsGranted = true;
-                        }
-
                         currentScreen = getScreenAfterLoading();
                         if (isInterrupted()) continue;
                         if (currentScreen == Screen.TERMS_OF_SERVICE) {
@@ -582,15 +514,6 @@ public class AccountCheckingService extends Service implements MadWebSocket.OnWe
                 mPogoInteractor.cleanUp(true);
             }
         }).start();
-    }
-
-    public void checkAccountsWithMAD() {
-        if (mChecking) return;
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String webSocketUri = sharedPreferences.getString(getString(R.string.webSocket_uri_pref_key), "");
-        mWebSocket = new MadWebSocket(webSocketUri);
-        mWebSocket.start(this);
     }
 
     public void pause() {
