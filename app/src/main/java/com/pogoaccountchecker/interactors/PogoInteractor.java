@@ -79,7 +79,7 @@ public class PogoInteractor {
             return Screen.NEW_EXISTING_ACCOUNT;
         }
 
-        if (text.contains("username") && text.contains("sign") && text.contains("forgot")) {
+        if ((text.contains("username") || text.contains("usernamne")) && text.contains("sign") && text.contains("forgot")) {
             return Screen.LOGIN;
         }
 
@@ -358,7 +358,12 @@ public class PogoInteractor {
         if (usernameX == 0 || usernameY == 0 || usernameWidth == 0 || usernameHeight == 0) {
             visionText = mScreenInteractor.getVisionText();
             if (mInterrupted) return;
-            Point[] usernameCornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "username");
+            Point[] usernameCornerPoints;
+            if (visionText.getText().toLowerCase().contains("usernamne")) {
+                usernameCornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "usernamne");
+            } else {
+                usernameCornerPoints = mScreenInteractor.getElementCornerPoints(visionText, "username");
+            }
             if (usernameCornerPoints == null) return;
 
             usernameX = (usernameCornerPoints[0].x + usernameCornerPoints[1].x) / 2;
