@@ -228,11 +228,23 @@ public class AccountCheckingService extends Service {
                     return true;
                 case NOTIFICATION_POPUP:
                     mPogoInteractor.closeNotificationPopup();
+                    if (isInterrupted()) return false;
+                    Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.notification_popup_delay_pref_key), "500")));
+                    break;
+                case TERMS_OF_SERVICE:
+                    mPogoInteractor.acceptTermsOfService();
+                    if (isInterrupted()) return false;
+                    Utils.sleepRandom(450, 550);
+                    break;
+                case PRIVACY_POLICY:
+                    mPogoInteractor.closePrivacyPolicy();
+                    if (isInterrupted()) return false;
+                    Utils.sleepRandom(450, 550);
                     break;
                 case CHEATING_WARNING_1:
                     mPogoInteractor.closeCheatingWarning1();
                     if (isInterrupted()) return false;
-                    Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.cheating_warning_delay_pref_key), "500")));
+                    Utils.sleepRandom(450, 550);
                     if (isInterrupted()) return false;
 
                     closeNotificationOpenPlayerProfile();
@@ -240,7 +252,7 @@ public class AccountCheckingService extends Service {
                 case CHEATING_WARNING_2:
                     mPogoInteractor.closeCheatingWarning2();
                     if (isInterrupted()) return false;
-                    Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.cheating_warning_delay_pref_key), "500")));
+                    Utils.sleepRandom(450, 550);
                     if (isInterrupted()) return false;
 
                     closeNotificationOpenPlayerProfile();
@@ -248,7 +260,7 @@ public class AccountCheckingService extends Service {
                 case CHEATING_WARNING_3:
                     mPogoInteractor.closeCheatingWarning3();
                     if (isInterrupted()) return false;
-                    Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.cheating_warning_delay_pref_key), "500")));
+                    Utils.sleepRandom(450, 550);
                     if (isInterrupted()) return false;
 
                     closeNotificationOpenPlayerProfile();
@@ -256,7 +268,7 @@ public class AccountCheckingService extends Service {
                 case SUSPENSION_WARNING:
                     mPogoInteractor.closeSuspensionWarning();
                     if (isInterrupted()) return false;
-                    Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.cheating_warning_delay_pref_key), "500")));
+                    Utils.sleepRandom(450, 550);
                     if (isInterrupted()) return false;
 
                     closeNotificationOpenPlayerProfile();

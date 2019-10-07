@@ -58,11 +58,4 @@
         android:singleLine="true"
         android:title="Delay after opening player profile"
         app:iconSpaceReserved="false" />
-    <EditTextPreference
-        android:defaultValue="500"
-        android:key="@string/cheating_warning_delay_pref_key"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="Delay after closing cheating warning"
-        app:iconSpaceReserved="false" />
 </PreferenceScreen>

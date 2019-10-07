@@ -97,5 +97,4 @@
     <string name="safety_warning_delay_pref_key">safety_warning_delay_pref_key</string>
     <string name="notification_popup_delay_pref_key">notification_popup_delay_pref_key</string>
     <string name="player_profile_delay_pref_key">player_profile_delay_pref_key</string>
-    <string name="cheating_warning_delay_pref_key">cheating_warning_delay_pref_key</string>
 </resources>

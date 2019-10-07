@@ -83,10 +83,5 @@ public class DelaySettingsFragment extends PreferenceFragmentCompat {
         playerProfileDelayPreference.setOnBindEditTextListener(onBindEditTextListener);
         playerProfileDelayPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         playerProfileDelayPreference.setSummaryProvider(summaryProvider);
-
-        EditTextPreference cheatingWarningDelayPreference = findPreference(getString(R.string.cheating_warning_delay_pref_key));
-        cheatingWarningDelayPreference.setOnBindEditTextListener(onBindEditTextListener);
-        cheatingWarningDelayPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-        cheatingWarningDelayPreference.setSummaryProvider(summaryProvider);
     }
 }
