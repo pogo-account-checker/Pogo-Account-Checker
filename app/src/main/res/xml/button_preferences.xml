@@ -318,31 +318,59 @@
 
         <EditTextPreference
             android:defaultValue="0"
-            android:key="@string/close_safety_warning_button_x_pref_key"
+            android:key="@string/close_safety_warning_small_button_x_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Close safety warning button x"
+            android:title="Close safety warning small button x"
             app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
-            android:key="@string/close_safety_warning_button_y_pref_key"
+            android:key="@string/close_safety_warning_small_button_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Close safety warning button y"
+            android:title="Close safety warning small button y"
             app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
-            android:key="@string/close_safety_warning_button_width_pref_key"
+            android:key="@string/close_safety_warning_small_button_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Close safety warning button width"
+            android:title="Close safety warning small button width"
             app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
-            android:key="@string/close_safety_warning_button_height_pref_key"
+            android:key="@string/close_safety_warning_small_button_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Close safety warning button height"
+            android:title="Close safety warning small button height"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/close_safety_warning_long_button_x_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Close safety warning long button x"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/close_safety_warning_long_button_y_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Close safety warning long button y"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/close_safety_warning_long_button_width_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Close safety warning long button width"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/close_safety_warning_long_button_height_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Close safety warning long button height"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory

@@ -244,25 +244,45 @@ public class ButtonSettingsFragment extends PreferenceFragmentCompat {
         closePrivacyPolicyButtonHeightPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         closePrivacyPolicyButtonHeightPreference.setSummaryProvider(summaryProvider);
 
-        EditTextPreference closeSafetyWarningButtonXPreference = findPreference(getString(R.string.close_safety_warning_button_x_pref_key));
-        closeSafetyWarningButtonXPreference.setOnBindEditTextListener(onBindEditTextListener);
-        closeSafetyWarningButtonXPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-        closeSafetyWarningButtonXPreference.setSummaryProvider(summaryProvider);
+        EditTextPreference closeSafetyWarningSmallButtonXPreference = findPreference(getString(R.string.close_safety_warning_small_button_x_pref_key));
+        closeSafetyWarningSmallButtonXPreference.setOnBindEditTextListener(onBindEditTextListener);
+        closeSafetyWarningSmallButtonXPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        closeSafetyWarningSmallButtonXPreference.setSummaryProvider(summaryProvider);
 
-        EditTextPreference closeSafetyWarningButtonYPreference = findPreference(getString(R.string.close_safety_warning_button_y_pref_key));
-        closeSafetyWarningButtonYPreference.setOnBindEditTextListener(onBindEditTextListener);
-        closeSafetyWarningButtonYPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-        closeSafetyWarningButtonYPreference.setSummaryProvider(summaryProvider);
+        EditTextPreference closeSafetyWarningSmallButtonYPreference = findPreference(getString(R.string.close_safety_warning_small_button_y_pref_key));
+        closeSafetyWarningSmallButtonYPreference.setOnBindEditTextListener(onBindEditTextListener);
+        closeSafetyWarningSmallButtonYPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        closeSafetyWarningSmallButtonYPreference.setSummaryProvider(summaryProvider);
 
-        EditTextPreference closeSafetyWarningButtonWidthPreference = findPreference(getString(R.string.close_safety_warning_button_width_pref_key));
-        closeSafetyWarningButtonWidthPreference.setOnBindEditTextListener(onBindEditTextListener);
-        closeSafetyWarningButtonWidthPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-        closeSafetyWarningButtonWidthPreference.setSummaryProvider(summaryProvider);
+        EditTextPreference closeSafetyWarningSmallButtonWidthPreference = findPreference(getString(R.string.close_safety_warning_small_button_width_pref_key));
+        closeSafetyWarningSmallButtonWidthPreference.setOnBindEditTextListener(onBindEditTextListener);
+        closeSafetyWarningSmallButtonWidthPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        closeSafetyWarningSmallButtonWidthPreference.setSummaryProvider(summaryProvider);
 
-        EditTextPreference closeSafetyWarningButtonHeightPreference = findPreference(getString(R.string.close_safety_warning_button_height_pref_key));
-        closeSafetyWarningButtonHeightPreference.setOnBindEditTextListener(onBindEditTextListener);
-        closeSafetyWarningButtonHeightPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-        closeSafetyWarningButtonHeightPreference.setSummaryProvider(summaryProvider);
+        EditTextPreference closeSafetyWarningSmallButtonHeightPreference = findPreference(getString(R.string.close_safety_warning_small_button_height_pref_key));
+        closeSafetyWarningSmallButtonHeightPreference.setOnBindEditTextListener(onBindEditTextListener);
+        closeSafetyWarningSmallButtonHeightPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        closeSafetyWarningSmallButtonHeightPreference.setSummaryProvider(summaryProvider);
+
+        EditTextPreference closeSafetyWarningLongButtonXPreference = findPreference(getString(R.string.close_safety_warning_long_button_x_pref_key));
+        closeSafetyWarningLongButtonXPreference.setOnBindEditTextListener(onBindEditTextListener);
+        closeSafetyWarningLongButtonXPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        closeSafetyWarningLongButtonXPreference.setSummaryProvider(summaryProvider);
+
+        EditTextPreference closeSafetyWarningLongButtonYPreference = findPreference(getString(R.string.close_safety_warning_long_button_y_pref_key));
+        closeSafetyWarningLongButtonYPreference.setOnBindEditTextListener(onBindEditTextListener);
+        closeSafetyWarningLongButtonYPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        closeSafetyWarningLongButtonYPreference.setSummaryProvider(summaryProvider);
+
+        EditTextPreference closeSafetyWarningLongButtonWidthPreference = findPreference(getString(R.string.close_safety_warning_long_button_width_pref_key));
+        closeSafetyWarningLongButtonWidthPreference.setOnBindEditTextListener(onBindEditTextListener);
+        closeSafetyWarningLongButtonWidthPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        closeSafetyWarningLongButtonWidthPreference.setSummaryProvider(summaryProvider);
+
+        EditTextPreference closeSafetyWarningLongButtonHeightPreference = findPreference(getString(R.string.close_safety_warning_long_button_height_pref_key));
+        closeSafetyWarningLongButtonHeightPreference.setOnBindEditTextListener(onBindEditTextListener);
+        closeSafetyWarningLongButtonHeightPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        closeSafetyWarningLongButtonHeightPreference.setSummaryProvider(summaryProvider);
 
         EditTextPreference closeCheatingWarning1ButtonXPreference = findPreference(getString(R.string.close_cheating_warning_1_button_x_pref_key));
         closeCheatingWarning1ButtonXPreference.setOnBindEditTextListener(onBindEditTextListener);

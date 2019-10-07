@@ -58,8 +58,8 @@ public class PogoInteractor {
 
     public enum Screen {
         BOOT, DATE_OF_BIRTH, NEW_EXISTING_ACCOUNT, LOGIN, LOGIN_FAILED, LOADING, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE,
-        TERMS_OF_SERVICE, PRIVACY_POLICY, TUTORIAL_GREETING, TUTORIAL_CATCH_POKEMON, TUTORIAL_FIRST_POKEMON, TUTORIAL_POKESTOPS, SAFETY_WARNING, NOTIFICATION_POPUP, CHEATING_WARNING_1,
-        CHEATING_WARNING_2, CHEATING_WARNING_3, SUSPENSION_WARNING, PLAYER_PROFILE, UNKNOWN
+        TERMS_OF_SERVICE, PRIVACY_POLICY, TUTORIAL_GREETING, TUTORIAL_CATCH_POKEMON, TUTORIAL_FIRST_POKEMON, TUTORIAL_POKESTOPS, SAFETY_WARNING_SMALL, SAFETY_WARNING_LONG,
+        NOTIFICATION_POPUP, CHEATING_WARNING_1, CHEATING_WARNING_2, CHEATING_WARNING_3, SUSPENSION_WARNING, PLAYER_PROFILE, UNKNOWN
     }
 
     public Screen getCurrentScreen() {
@@ -145,7 +145,11 @@ public class PogoInteractor {
         if ((text.contains("play") && text.contains("while") && text.contains("driving"))
                 || (text.contains("trespass") && text.contains("while") && text.contains("playing"))
                 || (text.contains("enter") && text.contains("dangerous") && text.contains("areas"))) {
-            return Screen.SAFETY_WARNING;
+            return Screen.SAFETY_WARNING_SMALL;
+        }
+
+        if (text.contains("courteous") && text.contains("members") && text.contains("communities")) {
+            return Screen.SAFETY_WARNING_LONG;
         }
 
         if (text.contains("see") && text.contains("details") && text.contains("dismiss")) {
@@ -519,11 +523,23 @@ public class PogoInteractor {
         Log.i(LOG_TAG, "Privacy policy closed.");
     }
 
-    public void closeSafetyWarning() {
-        int closeWarningX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_button_x_pref_key), "0"));
-        int closeWarningY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_button_y_pref_key), "0"));
-        int closeWarningWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_button_width_pref_key), "0"));
-        int closeWarningHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_button_height_pref_key), "0"));
+    public void closeSafetyWarning(Screen screen) {
+        int closeWarningX = 0;
+        int closeWarningY = 0;
+        int closeWarningWidth = 0;
+        int closeWarningHeight = 0;
+
+        if (screen == Screen.SAFETY_WARNING_SMALL) {
+            closeWarningX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_small_button_x_pref_key), "0"));
+            closeWarningY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_small_button_y_pref_key), "0"));
+            closeWarningWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_small_button_width_pref_key), "0"));
+            closeWarningHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_small_button_height_pref_key), "0"));
+        } else if (screen == Screen.SAFETY_WARNING_LONG) {
+            closeWarningX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_long_button_x_pref_key), "0"));
+            closeWarningY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_long_button_y_pref_key), "0"));
+            closeWarningWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_long_button_width_pref_key), "0"));
+            closeWarningHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_long_button_height_pref_key), "0"));
+        }
 
         if (closeWarningX == 0 || closeWarningY == 0 || closeWarningWidth == 0 || closeWarningHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
@@ -537,10 +553,17 @@ public class PogoInteractor {
             closeWarningHeight = cornerPoints[2].y - cornerPoints[0].y;
 
             SharedPreferences.Editor editor = mSharedPreferences.edit();
-            editor.putString(mContext.getString(R.string.close_safety_warning_button_x_pref_key), Integer.toString(closeWarningX));
-            editor.putString(mContext.getString(R.string.close_safety_warning_button_y_pref_key), Integer.toString(closeWarningY));
-            editor.putString(mContext.getString(R.string.close_safety_warning_button_width_pref_key), Integer.toString(closeWarningWidth));
-            editor.putString(mContext.getString(R.string.close_safety_warning_button_height_pref_key), Integer.toString(closeWarningHeight));
+            if (screen == Screen.SAFETY_WARNING_SMALL) {
+                editor.putString(mContext.getString(R.string.close_safety_warning_small_button_x_pref_key), Integer.toString(closeWarningX));
+                editor.putString(mContext.getString(R.string.close_safety_warning_small_button_y_pref_key), Integer.toString(closeWarningY));
+                editor.putString(mContext.getString(R.string.close_safety_warning_small_button_width_pref_key), Integer.toString(closeWarningWidth));
+                editor.putString(mContext.getString(R.string.close_safety_warning_small_button_height_pref_key), Integer.toString(closeWarningHeight));
+            } else if (screen == Screen.SAFETY_WARNING_LONG) {
+                editor.putString(mContext.getString(R.string.close_safety_warning_long_button_x_pref_key), Integer.toString(closeWarningX));
+                editor.putString(mContext.getString(R.string.close_safety_warning_long_button_y_pref_key), Integer.toString(closeWarningY));
+                editor.putString(mContext.getString(R.string.close_safety_warning_long_button_width_pref_key), Integer.toString(closeWarningWidth));
+                editor.putString(mContext.getString(R.string.close_safety_warning_long_button_height_pref_key), Integer.toString(closeWarningHeight));
+            }
             editor.apply();
         }
 

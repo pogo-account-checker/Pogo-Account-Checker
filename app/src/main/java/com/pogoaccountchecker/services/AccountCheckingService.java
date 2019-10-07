@@ -427,9 +427,9 @@ public class AccountCheckingService extends Service {
                             return AccountStatus.NOT_BANNED_TUTORIAL;
                         }
 
-                        if (currentScreen == Screen.SAFETY_WARNING) {
+                        if (currentScreen == Screen.SAFETY_WARNING_SMALL || currentScreen == Screen.SAFETY_WARNING_LONG) {
                             if (detectLevel) {
-                                mPogoInteractor.closeSafetyWarning();
+                                mPogoInteractor.closeSafetyWarning(currentScreen);
                                 if (isInterrupted()) continue;
                                 Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.safety_warning_delay_pref_key), "1000")));
                                 if (isInterrupted()) continue;
