@@ -252,6 +252,39 @@
 
         <EditTextPreference
             android:defaultValue="0"
+            android:key="@string/accept_notifications_button_x_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Decline Notifications and News button x"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/accept_notifications_button_y_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Decline Notifications and News button y"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/accept_notifications_button_width_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Decline Notifications and News width"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/accept_notifications_button_height_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Decline Notifications and News height"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Terms of Service screen"
+        app:iconSpaceReserved="false">
+
+        <EditTextPreference
+            android:defaultValue="0"
             android:key="@string/accept_tos_button_x_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"

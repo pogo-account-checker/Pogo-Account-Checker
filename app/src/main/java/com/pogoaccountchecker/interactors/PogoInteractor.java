@@ -58,7 +58,7 @@ public class PogoInteractor {
 
     public enum Screen {
         BOOT, DATE_OF_BIRTH, NEW_EXISTING_ACCOUNT, LOGIN, LOGIN_FAILED, LOADING, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE,
-        TERMS_OF_SERVICE, PRIVACY_POLICY, TUTORIAL_GREETING, TUTORIAL_CATCH_POKEMON, TUTORIAL_FIRST_POKEMON, TUTORIAL_POKESTOPS, SAFETY_WARNING_SMALL, SAFETY_WARNING_LONG,
+        NOTIFICATIONS_EVENTS, TERMS_OF_SERVICE, PRIVACY_POLICY, TUTORIAL_GREETING, TUTORIAL_CATCH_POKEMON, TUTORIAL_FIRST_POKEMON, TUTORIAL_POKESTOPS, SAFETY_WARNING_SMALL, SAFETY_WARNING_LONG,
         NOTIFICATION_POPUP, CHEATING_WARNING_1, CHEATING_WARNING_2, CHEATING_WARNING_3, SUSPENSION_WARNING, PLAYER_PROFILE, UNKNOWN
     }
 
@@ -87,7 +87,7 @@ public class PogoInteractor {
             return Screen.LOGIN_FAILED;
         }
 
-        if (text.contains("remember") || text.contains("alert") || text.contains("times")) {
+        if (text.contains("remember") || text.contains("surroundings") || text.contains("times")) {
             return Screen.LOADING;
         }
 
@@ -119,6 +119,10 @@ public class PogoInteractor {
 
         if (text.contains("terms") && text.contains("service") && text.contains("accept")) {
             return Screen.TERMS_OF_SERVICE;
+        }
+
+        if (text.contains("notifications") && text.contains("events") && text.contains("settings")) {
+            return Screen.NOTIFICATIONS_EVENTS;
         }
 
         if (text.contains("privacy") && text.contains("policy") && (text.contains("personal") || text.contains("collection"))) {
@@ -492,6 +496,41 @@ public class PogoInteractor {
 
         mScreenInteractor.tapRandom(acceptWarningX, acceptWarningY, acceptWarningWidth, acceptWarningHeight);
         Log.i(LOG_TAG, "Terms of Service accepted.");
+    }
+
+    public void acceptNotificationsNews() {
+        int acceptWarningX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.accept_notifications_button_x_pref_key), "0"));
+        int acceptWarningY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.accept_notifications_button_y_pref_key), "0"));
+        int acceptWarningWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.accept_notifications_button_width_pref_key), "0"));
+        int acceptWarningHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.accept_notifications_button_height_pref_key), "0"));
+
+        if (acceptWarningX == 0 || acceptWarningY == 0 || acceptWarningWidth == 0 || acceptWarningHeight == 0) {
+            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
+            List<Point[]> cornerPointsArray = mScreenInteractor.getAllElementCornerPoints(visionText, "don't allow");
+
+            if (cornerPointsArray.size() != 2) return;
+            Point[] cornerPoints;
+            if (cornerPointsArray.get(0)[0].y < cornerPointsArray.get(1)[0].y) {
+                cornerPoints = cornerPointsArray.get(1);
+            } else {
+                cornerPoints = cornerPointsArray.get(0);
+            }
+
+            acceptWarningX = (cornerPoints[0].x + cornerPoints[1].x) / 2;
+            acceptWarningY = (cornerPoints[0].y + cornerPoints[2].y) / 2;
+            acceptWarningWidth = cornerPoints[1].x - cornerPoints[0].x;
+            acceptWarningHeight = cornerPoints[2].y - cornerPoints[0].y;
+
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            editor.putString(mContext.getString(R.string.accept_notifications_button_x_pref_key), Integer.toString(acceptWarningX));
+            editor.putString(mContext.getString(R.string.accept_notifications_button_y_pref_key), Integer.toString(acceptWarningY));
+            editor.putString(mContext.getString(R.string.accept_notifications_button_width_pref_key), Integer.toString(acceptWarningWidth));
+            editor.putString(mContext.getString(R.string.accept_notifications_button_height_pref_key), Integer.toString(acceptWarningHeight));
+            editor.apply();
+        }
+        mScreenInteractor.tapRandom(acceptWarningX, acceptWarningY, acceptWarningWidth, acceptWarningHeight);
+        Log.i(LOG_TAG, "Notifications declined.");
     }
 
     public void closePrivacyPolicy() {
