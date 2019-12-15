@@ -58,8 +58,8 @@ public class PogoInteractor {
 
     public enum Screen {
         BOOT, DATE_OF_BIRTH, NEW_EXISTING_ACCOUNT, LOGIN, LOGIN_FAILED, LOADING, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE,
-        NOTIFICATIONS_EVENTS, TERMS_OF_SERVICE, PRIVACY_POLICY, TUTORIAL_GREETING, TUTORIAL_CATCH_POKEMON, TUTORIAL_FIRST_POKEMON, TUTORIAL_POKESTOPS, SAFETY_WARNING_SMALL, SAFETY_WARNING_LONG,
-        NOTIFICATION_POPUP, CHEATING_WARNING_1, CHEATING_WARNING_2, CHEATING_WARNING_3, SUSPENSION_WARNING, PLAYER_PROFILE, UNKNOWN
+        NOTIFICATIONS_EVENTS, TERMS_OF_SERVICE, PRIVACY_POLICY, TUTORIAL_GREETING, TUTORIAL_CATCH_POKEMON, TUTORIAL_FIRST_POKEMON, TUTORIAL_POKESTOPS, SAFETY_WARNING_SMALL, SAFETY_WARNING_BIG,
+        NEWS_POPUP, CHEATING_WARNING_1, CHEATING_WARNING_2, CHEATING_WARNING_3, SUSPENSION_WARNING, PLAYER_PROFILE, UNKNOWN
     }
 
     public Screen getCurrentScreen() {
@@ -153,11 +153,11 @@ public class PogoInteractor {
         }
 
         if (text.contains("courteous") && text.contains("members") && text.contains("communities")) {
-            return Screen.SAFETY_WARNING_LONG;
+            return Screen.SAFETY_WARNING_BIG;
         }
 
         if (text.contains("see") && text.contains("details") && text.contains("dismiss")) {
-            return Screen.NOTIFICATION_POPUP;
+            return Screen.NEWS_POPUP;
         }
 
         if (text.contains("suggests") && text.contains("accesses") && text.contains("compromised")) {
@@ -573,11 +573,11 @@ public class PogoInteractor {
             closeWarningY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_small_button_y_pref_key), "0"));
             closeWarningWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_small_button_width_pref_key), "0"));
             closeWarningHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_small_button_height_pref_key), "0"));
-        } else if (screen == Screen.SAFETY_WARNING_LONG) {
-            closeWarningX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_long_button_x_pref_key), "0"));
-            closeWarningY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_long_button_y_pref_key), "0"));
-            closeWarningWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_long_button_width_pref_key), "0"));
-            closeWarningHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_long_button_height_pref_key), "0"));
+        } else if (screen == Screen.SAFETY_WARNING_BIG) {
+            closeWarningX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_big_button_x_pref_key), "0"));
+            closeWarningY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_big_button_y_pref_key), "0"));
+            closeWarningWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_big_button_width_pref_key), "0"));
+            closeWarningHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.close_safety_warning_big_button_height_pref_key), "0"));
         }
 
         if (closeWarningX == 0 || closeWarningY == 0 || closeWarningWidth == 0 || closeWarningHeight == 0) {
@@ -597,11 +597,11 @@ public class PogoInteractor {
                 editor.putString(mContext.getString(R.string.close_safety_warning_small_button_y_pref_key), Integer.toString(closeWarningY));
                 editor.putString(mContext.getString(R.string.close_safety_warning_small_button_width_pref_key), Integer.toString(closeWarningWidth));
                 editor.putString(mContext.getString(R.string.close_safety_warning_small_button_height_pref_key), Integer.toString(closeWarningHeight));
-            } else if (screen == Screen.SAFETY_WARNING_LONG) {
-                editor.putString(mContext.getString(R.string.close_safety_warning_long_button_x_pref_key), Integer.toString(closeWarningX));
-                editor.putString(mContext.getString(R.string.close_safety_warning_long_button_y_pref_key), Integer.toString(closeWarningY));
-                editor.putString(mContext.getString(R.string.close_safety_warning_long_button_width_pref_key), Integer.toString(closeWarningWidth));
-                editor.putString(mContext.getString(R.string.close_safety_warning_long_button_height_pref_key), Integer.toString(closeWarningHeight));
+            } else if (screen == Screen.SAFETY_WARNING_BIG) {
+                editor.putString(mContext.getString(R.string.close_safety_warning_big_button_x_pref_key), Integer.toString(closeWarningX));
+                editor.putString(mContext.getString(R.string.close_safety_warning_big_button_y_pref_key), Integer.toString(closeWarningY));
+                editor.putString(mContext.getString(R.string.close_safety_warning_big_button_width_pref_key), Integer.toString(closeWarningWidth));
+                editor.putString(mContext.getString(R.string.close_safety_warning_big_button_height_pref_key), Integer.toString(closeWarningHeight));
             }
             editor.apply();
         }
@@ -610,10 +610,33 @@ public class PogoInteractor {
         Log.i(LOG_TAG, "Safety warning closed.");
     }
 
-    public void closeNotificationPopup() {
-        int screenHeight = mScreenInteractor.getScreenHeight();
-        mScreenInteractor.tap(0, Utils.randomWithRange(screenHeight - 50, screenHeight + 50));
-        Log.i(LOG_TAG, "Notification popup closed.");
+    public void dismissNews() {
+        int dismissX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.dismiss_news_button_x_pref_key), "0"));
+        int dismissY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.dismiss_news_button_y_pref_key), "0"));
+        int dismissWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.dismiss_news_button_width_pref_key), "0"));
+        int dismissHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.dismiss_news_button_height_pref_key), "0"));
+
+        if (dismissX == 0 || dismissY == 0 || dismissWidth == 0 || dismissHeight == 0) {
+            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
+            Point[] cornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "dismiss");
+            if (cornerPoints == null) return;
+
+            dismissX = (cornerPoints[0].x + cornerPoints[1].x) / 2;
+            dismissY = (cornerPoints[0].y + cornerPoints[2].y) / 2;
+            dismissWidth = cornerPoints[1].x - cornerPoints[0].x;
+            dismissHeight = cornerPoints[2].y - cornerPoints[0].y;
+
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            editor.putString(mContext.getString(R.string.dismiss_news_button_x_pref_key), Integer.toString(dismissX));
+            editor.putString(mContext.getString(R.string.dismiss_news_button_y_pref_key), Integer.toString(dismissY));
+            editor.putString(mContext.getString(R.string.dismiss_news_button_width_pref_key), Integer.toString(dismissWidth));
+            editor.putString(mContext.getString(R.string.dismiss_news_button_height_pref_key), Integer.toString(dismissHeight));
+            editor.apply();
+        }
+
+        mScreenInteractor.tapRandom(dismissX, dismissY, dismissWidth, dismissHeight);
+        Log.i(LOG_TAG, "News popup dismissed.");
     }
 
     public void closeCheatingWarning1() {

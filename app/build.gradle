@@ -21,15 +21,15 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta3'
     implementation 'androidx.preference:preference:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0-alpha10'
-    testImplementation 'junit:junit:4.13-beta-2'
+    implementation 'com.google.android.material:material:1.2.0-alpha02'
+    testImplementation 'junit:junit:4.13-rc-2'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.github.Stericson:RootShell:1.6'
-    implementation 'com.google.firebase:firebase-core:17.2.0'
-    implementation 'com.google.firebase:firebase-ml-vision:23.0.0'
+    implementation 'com.google.firebase:firebase-core:17.2.1'
+    implementation 'com.google.firebase:firebase-ml-vision:24.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

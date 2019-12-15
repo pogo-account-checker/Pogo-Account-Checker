@@ -224,82 +224,51 @@ public class AccountCheckingService extends Service {
         return Screen.UNKNOWN;
     }
 
-    private void closeNotificationOpenPlayerProfile() {
-        mPogoInteractor.closeNotificationPopup();
-        if (isInterrupted()) return;
-        Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.notification_popup_delay_pref_key), "500")));
-        if (isInterrupted()) return;
-
-        mPogoInteractor.openPlayerProfile();
-        if (isInterrupted()) return;
-        Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.player_profile_delay_pref_key), "2000")));
-    }
-
     private boolean getOnPlayerProfile() {
-        // Close notification popup before opening player profile, since most accounts that need to be checked will probably have unread messages.
-        closeNotificationOpenPlayerProfile();
-
         int wrongScreenCount = 0;
         while (wrongScreenCount < 10 && !isInterrupted()) {
+            mPogoInteractor.openPlayerProfile();
+            if (isInterrupted()) return false;
+            Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.player_profile_delay_pref_key), "2000")));
+            if (isInterrupted()) return false;
+
             Screen currentScreen = mPogoInteractor.getCurrentScreen();
             switch (currentScreen) {
                 case PLAYER_PROFILE:
                     return true;
-                case NOTIFICATION_POPUP:
-                    mPogoInteractor.closeNotificationPopup();
-                    if (isInterrupted()) return false;
-                    Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.notification_popup_delay_pref_key), "500")));
+                case NEWS_POPUP:
+                    mPogoInteractor.dismissNews();
                     break;
                 case TERMS_OF_SERVICE:
                     mPogoInteractor.acceptTermsOfService();
-                    if (isInterrupted()) return false;
-                    Utils.sleepRandom(450, 550);
                     break;
                 case PRIVACY_POLICY:
                     mPogoInteractor.closePrivacyPolicy();
-                    if (isInterrupted()) return false;
-                    Utils.sleepRandom(450, 550);
                     break;
                 case CHEATING_WARNING_1:
                     mPogoInteractor.closeCheatingWarning1();
-                    if (isInterrupted()) return false;
-                    Utils.sleepRandom(450, 550);
-                    if (isInterrupted()) return false;
-
-                    closeNotificationOpenPlayerProfile();
                     break;
                 case CHEATING_WARNING_2:
                     mPogoInteractor.closeCheatingWarning2();
-                    if (isInterrupted()) return false;
-                    Utils.sleepRandom(450, 550);
-                    if (isInterrupted()) return false;
-
-                    closeNotificationOpenPlayerProfile();
                     break;
                 case CHEATING_WARNING_3:
                     mPogoInteractor.closeCheatingWarning3();
-                    if (isInterrupted()) return false;
-                    Utils.sleepRandom(450, 550);
-                    if (isInterrupted()) return false;
-
-                    closeNotificationOpenPlayerProfile();
                     break;
                 case SUSPENSION_WARNING:
                     mPogoInteractor.closeSuspensionWarning();
-                    if (isInterrupted()) return false;
-                    Utils.sleepRandom(450, 550);
-                    if (isInterrupted()) return false;
-
-                    closeNotificationOpenPlayerProfile();
                     break;
                 default:
-                    Log.e(LOG_TAG, "Not on player profile screen.");
+                    Log.e(LOG_TAG, "Could not recognize current screen.");
                     wrongScreenCount++;
-                    // Assume that we are on the overworld screen.
-                    mPogoInteractor.openPlayerProfile();
-                    if (isInterrupted()) return false;
-                    Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.player_profile_delay_pref_key), "2000")));
             }
+
+            if (isInterrupted()) return false;
+            if (currentScreen == Screen.NEWS_POPUP) {
+                Utils.sleep(Integer.parseInt(mSharedPreferences.getString(getString(R.string.notification_popup_delay_pref_key), "500")));
+            } else {
+                Utils.sleepRandom(450, 550);
+            }
+            if (isInterrupted()) return false;
         }
 
         return false;
@@ -468,7 +437,7 @@ public class AccountCheckingService extends Service {
                             return AccountStatus.NOT_BANNED_TUTORIAL;
                         }
 
-                        if (currentScreen == Screen.SAFETY_WARNING_SMALL || currentScreen == Screen.SAFETY_WARNING_LONG) {
+                        if (currentScreen == Screen.SAFETY_WARNING_SMALL || currentScreen == Screen.SAFETY_WARNING_BIG) {
                             if (detectLevel) {
                                 mPogoInteractor.closeSafetyWarning(currentScreen);
                                 if (isInterrupted()) continue;
@@ -477,10 +446,10 @@ public class AccountCheckingService extends Service {
 
                                 if (getOnPlayerProfile()) {
                                     int level = mPogoInteractor.getAccountLevel();
-                                    if (level == -1) {
-                                        processBannedAccount(account, username);
-                                    } else {
+                                    if (level > 0) {
                                         processNotBannedLevelAccount(account, username, level);
+                                    } else {
+                                        processNotBannedAccount(account, username);
                                     }
                                     return AccountStatus.NOT_BANNED;
                                 } else if (isInterrupted()) continue;
