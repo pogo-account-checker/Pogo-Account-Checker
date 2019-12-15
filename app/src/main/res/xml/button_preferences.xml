@@ -346,31 +346,31 @@
             app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
-            android:key="@string/close_safety_warning_long_button_x_pref_key"
+            android:key="@string/close_safety_warning_big_button_x_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Close safety warning long button x"
+            android:title="Close safety warning big button x"
             app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
-            android:key="@string/close_safety_warning_long_button_y_pref_key"
+            android:key="@string/close_safety_warning_big_button_y_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Close safety warning long button y"
+            android:title="Close safety warning big button y"
             app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
-            android:key="@string/close_safety_warning_long_button_width_pref_key"
+            android:key="@string/close_safety_warning_big_button_width_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Close safety warning long button width"
+            android:title="Close safety warning big button width"
             app:iconSpaceReserved="false" />
         <EditTextPreference
             android:defaultValue="0"
-            android:key="@string/close_safety_warning_long_button_height_pref_key"
+            android:key="@string/close_safety_warning_big_button_height_pref_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Close safety warning long button height"
+            android:title="Close safety warning big button height"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
@@ -488,6 +488,39 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="Close suspension warning button height"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="News popup"
+        app:iconSpaceReserved="false">
+
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/dismiss_news_button_x_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Dismiss news button x"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/dismiss_news_button_y_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Dismiss news button y"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/dismiss_news_button_width_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Dismiss news button width"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/dismiss_news_button_height_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Dismiss news button height"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
