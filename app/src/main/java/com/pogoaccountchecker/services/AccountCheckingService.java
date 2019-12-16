@@ -407,7 +407,7 @@ public class AccountCheckingService extends Service {
                         currentScreen = getScreenAfterLoading();
                         if (isInterrupted()) continue;
                         if (currentScreen == Screen.NOTIFICATIONS_EVENTS) {
-                            mPogoInteractor.acceptNotificationsNews();
+                            mPogoInteractor.declineNotifications();
                             if (isInterrupted()) continue;
                             Utils.sleepRandom(450, 550);
                             if (isInterrupted()) continue;

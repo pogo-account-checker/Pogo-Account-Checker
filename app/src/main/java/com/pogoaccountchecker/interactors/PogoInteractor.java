@@ -506,7 +506,7 @@ public class PogoInteractor {
         Log.i(LOG_TAG, "Terms of Service accepted.");
     }
 
-    public void acceptNotificationsNews() {
+    public void declineNotifications() {
         int acceptWarningX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.accept_notifications_button_x_pref_key), "0"));
         int acceptWarningY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.accept_notifications_button_y_pref_key), "0"));
         int acceptWarningWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.accept_notifications_button_width_pref_key), "0"));
@@ -515,7 +515,7 @@ public class PogoInteractor {
         if (acceptWarningX == 0 || acceptWarningY == 0 || acceptWarningWidth == 0 || acceptWarningHeight == 0) {
             FirebaseVisionText visionText = mScreenInteractor.getVisionText();
             if (mInterrupted) return;
-            List<Point[]> cornerPointsArray = mScreenInteractor.getAllElementCornerPoints(visionText, "don't allow");
+            List<Point[]> cornerPointsArray = mScreenInteractor.getAllElementCornerPoints(visionText, "allow");
 
             if (cornerPointsArray.size() != 2) return;
             Point[] cornerPoints;
