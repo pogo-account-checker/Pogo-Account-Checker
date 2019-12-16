@@ -236,6 +236,11 @@ public class AccountCheckingService extends Service {
             switch (currentScreen) {
                 case PLAYER_PROFILE:
                     return true;
+                case WALK_REWARD_PRICE:
+                case WALK_REWARD_NO_PRICE:
+                    boolean hasPrice = currentScreen == Screen.WALK_REWARD_PRICE;
+                    mPogoInteractor.closeWalkRewardPopup(hasPrice);
+                    break;
                 case NEWS_POPUP:
                     mPogoInteractor.dismissNews();
                     break;

@@ -122,6 +122,11 @@ public class ScreenInteractor {
         return null;
     }
 
+    public void goBack() {
+        Shell.runSuCommand("input keyevent 4");
+        Log.d(LOG_TAG, "Pressed back button.");
+    }
+
     public void cleanUp() {
         mTextRecognizer.close();
         Shell.runSuCommand("rm " + APP_PATH + "/screenshot.png");

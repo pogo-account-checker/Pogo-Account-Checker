@@ -384,6 +384,26 @@ public class ButtonSettingsFragment extends PreferenceFragmentCompat {
         closeSuspensionWarningButtonHeightPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         closeSuspensionWarningButtonHeightPreference.setSummaryProvider(summaryProvider);
 
+        EditTextPreference claimWalkRewardButtonXPreference = findPreference(getString(R.string.claim_walk_reward_button_x_pref_key));
+        claimWalkRewardButtonXPreference.setOnBindEditTextListener(onBindEditTextListener);
+        claimWalkRewardButtonXPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        claimWalkRewardButtonXPreference.setSummaryProvider(summaryProvider);
+
+        EditTextPreference claimWalkRewardButtonYPreference = findPreference(getString(R.string.claim_walk_reward_button_y_pref_key));
+        claimWalkRewardButtonYPreference.setOnBindEditTextListener(onBindEditTextListener);
+        claimWalkRewardButtonYPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        claimWalkRewardButtonYPreference.setSummaryProvider(summaryProvider);
+
+        EditTextPreference claimWalkRewardButtonWidthPreference = findPreference(getString(R.string.claim_walk_reward_button_width_pref_key));
+        claimWalkRewardButtonWidthPreference.setOnBindEditTextListener(onBindEditTextListener);
+        claimWalkRewardButtonWidthPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        claimWalkRewardButtonWidthPreference.setSummaryProvider(summaryProvider);
+
+        EditTextPreference claimWalkRewardButtonHeightPreference = findPreference(getString(R.string.claim_walk_reward_button_height_pref_key));
+        claimWalkRewardButtonHeightPreference.setOnBindEditTextListener(onBindEditTextListener);
+        claimWalkRewardButtonHeightPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        claimWalkRewardButtonHeightPreference.setSummaryProvider(summaryProvider);
+
         EditTextPreference dismissNewsButtonXPreference = findPreference(getString(R.string.dismiss_news_button_x_pref_key));
         dismissNewsButtonXPreference.setOnBindEditTextListener(onBindEditTextListener);
         dismissNewsButtonXPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
