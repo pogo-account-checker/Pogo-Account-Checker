@@ -156,7 +156,7 @@ public class PogoInteractor {
             return Screen.SAFETY_WARNING_BIG;
         }
 
-        if (text.contains("walked") && text.contains("week")) {
+        if (text.contains("walked") && text.contains("week") && text.contains("rewards")) {
             if (text.contains("claim")) {
                 return Screen.WALK_REWARD_PRICE;
             } else {
