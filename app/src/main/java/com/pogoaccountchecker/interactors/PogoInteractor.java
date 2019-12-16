@@ -583,6 +583,7 @@ public class PogoInteractor {
         if (!hasPrice) {
             mScreenInteractor.goBack();
             Log.i(LOG_TAG, "Weekly walk reward popup closed.");
+            return;
         }
 
         int claimRewardX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.claim_walk_reward_button_x_pref_key), "0"));
