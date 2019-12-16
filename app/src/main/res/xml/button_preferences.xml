@@ -491,6 +491,39 @@
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <PreferenceCategory
+        android:title="Weekly walk reward popup"
+        app:iconSpaceReserved="false">
+
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/claim_walk_reward_button_x_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Claim reward button x"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/claim_walk_reward_button_y_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Claim reward button y"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/claim_walk_reward_button_width_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Claim reward button width"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:defaultValue="0"
+            android:key="@string/claim_walk_reward_button_height_pref_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Claim reward button height"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
         android:title="News popup"
         app:iconSpaceReserved="false">
 

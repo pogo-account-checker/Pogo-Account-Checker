@@ -58,8 +58,8 @@ public class PogoInteractor {
 
     public enum Screen {
         BOOT, DATE_OF_BIRTH, NEW_EXISTING_ACCOUNT, LOGIN, LOGIN_FAILED, LOADING, ACCOUNT_BANNED, ACCOUNT_WRONG_CREDENTIALS, ACCOUNT_NEW, ACCOUNT_NOT_ACTIVATED, ACCOUNT_LOCKED, NOT_AUTHENTICATE,
-        TERMS_OF_SERVICE, PRIVACY_POLICY, TUTORIAL_GREETING, TUTORIAL_CATCH_POKEMON, TUTORIAL_FIRST_POKEMON, TUTORIAL_POKESTOPS, SAFETY_WARNING_SMALL, SAFETY_WARNING_BIG, NEWS_POPUP,
-        CHEATING_WARNING_1, CHEATING_WARNING_2, CHEATING_WARNING_3, SUSPENSION_WARNING, PLAYER_PROFILE, UNKNOWN
+        TERMS_OF_SERVICE, PRIVACY_POLICY, TUTORIAL_GREETING, TUTORIAL_CATCH_POKEMON, TUTORIAL_FIRST_POKEMON, TUTORIAL_POKESTOPS, SAFETY_WARNING_SMALL, SAFETY_WARNING_BIG, WALK_REWARD_PRICE,
+        WALK_REWARD_NO_PRICE, NEWS_POPUP, CHEATING_WARNING_1, CHEATING_WARNING_2, CHEATING_WARNING_3, SUSPENSION_WARNING, PLAYER_PROFILE, UNKNOWN
     }
 
     public Screen getCurrentScreen() {
@@ -150,6 +150,14 @@ public class PogoInteractor {
 
         if (text.contains("courteous") && text.contains("members") && text.contains("communities")) {
             return Screen.SAFETY_WARNING_BIG;
+        }
+
+        if (text.contains("walked") && text.contains("week")) {
+            if (text.contains("claim")) {
+                return Screen.WALK_REWARD_PRICE;
+            } else {
+                return Screen.WALK_REWARD_NO_PRICE;
+            }
         }
 
         if (text.contains("see") && text.contains("details") && text.contains("dismiss")) {
@@ -569,6 +577,40 @@ public class PogoInteractor {
 
         mScreenInteractor.tapRandom(closeWarningX, closeWarningY, closeWarningWidth, closeWarningHeight);
         Log.i(LOG_TAG, "Safety warning closed.");
+    }
+
+    public void closeWalkRewardPopup(boolean hasPrice) {
+        if (!hasPrice) {
+            mScreenInteractor.goBack();
+            Log.i(LOG_TAG, "Weekly walk reward popup closed.");
+        }
+
+        int claimRewardX = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.claim_walk_reward_button_x_pref_key), "0"));
+        int claimRewardY = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.claim_walk_reward_button_y_pref_key), "0"));
+        int claimRewardWidth = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.claim_walk_reward_button_width_pref_key), "0"));
+        int claimRewardHeight = Integer.parseInt(mSharedPreferences.getString(mContext.getString(R.string.claim_walk_reward_button_height_pref_key), "0"));
+
+        if (claimRewardX == 0 || claimRewardY == 0 || claimRewardWidth == 0 || claimRewardHeight == 0) {
+            FirebaseVisionText visionText = mScreenInteractor.getVisionText();
+            if (mInterrupted) return;
+            Point[] cornerPoints = mScreenInteractor.getLineCornerPoints(visionText, "claim reward");
+            if (cornerPoints == null) return;
+
+            claimRewardX = (cornerPoints[0].x + cornerPoints[1].x) / 2;
+            claimRewardY = (cornerPoints[0].y + cornerPoints[2].y) / 2;
+            claimRewardWidth = cornerPoints[1].x - cornerPoints[0].x;
+            claimRewardHeight = cornerPoints[2].y - cornerPoints[0].y;
+
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            editor.putString(mContext.getString(R.string.claim_walk_reward_button_x_pref_key), Integer.toString(claimRewardX));
+            editor.putString(mContext.getString(R.string.claim_walk_reward_button_y_pref_key), Integer.toString(claimRewardY));
+            editor.putString(mContext.getString(R.string.claim_walk_reward_button_width_pref_key), Integer.toString(claimRewardWidth));
+            editor.putString(mContext.getString(R.string.claim_walk_reward_button_height_pref_key), Integer.toString(claimRewardHeight));
+            editor.apply();
+        }
+
+        mScreenInteractor.tapRandom(claimRewardX, claimRewardY, claimRewardWidth, claimRewardHeight);
+        Log.i(LOG_TAG, "Weekly walk reward claimed.");
     }
 
     public void dismissNews() {

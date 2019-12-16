@@ -85,6 +85,10 @@
     <string name="close_suspension_warning_button_y_pref_key">close_suspension_warning_button_y_pref_key</string>
     <string name="close_suspension_warning_button_width_pref_key">close_suspension_warning_button_width_pref_key</string>
     <string name="close_suspension_warning_button_height_pref_key">close_suspension_warning_button_height_pref_key</string>
+    <string name="claim_walk_reward_button_x_pref_key">claim_walk_reward_button_x_pref_key</string>
+    <string name="claim_walk_reward_button_y_pref_key">claim_walk_reward_button_y_pref_key</string>
+    <string name="claim_walk_reward_button_width_pref_key">claim_walk_reward_button_width_pref_key</string>
+    <string name="claim_walk_reward_button_height_pref_key">claim_walk_reward_button_height_pref_key</string>
     <string name="dismiss_news_button_x_pref_key">dismiss_news_button_x_pref_key</string>
     <string name="dismiss_news_button_y_pref_key">dismiss_news_button_y_pref_key</string>
     <string name="dismiss_news_button_width_pref_key">dismiss_news_button_width_pref_key</string>
