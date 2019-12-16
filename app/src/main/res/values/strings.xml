@@ -53,6 +53,10 @@
     <string name="sign_in_button_y_pref_key">sign_in_button_y_pref_key</string>
     <string name="sign_in_button_width_pref_key">sign_in_button_width_pref_key</string>
     <string name="sign_in_button_height_pref_key">sign_in_button_height_pref_key</string>
+    <string name="accept_notifications_button_x_pref_key">accept_notifications_button_x_pref_key</string>
+    <string name="accept_notifications_button_y_pref_key">accept_notifications_button_y_pref_key</string>
+    <string name="accept_notifications_button_width_pref_key">accept_notifications_button_width_pref_key</string>
+    <string name="accept_notifications_button_height_pref_key">accept_notifications_button_height_pref_key</string>
     <string name="accept_tos_button_x_pref_key">accept_tos_button_x_pref_key</string>
     <string name="accept_tos_button_y_pref_key">accept_tos_button_y_pref_key</string>
     <string name="accept_tos_button_width_pref_key">accept_tos_button_width_pref_key</string>

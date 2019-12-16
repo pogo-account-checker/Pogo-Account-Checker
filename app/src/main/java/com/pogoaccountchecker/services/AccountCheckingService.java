@@ -167,6 +167,25 @@ public class AccountCheckingService extends Service {
         return Screen.UNKNOWN;
     }
 
+    private Screen getScreenAfterNotifications() {
+        int wrongScreenCount = 0;
+        while (wrongScreenCount < 5 && !isInterrupted()) {
+            Screen currentScreen = mPogoInteractor.getCurrentScreen();
+            if (currentScreen != Screen.NOTIFICATIONS_EVENTS && currentScreen != Screen.UNKNOWN) {
+                return currentScreen;
+            } else {
+                if (currentScreen == Screen.NOTIFICATIONS_EVENTS) {
+                    Log.i(LOG_TAG, "Still on Notifications and News screen.");
+                } else {
+                    Log.e(LOG_TAG, "Could not recognize current screen.");
+                }
+                wrongScreenCount++;
+            }
+        }
+
+        return Screen.UNKNOWN;
+    }
+
     private Screen getScreenAfterTos() {
         int wrongScreenCount = 0;
         while (wrongScreenCount < 5 && !isInterrupted()) {
@@ -387,6 +406,16 @@ public class AccountCheckingService extends Service {
                     if (detectLevel || checkTutorial) {
                         currentScreen = getScreenAfterLoading();
                         if (isInterrupted()) continue;
+                        if (currentScreen == Screen.NOTIFICATIONS_EVENTS) {
+                            mPogoInteractor.acceptNotificationsNews();
+                            if (isInterrupted()) continue;
+                            Utils.sleepRandom(450, 550);
+                            if (isInterrupted()) continue;
+
+                            currentScreen = getScreenAfterNotifications();
+                            if (isInterrupted()) continue;
+                        }
+
                         if (currentScreen == Screen.TERMS_OF_SERVICE) {
                             mPogoInteractor.acceptTermsOfService();
                             if (isInterrupted()) continue;

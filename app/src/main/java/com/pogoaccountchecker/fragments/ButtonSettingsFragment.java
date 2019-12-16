@@ -204,6 +204,26 @@ public class ButtonSettingsFragment extends PreferenceFragmentCompat {
         signInButtonHeightPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         signInButtonHeightPreference.setSummaryProvider(summaryProvider);
 
+        EditTextPreference acceptNotificationsButtonXPreference = findPreference(getString(R.string.accept_notifications_button_x_pref_key));
+        acceptNotificationsButtonXPreference.setOnBindEditTextListener(onBindEditTextListener);
+        acceptNotificationsButtonXPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        acceptNotificationsButtonXPreference.setSummaryProvider(summaryProvider);
+
+        EditTextPreference acceptNotificationsButtonYPreference = findPreference(getString(R.string.accept_notifications_button_y_pref_key));
+        acceptNotificationsButtonYPreference.setOnBindEditTextListener(onBindEditTextListener);
+        acceptNotificationsButtonYPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        acceptNotificationsButtonYPreference.setSummaryProvider(summaryProvider);
+
+        EditTextPreference acceptNotificationsButtonWidthPreference = findPreference(getString(R.string.accept_notifications_button_width_pref_key));
+        acceptNotificationsButtonWidthPreference.setOnBindEditTextListener(onBindEditTextListener);
+        acceptNotificationsButtonWidthPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        acceptNotificationsButtonWidthPreference.setSummaryProvider(summaryProvider);
+
+        EditTextPreference acceptNotificationsButtonHeightPreference = findPreference(getString(R.string.accept_notifications_button_height_pref_key));
+        acceptNotificationsButtonHeightPreference.setOnBindEditTextListener(onBindEditTextListener);
+        acceptNotificationsButtonHeightPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        acceptNotificationsButtonHeightPreference.setSummaryProvider(summaryProvider);
+
         EditTextPreference acceptTosButtonXPreference = findPreference(getString(R.string.accept_tos_button_x_pref_key));
         acceptTosButtonXPreference.setOnBindEditTextListener(onBindEditTextListener);
         acceptTosButtonXPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
