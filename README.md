@@ -25,7 +25,7 @@ Then transfer the file to your phone. Next open the app, press the `set accounts
 * `not_banned.txt` - contains accounts that still work.
 * `not_banned_L{lvl}.txt` - contains accounts with level `lvl` that still work. Check `Detect account level` in settings to enable level detection.
 * `tutorial.txt` - contains unbanned accounts that still need to complete the tutorial. Check `Check for tutorial` in settings for tutorial detection.
-* `tutorial_L{lvl}.txt` - contains unbanned accounts with level `lvl` that still need to complete the tutorial. Check `Check for tutorial` in settings for tutorial detection.
+* `tutorial_L{lvl}.txt` - contains unbanned accounts with level `lvl` that still need to complete the tutorial.
 * `banned.txt` - contains accounts that are banned.
 * `temp_banned.txt` - contains accounts that are temporarily banned.
 * `wrong_credentials.txt` - contains accounts that don't exist or have a wrong username/password.
