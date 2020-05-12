@@ -33,3 +33,5 @@ Then transfer the file to your phone. Next open the app, press the `set accounts
 * `not_activated.txt` - contains accounts that have not been activated via the activation email.
 * `locked.txt` - contains accounts that are locked. Locked accounts can't be accessed untill their password gets changed.
 * `error.txt` - contains accounts for which checking failed 10 times in a row, this can for example happen when there is no internet connection.
+## Retrieving additional data with PogoDroid
+You can use MAD's PogoDroid to get additional information, like player info, Pokémon data, and inventory item data. PogoDroid is a MITM app used to exctract data from PoGo for maps. In order to use PogoDroid with PAC you have to enable `Use PogoDroid` in PAC's settings and enable `Send raw data (base64 encode)` + set `RAW POST Destination` to `http://127.0.0.1:8080` in PogoDroid's settings. You can change the port `8080` if it's not open on your device.
