@@ -34,7 +34,7 @@ Then transfer the file to your phone. Next open the app, press the `set accounts
 * `locked.txt` - contains accounts that are locked. Locked accounts can't be accessed untill their password gets changed.
 * `error.txt` - contains accounts for which checking failed 10 times in a row, this can for example happen when there is no internet connection.
 ## Retrieving additional data with PogoDroid
-You can use [MAD's](https://github.com/Map-A-Droid/MAD) PogoDroid to get additional information such as experience, stardust, Pokémon data, and item bag data. PogoDroid is a MITM app used to extract data from PoGo for maps.
+You can use [MAD's](https://github.com/Map-A-Droid/MAD) PogoDroid to get additional information such as experience, stardust, Pokémon data, and item bag data. PogoDroid is a MITM app used to extract data from PoGo for maps.\
 Setup PogoDroid:
 1. Install PogoDroid and setup account, you can find more information [here](https://mad-docs.readthedocs.io/en/latest/device-setup/#pogodroid).
 2. Disable `Send selected set of serialized data (json)` (PogoDroid -> settings -> External communication).
