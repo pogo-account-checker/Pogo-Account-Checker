@@ -34,4 +34,13 @@ Then transfer the file to your phone. Next open the app, press the `set accounts
 * `locked.txt` - contains accounts that are locked. Locked accounts can't be accessed untill their password gets changed.
 * `error.txt` - contains accounts for which checking failed 10 times in a row, this can for example happen when there is no internet connection.
 ## Retrieving additional data with PogoDroid
-You can use MAD's PogoDroid to get additional information, like player info, Pokémon data, and inventory item data. PogoDroid is a MITM app used to extract data from PoGo for maps. In order to use PogoDroid with PAC you have to enable `Use PogoDroid` in PAC's settings and enable `Send raw data (base64 encode)` + set `RAW POST Destination` to `http://127.0.0.1:8080/raw` in PogoDroid's settings. You can change the port to something other than `8080` if it's not open on your device. Make sure that PogoDroid injects before an account is logged in by setting `Injection delay` to a low value, 10 should be fine. **It's VERY important to disable all PogoDroid notifications because they might interfere with PAC's screen detection. Also disable the GZIP setting in PogoDroid.** You can find more info about PogoDroid here: https://mad-docs.readthedocs.io/en/latest/device-setup/
+You can use [MAD's](https://github.com/Map-A-Droid/MAD) PogoDroid to get additional information, like player info, Pokémon data, and inventory item data. PogoDroid is a MITM app used to extract data from PoGo for maps.
+Setup PogoDroid:
+1. Install PogoDroid and setup account, you can find more information [here](https://mad-docs.readthedocs.io/en/latest/device-setup/#pogodroid).
+2. Disable `Send selected set of serialized data (json)` (PogoDroid -> settings -> External communication).
+3. Enable `Send raw data (base64 encoded)` (PogoDroid -> settings -> External communication).
+4. Disable `GZIP the raw data that is to be posted.` (PogoDroid -> settings -> External communication).
+5. Set `RAW POST Destination` to `http://127.0.0.1:8080/raw` (PogoDroid -> settings -> External communication).
+6. Set `Injection delay` to 5 (PogoDroid -> settings -> App).
+7. **Important:** Disable full screen notifications from PogoDroid in the Android settings.
+8. Optional: enable `Injection detection` (PogoDroid -> settings -> App) if you experience PoGo crashes after PogoDroid has injected.
