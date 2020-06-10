@@ -14,8 +14,8 @@ You can get the APK [here](https://github.com/pogo-account-checker/Pogo-Account-
 ## Checking accounts
 First you have to put your PTC accounts in a `.txt` file, username and password should be seperated by a delimiter of choice. The delimiter can be chosen in the settings menu. Make sure to place each account on a new line. `.txt` file example:
 ```txt
-username01,password01
-username02,password02
+username01:password01
+username02:password02
 ```
 Then transfer the file to your phone. Next open the app, press the `set accounts` button, grant root permission forever, and select the file. Press start to start checking the accounts. The checked accounts can be found in the `PogoAccountChecker` folder on your phone. In this folder you can find the following files:
 * `not_banned.txt` - contains accounts that still work.
