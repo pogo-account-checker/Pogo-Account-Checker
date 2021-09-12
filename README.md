@@ -10,7 +10,7 @@ Pogo Account Checker (PAC) is an Android app that checks if Pokémon Go PTC acco
 1. Ensure your phone has an unlocked bootloader and is able to support root. [LineageOS](https://lineageos.org/) is a good place to start for a custom ROM and they have good installation instruction for each device.
 2. Install [Magisk](https://www.xda-developers.com/how-to-install-magisk/) (v20.3 or newer) to root the phone via recovery. Repackage the MagiskManager App and add Pokémon Go to Magisk Hide. Make sure to delete the folder `/sdcard/MagiskManager` after repackaging. It's necessary to pass the Safetynet check to run Pokémon Go on rooted phones. Check the Safetynet status in the MagiskManager App.
 ### Install Pogo Account Checker
-You can get the APK [here](https://github.com/pogo-account-checker/Pogo-Account-Checker/blob/master/apk/pogo-account-checker.apk).
+There are two PAC versions. You can download the version you want [here](https://github.com/pogo-account-checker/Pogo-Account-Checker/tree/master/apk). 
 ## Checking accounts
 First you have to put your PTC accounts in a `.txt` file, username and password should be seperated by a delimiter of choice. The delimiter can be chosen in the settings menu. Make sure to place each account on a new line. `.txt` file example:
 ```txt
