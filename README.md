@@ -42,7 +42,7 @@ Setup PogoDroid:
 6. **Important:** disable full screen notifications from PogoDroid in the Android settings.
 7. Optional: enable `Injection detection` (PogoDroid -> settings -> App) if you experience PoGo crashes after PogoDroid has injected.
 
-JSON account data example:
+Below you can find an example of the data you can retrieve.
 ```
 {
   "username":"bob",
