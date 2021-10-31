@@ -43,7 +43,8 @@ Setup PogoDroid:
 7. Optional: enable `Injection detection` (PogoDroid -> settings -> App) if you experience PoGo crashes after PogoDroid has injected.
 
 JSON account data example:
-```{
+```
+{
   "username":"bob",
   "password":"bob123",
   "status":"notBanned",
@@ -237,4 +238,5 @@ JSON account data example:
     "ptc":"bob@bob.com",
     "google":"bob@gmail.com"
   }
-}```
+}
+```
