@@ -53,13 +53,12 @@ Below you can find an example of the data you can retrieve.
     "battleLockoutEndMs":0,
     "hasWarning":false,
     "inGameUsername":"bob",
-    "lastTeamChangeDate":"1970-01-01T00:00:00",
     "lastTeamChangeTimestamp":0,
     "maxItemStorage":350,
     "maxPokemonStorage":300,
     "pokeCoins":0,
     "remainingNameChanges":3,
-    "stardust":777981,
+    "stardust":780881,
     "startDate":"2017-04-19T17:17:05.817",
     "startTimestamp":1492622225817,
     "suspendedMessageAcknowledged":true,
@@ -73,33 +72,135 @@ Below you can find an example of the data you can retrieve.
     "warningMessageAcknowledged":false
   },
   "playerStats":{
-    "experience":2436080,
+    "battleLeagueStats":{
+      "greatLeague":{
+        "battlesTotal":0,
+        "battlesWon":0
+      },
+      "ultraLeague":{
+        "battlesTotal":0,
+        "battlesWon":0
+      },
+      "masterLeague":{
+        "battlesTotal":0,
+        "battlesWon":0
+      }
+    },
+    "berriesFed":0,
+    "bestBuddies":0,
+    "bestFriends":0,
+    "bigMagikarpCaught":0,
+    "collectionChallengesCompleted":0,
+    "eggsHatched":41,
+    "eventBadges":[
+      
+    ],
+    "experience":2441350,
+    "gruntsDefeated":0,
+    "gymAttacksTotal":0,
+    "gymAttacksWon":0,
+    "gymDefencesWon":0,
+    "gymDefendTimeMs":0,
     "kilometersWalked":6152.178,
-    "pokemonCaught":1973,
-    "pokemonEncountered":1127651,
-    "pokestopsVisited":6279
+    "legendaryRaidsTotal":1,
+    "legendaryRaidsWon":1,
+    "level":30,
+    "nextLevelExperience":2500000,
+    "photoBombEncounters":0,
+    "playersReferred":0,
+    "pokeballThrown":3650,
+    "pokemonCaught":1974,
+    "pokemonCaughtAtMyLures":0,
+    "pokemonCaughtByType":{
+      "flying":846,
+      "ice":2,
+      "normal":1008,
+      "fairy":29,
+      "steel":2,
+      "poison":512,
+      "water":183,
+      "ground":39,
+      "dragon":7,
+      "psychic":58,
+      "bug":474,
+      "dark":250,
+      "fire":89,
+      "rock":29,
+      "fighting":1,
+      "ghost":11,
+      "electric":12,
+      "grass":173
+    },
+    "pokemonDeployedInGyms":0,
+    "pokemonEncountered":1127652,
+    "pokemonEvolved":234,
+    "pokemonFormChanges":0,
+    "pokemonPurified":0,
+    "pokestopsScanned":0,
+    "pokestopsVisited":6279,
+    "previousLevelExperience":2000000,
+    "questsCompleted":5,
+    "raidsTotal":2,
+    "raidsWon":2,
+    "raidsWonWithFriends":1,
+    "rocketBalloonBattlesTotal":0,
+    "rocketBalloonBattlesWon":0,
+    "sevenDayStreaks":0,
+    "smallRattataCaught":17,
+    "timesOnRaidAchievementsScreen":1,
+    "totalMegaEvolutions":0,
+    "tradeAccumulatedDistance":0,
+    "tradesDone":0,
+    "trainingBattlesTotal":0,
+    "trainingBattlesWon":0,
+    "uniqueMegaEvolutions":0,
+    "uniquePokedexEntries":134,
+    "uniqueRaidBossesDefeated":3,
+    "wayfarerAgreements":0
   },
   "activeBuddyData":{
-    "battles":0,
-    "berriesFed":3,
     "internalPokemonId":2104927287868420184,
-    "kilometersWalked":0.0,
-    "newVisits":0,
-    "photosTaken":0,
-    "pointsEarned":2,
     "souvenirs":{
       
     },
-    "timesPlayed":1,
-    "totalDaysBuddy":1,
+    "stats":{
+      "battles":1,
+      "berriesFed":3,
+      "kilometersWalked":0.0,
+      "newVisits":0,
+      "photosTaken":0,
+      "pointsEarned":2,
+      "timesPlayed":1,
+      "totalDaysBuddy":15
+    },
     "validationResult":"SUCCESS"
   },
-  "totalPokemon":176,
+  "buddyHistory":[
+    {
+      "internalPokemonId":7298435912171532184,
+      "lastSetTimestamp":1635610744353,
+      "lastUnsetTimestamp":1635615330023,
+      "pokemonId":6,
+      "souvenirs":{
+        
+      },
+      "stats":{
+        "battles":0,
+        "berriesFed":0,
+        "kilometersWalked":0.0,
+        "newVisits":0,
+        "photosTaken":0,
+        "pointsEarned":0,
+        "timesPlayed":0,
+        "totalDaysBuddy":0
+      }
+    }
+  ],
+  "totalPokemon":177,
   "pokemon":[
     {
       "costumeId":0,
       "cp":883,
-      "creationDate":"2017-04-20T19:39:15.143",
       "creationTimestamp":1492717155143,
       "formId":0,
       "gender":2,
@@ -134,7 +235,6 @@ Below you can find an example of the data you can retrieve.
     {
       "costumeId":0,
       "cp":1126,
-      "creationDate":"2017-04-19T20:50:10.624",
       "creationTimestamp":1492635010624,
       "formId":0,
       "gender":1,
@@ -169,7 +269,6 @@ Below you can find an example of the data you can retrieve.
     {
       "costumeId":0,
       "cp":530,
-      "creationDate":"2017-04-20T18:18:58.529",
       "creationTimestamp":1492712338529,
       "formId":0,
       "gender":1,
@@ -203,35 +302,35 @@ Below you can find an example of the data you can retrieve.
     }
   ],
   "candyData":{
-    "1":{
-      "candyCount":8,
+    "165":{
+      "candyCount":4,
       "xlCandyCount":0
     },
-    "4":{
-      "candyCount":22,
+    "223":{
+      "candyCount":27,
       "xlCandyCount":0
     },
-    "7":{
-      "candyCount":20,
+    "190":{
+      "candyCount":25,
       "xlCandyCount":0
     }
   },
   "megaEnergyData":{
     "6":50
   },
-  "totalItems":369,
+  "totalItems":374,
   "items":{
-    "1":{
-      "count":138,
-      "name":"Poké Ball"
+    "1104":{
+      "count":1,
+      "name":"Dragon Scale"
     },
-    "2":{
-      "count":59,
-      "name":"Great Ball"
+    "701":{
+      "count":49,
+      "name":"Razz Berry"
     },
-    "3":{
-      "count":17,
-      "name":"Ultra Ball"
+    "901":{
+      "count":1,
+      "name":"Unlimited Incubator"
     }
   },
   "loginEmails":{
