@@ -34,7 +34,7 @@ Then transfer the file to your phone. Next open the app, press the `set accounts
 ## Retrieving additional data with PogoDroid
 You can use [MAD's](https://github.com/Map-A-Droid/MAD) PogoDroid to get additional information such as experience, stardust, Pokémon data, and item bag data. PogoDroid is a MITM app used to extract data from PoGo for maps.\
 Setup PogoDroid:
-1. Install PogoDroid and setup account, you can find more information [here](https://mad-docs.readthedocs.io/en/latest/device-setup/#pogodroid).
+1. Install PogoDroid and setup account, you can find more information [here](https://mad-docs.readthedocs.io/en/latest/device_setup/android_dev/#pogodroid).
 2. Disable `Send selected set of serialized data (json)` (PogoDroid -> settings -> External communication).
 3. Enable `Send raw data (base64 encoded)` (PogoDroid -> settings -> External communication).
 4. Disable `GZIP the raw data that is to be posted.` (PogoDroid -> settings -> External communication).
