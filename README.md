@@ -39,9 +39,8 @@ Setup PogoDroid:
 3. Enable `Send raw data (base64 encoded)` (PogoDroid -> settings -> External communication).
 4. Disable `GZIP the raw data that is to be posted.` (PogoDroid -> settings -> External communication).
 5. Set `RAW POST Destination` to `http://127.0.0.1:8080/raw` (PogoDroid -> settings -> External communication).
-6. Turn on `Disable last sent notifications` (PogoDroid -> settings -> External communication).
-7. **Important:** make sure PogoDroid notifications are enabled so PAC can know when PogoDroid has injected.
-8. Optional: enable `Injection detection` (PogoDroid -> settings -> App) if you experience PoGo crashes after PogoDroid has injected.
+6. **Important:** make sure PogoDroid notifications are enabled so PAC can know when PogoDroid has injected.
+7. Optional: enable `Injection detection` (PogoDroid -> settings -> App) if you experience PoGo crashes after PogoDroid has injected.
 
 Below you can find an example of the data you can retrieve.
 ```
