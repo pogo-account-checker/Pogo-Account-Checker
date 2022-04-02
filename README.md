@@ -42,6 +42,7 @@ Setup PogoDroid:
 6. Turn on `Disable last sent notifications` (PogoDroid -> settings -> External communication).
 7. **Important:** make sure PogoDroid notifications are enabled so PAC can know when PogoDroid has injected.
 8. Optional: enable `Injection detection` (PogoDroid -> settings -> App) if you experience PoGo crashes after PogoDroid has injected.
+9. Optinoal: enable `Patch SELinux` (PogoDroid -> settings -> App) if PogoDroid does not inject.
 
 Below you can find an example of the data you can retrieve.
 ```
