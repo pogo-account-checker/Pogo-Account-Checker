@@ -75,15 +75,15 @@ Below you can find an example of the data you can retrieve.
   },
   "playerStats":{
     "battleLeagueStats":{
+      "masterLeague":{
+        "battlesTotal":0,
+        "battlesWon":0
+      },
       "greatLeague":{
         "battlesTotal":0,
         "battlesWon":0
       },
       "ultraLeague":{
-        "battlesTotal":0,
-        "battlesWon":0
-      },
-      "masterLeague":{
         "battlesTotal":0,
         "battlesWon":0
       }
@@ -115,24 +115,24 @@ Below you can find an example of the data you can retrieve.
     "pokemonCaught":1974,
     "pokemonCaughtAtMyLures":0,
     "pokemonCaughtByType":{
-      "flying":846,
-      "ice":2,
-      "normal":1008,
-      "fairy":29,
       "steel":2,
+      "normal":1008,
       "poison":512,
-      "water":183,
-      "ground":39,
+      "electric":12,
+      "ice":2,
       "dragon":7,
-      "psychic":58,
+      "fighting":1,
+      "water":183,
+      "rock":29,
+      "ghost":11,
       "bug":474,
+      "grass":173,
+      "flying":846,
       "dark":250,
       "fire":89,
-      "rock":29,
-      "fighting":1,
-      "ghost":11,
-      "electric":12,
-      "grass":173
+      "ground":39,
+      "psychic":58,
+      "fairy":29
     },
     "pokemonDeployedInGyms":0,
     "pokemonEncountered":1127652,
@@ -152,6 +152,7 @@ Below you can find an example of the data you can retrieve.
     "smallRattataCaught":17,
     "timesOnRaidAchievementsScreen":1,
     "totalMegaEvolutions":0,
+    "totalRoutePlay":0,
     "tradeAccumulatedDistance":0,
     "tradesDone":0,
     "trainingBattlesTotal":0,
@@ -159,6 +160,7 @@ Below you can find an example of the data you can retrieve.
     "uniqueMegaEvolutions":0,
     "uniquePokedexEntries":134,
     "uniqueRaidBossesDefeated":3,
+    "uniqueRoutePlay":0,
     "wayfarerAgreements":0
   },
   "activeBuddyData":{
@@ -174,7 +176,7 @@ Below you can find an example of the data you can retrieve.
       "photosTaken":0,
       "pointsEarned":2,
       "timesPlayed":1,
-      "totalDaysBuddy":15
+      "totalDaysBuddy":219
     },
     "validationResult":"SUCCESS"
   },
@@ -199,7 +201,6 @@ Below you can find an example of the data you can retrieve.
       }
     }
   ],
-  "totalPokemon":177,
   "pokemon":[
     {
       "costumeId":0,
@@ -231,6 +232,7 @@ Below you can find an example of the data you can retrieve.
       "familyId":185,
       "legendary":false,
       "mythical":false,
+      "ultraBeast":false,
       "move1Name":"Rock Throw",
       "move2Name":"Earthquake",
       "move3Name":""
@@ -265,6 +267,7 @@ Below you can find an example of the data you can retrieve.
       "familyId":215,
       "legendary":false,
       "mythical":false,
+      "ultraBeast":false,
       "move1Name":"Feint Attack",
       "move2Name":"Avalanche",
       "move3Name":""
@@ -299,46 +302,54 @@ Below you can find an example of the data you can retrieve.
       "familyId":206,
       "legendary":false,
       "mythical":false,
+      "ultraBeast":false,
       "move1Name":"Astonish",
       "move2Name":"Dig",
       "move3Name":""
     }
   ],
+  "totalPokemon":177,
+  "legendaryPokemon":1,
+  "mythicalPokemon":0,
+  "ultraBeastPokemon":0,
+  "shinyPokemon":1,
+  "luckyPokemon":0,
+  "iv100Pokemon":1,
   "candyData":{
-    "165":{
-      "candyCount":4,
+    "129":{
+      "candyCount":26,
       "xlCandyCount":0
     },
-    "223":{
-      "candyCount":27,
+    "1":{
+      "candyCount":8,
       "xlCandyCount":0
     },
-    "190":{
-      "candyCount":25,
+    "258":{
+      "candyCount":10,
       "xlCandyCount":0
     }
   },
   "megaEnergyData":{
     "6":50
   },
-  "totalItems":374,
   "items":{
-    "1104":{
-      "count":1,
-      "name":"Dragon Scale"
+    "3":{
+      "count":17,
+      "name":"Ultra Ball"
     },
-    "701":{
-      "count":49,
-      "name":"Razz Berry"
+    "708":{
+      "count":11,
+      "name":"Silver Pinap Berry"
     },
-    "901":{
-      "count":1,
-      "name":"Unlimited Incubator"
+    "401":{
+      "count":0,
+      "name":"Incense"
     }
   },
+  "totalItems":374,
   "loginEmails":{
-    "ptc":"bob@bob.com",
-    "google":"bob@gmail.com"
+    "google":"catpoksrvsit@gmail.com",
+    "ptc":"catpoksrvsit@pokeservaccounts.com"
   }
 }
 ```
