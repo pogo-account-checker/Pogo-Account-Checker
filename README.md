@@ -94,9 +94,9 @@ Below you can find an example of the data you can retrieve.
     "bigMagikarpCaught":0,
     "collectionChallengesCompleted":0,
     "eggsHatched":41,
-    "eventBadges":[ // HoloBadgeType (https://github.com/Furtif/POGOProtos/blob/master/base/v0.223.x_p_obf.proto#L525)
-      5231,
-      5233
+    "eventBadges":[
+      BADGE_LEVEL_40,
+      BADGE_GOFEST_2021_GLOBAL
     ],
     "experience":2441350,
     "gruntsDefeated":0,
