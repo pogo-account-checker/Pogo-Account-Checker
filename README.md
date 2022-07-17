@@ -163,6 +163,20 @@ Below you can find an example of the data you can retrieve.
     "uniqueRoutePlay":0,
     "wayfarerAgreements":0
   },
+  "medals":[
+    {
+      "currentValue":6152.17822265625,
+      "endValue":10000,
+      "rank":"GOLD",
+      "type":"BADGE_TRAVEL_KM"
+    },
+    {
+      "currentValue":72.0,
+      "endValue":100,
+      "rank":"SILVER",
+      "type":"BADGE_POKEDEX_ENTRIES"
+    }
+  ],
   "activeBuddyData":{
     "internalPokemonId":2104927287868420184,
     "souvenirs":{
