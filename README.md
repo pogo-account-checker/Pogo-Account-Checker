@@ -21,8 +21,8 @@ username02:password02
 ```
 Then transfer the file to your phone. Next open the app, press the `set accounts` button, grant root permission forever, and select the file. Press start to start checking the accounts. The checked accounts can be found in the `PAC` folder on your phone. In this folder you can find the following files:
 * `not_banned.txt` - contains accounts that still work.
-* `not_banned_L{lvl}.txt` - contains accounts with level `lvl` that still work. Check `Detect account level` in settings to enable level detection.
-* `tutorial.txt` - contains unbanned accounts that still need to complete the tutorial. Check `Check for tutorial` in settings for tutorial detection.
+* `not_banned_L{lvl}.txt` - contains accounts with level `lvl` that still work.
+* `tutorial.txt` - contains unbanned accounts that still need to complete the tutorial.
 * `tutorial_L{lvl}.txt` - contains unbanned accounts with level `lvl` that still need to complete the tutorial.
 * `banned.txt` - contains accounts that are banned.
 * `temp_banned.txt` - contains accounts that are temporarily banned.
