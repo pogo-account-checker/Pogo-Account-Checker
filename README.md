@@ -30,9 +30,11 @@ Then transfer the file to your phone. Next open the app, press the `set accounts
 * `new.txt` - contains accounts that have never been logged in to Pokémon Go.
 * `not_activated.txt` - contains accounts that have not been activated via the activation email.
 * `locked.txt` - contains accounts that are locked. Locked accounts can't be accessed untill their password gets changed.
-* `error.txt` - contains accounts for which checking failed 10 times in a row, this can for example happen when there is no internet connection.
+* `error.txt` - contains accounts for which checking failed 5 times in a row, this can for example happen when there is no internet connection.
 ## Retrieving mitm data
 With mitm, PAC can retrieve additional information such as player stats, Pokémon data, item data, and much more. You can enable mitm data in the settings menu.
+
+**Note:** mitm is not supported on emulators.
 
 Below you can find an example of the data you can retrieve.
 ```
