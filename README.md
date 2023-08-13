@@ -248,6 +248,9 @@ Below you can find an example of the data you can retrieve.
          "costumeId":0,
          "cp":26,
          "creationTimestamp":1680440031407,
+         "egg":false,
+         "eggKmWalked":0.0,
+         "eggKmWalkedTarget":0.0,
          "events":[
             
          ],
@@ -315,6 +318,9 @@ Below you can find an example of the data you can retrieve.
          "costumeId":0,
          "cp":0,
          "creationTimestamp":1680542674059,
+         "egg":false,
+         "eggKmWalked":0.0,
+         "eggKmWalkedTarget":0.0,
          "events":[
             
          ],
@@ -382,6 +388,7 @@ Below you can find an example of the data you can retrieve.
    "shinyPokemon":0,
    "luckyPokemon":0,
    "iv100Pokemon":0,
+   "eggs":0,
    "pokedexCategories":[
       {
          "pokedexCategory":{
