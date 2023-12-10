@@ -992,6 +992,29 @@ JSON schema of mitm data:
             }
          }
       },
+      "PokemonType":{
+         "type":"string",
+         "enum":[
+            "NORMAL",
+            "FIGHTING",
+            "FLYING",
+            "POISON",
+            "GROUND",
+            "ROCK",
+            "BUG",
+            "GHOST",
+            "STEEL",
+            "FIRE",
+            "WATER",
+            "GRASS",
+            "ELECTRIC",
+            "PSYCHIC",
+            "ICE",
+            "DRAGON",
+            "DARK",
+            "FAIRY"
+         ]
+      },
       "Quest":{
          "type":"object",
          "properties":{
@@ -1430,6 +1453,12 @@ JSON schema of mitm data:
                            "withOpponentPokemonBattleStatus":{
                               "type":"object",
                               "properties":{
+                                 "opponentPokemonTypes":{
+                                    "type":"array",
+                                    "items":{
+                                       "$ref":"#/$defs/PokemonType"
+                                    }
+                                 },
                                  "requireDefeat":{
                                     "type":"boolean"
                                  }
@@ -1495,6 +1524,17 @@ JSON schema of mitm data:
                                  }
                               }
                            },
+                           "withPokemonMove":{
+                              "type":"object",
+                              "properties":{
+                                 "moves":{
+                                    "type":"array",
+                                    "items":{
+                                       "$ref":"#/$defs/Move"
+                                    }
+                                 }
+                              }
+                           },
                            "withPokemonSize":{
                               "type":"object",
                               "properties":{
@@ -1520,27 +1560,7 @@ JSON schema of mitm data:
                                  "pokemonTypes":{
                                     "type":"array",
                                     "items":{
-                                       "type":"string",
-                                       "enum":[
-                                          "NORMAL",
-                                          "FIGHTING",
-                                          "FLYING",
-                                          "POISON",
-                                          "GROUND",
-                                          "ROCK",
-                                          "BUG",
-                                          "GHOST",
-                                          "STEEL",
-                                          "FIRE",
-                                          "WATER",
-                                          "GRASS",
-                                          "ELECTRIC",
-                                          "PSYCHIC",
-                                          "ICE",
-                                          "DRAGON",
-                                          "DARK",
-                                          "FAIRY"
-                                       ]
+                                       "$ref":"#/$defs/PokemonType"
                                     }
                                  }
                               }
@@ -1631,6 +1651,22 @@ JSON schema of mitm data:
                                     "type":"boolean"
                                  },
                                  "throwType":{
+                                    "type":"object",
+                                    "properties":{
+                                       "enumName":{
+                                          "type":"string"
+                                       },
+                                       "id":{
+                                          "type":"integer"
+                                       }
+                                    }
+                                 }
+                              }
+                           },
+                           "withUniquePokestop":{
+                              "type":"object",
+                              "properties":{
+                                 "context":{
                                     "type":"object",
                                     "properties":{
                                        "enumName":{
@@ -1814,6 +1850,17 @@ JSON schema of mitm data:
                      },
                      "xlCandy":{
                         "$ref":"#/$defs/CandyReward"
+                     }
+                  }
+               }
+            },
+            "spinPokestopQuest":{
+               "type":"object",
+               "properties":{
+                  "fortIds":{
+                     "type":"array",
+                     "items":{
+                        "type":"string"
                      }
                   }
                }
