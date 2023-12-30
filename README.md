@@ -749,23 +749,11 @@ JSON schema of mitm data:
             "costume":{
                "$ref":"#/$defs/Costume"
             },
-            "costumeId":{
-               "type":"integer"
-            },
             "cp":{
                "type":"integer"
             },
             "creationTimestamp":{
                "type":"integer"
-            },
-            "egg":{
-               "type":"boolean"
-            },
-            "eggKmWalked":{
-               "type":"number"
-            },
-            "eggKmWalkedTarget":{
-               "type":"number"
             },
             "events":{
                "type":"array",
@@ -782,17 +770,8 @@ JSON schema of mitm data:
             "form":{
                "$ref":"#/$defs/Form"
             },
-            "formId":{
-               "type":"integer"
-            },
-            "formName":{
-               "type":"string"
-            },
             "fromRaid":{
                "type":"boolean"
-            },
-            "gender":{
-               "type":"integer"
             },
             "genderInfo":{
                "$ref":"#/$defs/Gender"
@@ -836,29 +815,11 @@ JSON schema of mitm data:
             "move1":{
                "$ref":"#/$defs/Move"
             },
-            "move1Id":{
-               "type":"integer"
-            },
-            "move1Name":{
-               "type":"string"
-            },
             "move2":{
                "$ref":"#/$defs/Move"
             },
-            "move2Id":{
-               "type":"integer"
-            },
-            "move2Name":{
-               "type":"string"
-            },
             "move3":{
                "$ref":"#/$defs/Move"
-            },
-            "move3Id":{
-               "type":"integer"
-            },
-            "move3Name":{
-               "type":"string"
             },
             "mythical":{
                "type":"boolean"
