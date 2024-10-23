@@ -1,8 +1,7 @@
 # Pogo-Account-Checker
 ## Information
 Pogo Account Checker (PAC) is an Android app that checks if Pokémon Go PTC accounts are banned or not. It does so by using the Pokémon Go app, no third party APIs that can put your accounts at risk are used. PAC can also retrieve account data such as level, experience, stardust, Pokémon data, and item bag data.
-* [~~Discord~~](https://discord.gg/sNv8sPr) - Banned for no reason, I'm trying to get it back
-* [Discord](https://discord.gg/8JBqQhZgwk) - Temporary new server
+* [Discord](https://discord.gg/8JBqQhZgwk) - For support
 ## Requirements
 * Rooted Android device with Android 5.0 or higher and the language set to english.
 * Pokémon Go installed.
